@@ -18,3 +18,21 @@ By default duplicate value rows are not inserted.
 The import can also be run as a custom command, ie manage.py csvimport filename
 for possible use via cronjob etc.
 
+Custom command
+--------------
+
+Use manage.py csvimport --mappings='' --model='app_label.model_name' importfile.csv
+
+For mappings enter a list of fields in order only if you dont have a header row 
+with matching field names - or you want to override it, eg.
+
+--mappings = 'column1=shared_code,column2=org(Organisation|name)'
+
+where (model|foreign key field) is used to specify relations if again, you want to
+override what would be looked up from your models.
+
+Admin interface import
+----------------------
+
+Just add a csvimport item, fill in the form and submit. 
+Failed import rows are added to the log field.
