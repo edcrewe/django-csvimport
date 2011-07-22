@@ -1,0 +1,26 @@
+Metadata-Version: 1.0
+Name: django-csvimport
+Version: 0.1dev
+Summary: Import CSV files to django models
+Home-page: https://github.com/TomDunham/helios-iis
+Author: Ed Crewe
+Author-email: edmundcrewe@gmail.com
+License: Apache
+Description: Introduction
+        ============
+        
+        Importer for CSV files via JSON fixture conversion with some data cleanup handling
+        
+        Changelog
+        =========
+        
+        0.1 - Unreleased
+        ----------------
+        
+        * Initial release
+        
+        
+Keywords: CVS import django fixture
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
