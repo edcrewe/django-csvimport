@@ -6,18 +6,73 @@ Home-page: https://github.com/TomDunham/helios-iis
 Author: Ed Crewe
 Author-email: edmundcrewe@gmail.com
 License: Apache
-Description: Introduction
-        ============
+Description: Django CSV Import
+        =================
         
-        Importer for CSV files via JSON fixture conversion with some data cleanup handling
+        Ed Crewe - July 2011
+        
+        Overview
+        --------
+        
+        django-csvimport is a generic importer tool to allow the upload of CSV files for
+        populating data. The egg installs an admin cvsimport model that has a file upload field.
+        Add a new csvimport and upload a comma separated values file or MS Excel file.
+        
+        The upload triggers the import mechanism which matches the header line of the files 
+        field names to the fields in the selected model. Importing any rows that include all required fields.
+        Optionally required fields can be specified as part of the upload.
+        By default duplicate value rows are not inserted.
+        
+        The import can also be run as a custom command, ie manage.py csvimport filename
+        for possible use via cronjob etc.
+        
+        Custom command
+        --------------
+        
+        Use manage.py csvimport --mappings='' --model='app_label.model_name' importfile.csv
+        
+        For mappings enter a list of fields in order only if you dont have a header row 
+        with matching field names - or you want to override it, eg.
+        
+        --mappings = 'column1=shared_code,column2=org(Organisation|name)'
+        
+        where (model|foreign key field) is used to specify relations if again, you want to
+        override what would be looked up from your models.
+        
+        Admin interface import
+        ----------------------
+        
+        Just add a csvimport item, fill in the form and submit. 
+        Failed import rows are added to the log field.
         
         Changelog
         =========
         
+        0.2 - Demo IIS version - 9th July 2011
+        --------------------------------------
+        
+        #. Build it as a django-csvimport egg
+        #. Create csvimport management command
+        #. Improve unicode handling
+        #. Add admin csvimport model to upload CSV files with logging of import
+        #. Use file upload save to trigger csvimport command
+        #. Autodetect column mappings by matching model fields and CSV header text
+        #. Add a deduplicate feature
+        #. Test with data / app for HELIOS cross agency supply chain data sharing 
+           http://www.helios-foundation.org/cbha-project/index_html
+        
+        Ed Crewe
+        
         0.1 - Unreleased
         ----------------
         
-        * Initial release
+        #. Use django snippet as starting point
+           http://djangosnippets.org/snippets/633/
+        
+        Jonathan Holst
+          
+        
+        
         
         
 Keywords: CVS import django fixture
