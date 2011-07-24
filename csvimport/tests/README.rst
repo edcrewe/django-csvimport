@@ -1,6 +1,10 @@
 Tests Readme
 ============
 
+Test files are imported via the __init__.py 
+
+>>> from foobar_tests import *
+
 For one off run of tests use 
 
 >>> manage.py test --settings='csvimport.tests.settings' csvimport

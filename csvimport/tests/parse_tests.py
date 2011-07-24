@@ -3,16 +3,24 @@ import os
 from django.test import TestCase
 from csvimport.management.commands.csvimport import Command
 
+class DummyFileObj:
+    path = ''
+
+    def set_path(self, filename):
+        self.path = os.path.join(os.path.dirname(__file__), 
+                                 'fixtures',
+                                 filename)
+
 class CommandParseTest(TestCase):
     """ Run test of file parsing """
-    test_upload_path = 'fixtures/test.csv'
-    
-    def test_parse(self):
+
+    def test_parse(self, filename='test.csv'):
         cmd = Command()
-        test_fh = os.open(self.test_upload_path)
+        uploaded = DummyFileObj()
+        uploaded.set_path(filename)
         cmd.setup(mappings='', 
-                  modelname='csvimport.tests.Item', 
-                  uploaded=test_fh,
+                  modelname='csvtest.Item', 
+                  uploaded=uploaded,
                   defaults='')
         errors = cmd.run(logid=obj.id)
         print errors

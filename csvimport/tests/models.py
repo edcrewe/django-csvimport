@@ -1,4 +1,4 @@
-# Test case models for cvsimport
+# Test case models for cvsimport - set csvtest app_label for all
 from django.db import models
 
 class Country(models.Model):
@@ -12,6 +12,9 @@ class Country(models.Model):
     longitude = models.FloatField()
     alias = models.CharField(max_length=255)
 
+    class Meta:
+        app_label = 'csvtest'
+
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.code)
 
@@ -19,12 +22,18 @@ class Country(models.Model):
 class UnitOfMeasure(models.Model):
     name = models.CharField(max_length=32)
 
+    class Meta:
+        app_label = 'csvtest'
+
     def __unicode__(self):
         return self.name
 
 
 class Organisation(models.Model):
     name = models.CharField(max_length=255)
+
+    class Meta:
+        app_label = 'csvtest'
 
     def __unicode__(self):
         return self.name
@@ -47,4 +56,6 @@ class Item(models.Model):
     date = models.DateField(auto_now=True, null=True, validators=[])
     country = models.ForeignKey(Country)
 
+    class Meta:
+        app_label = 'csvtest'
 
