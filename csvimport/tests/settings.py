@@ -16,6 +16,7 @@ DATABASES = {
 INSTALLED_APPS = (
     # Put any other apps that your app depends on here
     'csvimport',
+    'csvimport.tests'
 )
 SITE_ID = 1
 

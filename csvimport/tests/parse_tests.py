@@ -22,5 +22,5 @@ class CommandParseTest(TestCase):
                   modelname='csvtest.Item', 
                   uploaded=uploaded,
                   defaults='')
-        errors = cmd.run(logid=obj.id)
+        errors = cmd.run(logid='commandtest')
         print errors
