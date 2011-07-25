@@ -1,5 +1,5 @@
 # Settings to be used when running unit tests
-# python manage.py test --settings=django-csvimport.test_settings django-csvimport
+# python manage.py test --settings=django-csvimport.tests.settings django-csvimport
 
 
 DATABASES = {
@@ -14,9 +14,9 @@ DATABASES = {
 }
 
 INSTALLED_APPS = (
-    # Put any other apps that your app depends on here
+    # Add csvimport app itself and the tests models
     'csvimport',
-    'csvimport.tests'
+    'tests'
 )
 SITE_ID = 1
 

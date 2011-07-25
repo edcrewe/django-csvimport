@@ -19,7 +19,7 @@ class CommandParseTest(TestCase):
         uploaded = DummyFileObj()
         uploaded.set_path(filename)
         cmd.setup(mappings='', 
-                  modelname='csvtest.Item', 
+                  modelname='tests.Item', 
                   uploaded=uploaded,
                   defaults='')
         errors = cmd.run(logid='commandtest')
