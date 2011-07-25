@@ -8,9 +8,9 @@ class Country(models.Model):
     """
     code = models.CharField(max_length=4, primary_key=True)
     name = models.CharField(max_length=255)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
-    alias = models.CharField(max_length=255)
+    latitude = models.FloatField(null=True)
+    longitude = models.FloatField(null=True)
+    alias = models.CharField(max_length=255, null=True)
 
 
     def __unicode__(self):

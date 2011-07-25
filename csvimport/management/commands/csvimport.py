@@ -58,13 +58,13 @@ class Command(LabelCommand):
         raise Exception(errors)
         return
 
-    def setup(self, mappings, modelname, csvfile='', defaults=[],
+    def setup(self, mappings, modelname, csvfile='', defaults='',
               uploaded=None, nameindexes=False, deduplicate=True):
         """ Setup up the attributes for running the import """
         self.debug = False
         self.errors = []
         self.loglist = []
-        self.defaults = defaults
+        self.defaults = self.__mappings(defaults)
         if modelname.find('.') > -1:
             app_label, model = modelname.split('.')
         self.app_label = app_label
