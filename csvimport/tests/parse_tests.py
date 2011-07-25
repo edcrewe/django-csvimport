@@ -7,6 +7,9 @@ from csvimport.management.commands.csvimport import Command
 from csvimport.tests.models import Item
 
 class DummyFileObj:
+    """ Use to replace html upload / or command arg 
+        with test fixtures files 
+    """
     path = ''
 
     def set_path(self, filename):
