@@ -25,6 +25,7 @@ setup(name='django-csvimport',
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
+          'chardet'
       ],
       entry_points="""
       # -*- Entry points: -*-

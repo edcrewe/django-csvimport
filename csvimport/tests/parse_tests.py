@@ -20,15 +20,15 @@ class DummyFileObj:
 class CommandParseTest(TestCase):
     """ Run test of file parsing """
 
-    def test_parse(self, filename='test.csv'):
-        """ Use custom command to upload file and parse it into Items """
+    def command(self, filename, defaults='country=KE(Country|code)'):
+        """ Run core csvimport command to parse file """
         cmd = Command()
         uploaded = DummyFileObj()
         uploaded.set_path(filename)
         cmd.setup(mappings='', 
                   modelname='tests.Item', 
                   uploaded=uploaded,
-                  defaults='country=KE(Country|code)')
+                  defaults=defaults)
 
         # Report back any parse errors and fail test if they exist
         errors = cmd.run(logid='commandtest')
@@ -37,13 +37,32 @@ class CommandParseTest(TestCase):
                 print err
         self.assertEqual(errors, None)
 
+    def get_item(self, code_share='sheeting'):
+        """ Get item for confirming import is OK """
         try:
-            item = Item.objects.get(code_share__exact='sheeting')
+            item = Item.objects.get(code_share__exact=code_share)
         except ObjectDoesNotExist:
-            print 'Failed to get row from imported test.csv Items'
+            item = None
+        self.assertTrue(item, 'Failed to get row from imported test.csv Items')
+        return item
 
+    def test_plain(self, filename='test_plain.csv'):
+        """ Use custom command to upload file and parse it into Items """
+        self.command(filename)
+        item = self.get_item('sheeting')
         # Check a couple of the fields in Item    
         self.assertEqual(item.code_org, 'RF007')
         self.assertEqual(item.description, 'Plastic sheeting, 4*60m, roll')
         # Check related Organisation model is created
         self.assertEqual(item.organisation.name, 'Save UK')
+        Item.objects.all().delete()
+
+    def test_char(self, filename='test_char.csv'):
+        """ Use custom command to upload file and parse it into Items """
+        self.command(filename)
+        item = self.get_item('watercan')
+        self.assertEqual(item.code_org, 'CWATCONT20F')
+        self.assertEqual(item.quantity, 1000)
+        self.assertEqual(unicode(item.uom), u'pi\u7e26e')
+        self.assertEqual(item.organisation.name, 'AID-France')
+        Item.objects.all().delete()

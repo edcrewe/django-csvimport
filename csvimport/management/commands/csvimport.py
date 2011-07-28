@@ -3,6 +3,7 @@
 import sys, os, csv, re
 from datetime import datetime
 import codecs
+import chardet
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import LabelCommand, BaseCommand
@@ -145,6 +146,8 @@ class Command(LabelCommand):
 
                 if self.debug:
                     self.loglist.append('%s.%s = "%s"' % (self.model, field, row[column]))
+                #if type(row[column]) == type(''):
+                #    row[column] = unicode(row[column])
                 try:
                     model_instance.__setattr__(field, row[column])
                 except:
@@ -156,6 +159,7 @@ class Command(LabelCommand):
                         except:
                             row[column] = None
                             self.loglist.append('Column %s failed' % field)
+
             if self.defaults:
                 for (field, value, foreignkey) in self.defaults:
                     try:
@@ -229,9 +233,13 @@ class Command(LabelCommand):
             print "%s: %s" % (types[type][0], message)
     
     def __csvfile(self, datafile):
-        #import chardet
+        """ Detect file encoding and open appropriately """
+        fh = open(datafile)
+        diagnose = chardet.detect(fh.read())
+        encoding = diagnose['encoding']
         try:
-            csvfile = codecs.open(datafile, 'r', 'utf-8')
+            csvfile = codecs.open(datafile, 'r', encoding)
+            print csvfile.read()
         except IOError:
             self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
         else:
