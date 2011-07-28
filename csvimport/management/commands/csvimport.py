@@ -236,29 +236,29 @@ class Command(LabelCommand):
         """ Detect file encoding and open appropriately """
         fh = open(datafile)
         diagnose = chardet.detect(fh.read())
-        encoding = diagnose['encoding']
+        charset = diagnose['encoding']
         try:
-            csvfile = codecs.open(datafile, 'r', encoding)
-            print csvfile.read()
+            csvfile = codecs.open(datafile, 'r', charset)
         except IOError:
             self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
         else:
             # CSV Reader returns an iterable, but as we possibly need to
             # perform list commands and since list is an acceptable iterable, 
             # we'll just transform it.
-            return list(self.unicode_csv_reader(csvfile))
+            return list(self.charset_csv_reader(csv_data=csvfile, 
+                                                charset=charset))
 
-    def unicode_csv_reader(self, unicode_csv_data, dialect=csv.excel, **kwargs):
-        # csv.py doesn't do Unicode; encode temporarily as UTF-8:
-        csv_reader = csv.reader(self.utf_8_encoder(unicode_csv_data),
+    def charset_csv_reader(self, csv_data, dialect=csv.excel, 
+                           charset='utf-8', **kwargs):
+        csv_reader = csv.reader(self.charset_encoder(csv_data, charset),
                                 dialect=dialect, **kwargs)
         for row in csv_reader:
-            # decode UTF-8 back to Unicode, cell by cell:
-            yield [unicode(cell, 'utf-8') for cell in row]
+            # decode charset back to Unicode, cell by cell:
+            yield [unicode(cell, charset) for cell in row]
 
-    def utf_8_encoder(self, unicode_csv_data):
-        for line in unicode_csv_data:
-            yield line.encode('utf-8')
+    def charset_encoder(self, csv_data, charset='utf-8'):
+        for line in csv_data:
+            yield line.encode(charset)
     
     def __model(self, model='Item'):
         # In order to properly import the models, and figure out what settings 
