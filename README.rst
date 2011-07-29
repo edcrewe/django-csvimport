@@ -18,6 +18,13 @@ By default duplicate value rows are not inserted.
 The import can also be run as a custom command, ie manage.py csvimport filename
 for possible use via cronjob etc.
 
+The core import code was based on http://djangosnippets.org/snippets/633/ by Jonathan Holst.
+It adds character encoding handling, model field and column autodetection, admin interface,
+custom command etc.
+
+NB: There is another similar application django-batchimport but it not packaged,
+requires Excel files and doesnt provide a custom command for batch usage.
+
 Custom command
 --------------
 
@@ -36,3 +43,14 @@ Admin interface import
 
 Just add a csvimport item, fill in the form and submit. 
 Failed import rows are added to the log field.
+
+Acknowledgements
+----------------
+
+This egg was created as part of a django dash at the House of Omni, Bristol UK, organised
+by Dan Fairs and the local django users group, DBUG. It was a core component for an application
+for aid agency supply chain sharing, prompted by Fraser Stephens of the HELIOS foundation
+and developed by Ed Crewe and Tom Dunham.
+
+ 
+
