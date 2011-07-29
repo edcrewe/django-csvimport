@@ -1,3 +1,5 @@
+MANIFEST.in
+README.rst
 setup.cfg
 setup.py
 csvimport/__init__.py
@@ -9,6 +11,13 @@ csvimport/views.py
 csvimport/management/__init__.py
 csvimport/management/commands/__init__.py
 csvimport/management/commands/csvimport.py
+csvimport/tests/README.rst
+csvimport/tests/__init__.py
+csvimport/tests/models.py
+csvimport/tests/parse_tests.py
+csvimport/tests/settings.py
+csvimport/tests/fixtures/test_char.csv
+csvimport/tests/fixtures/test_plain.csv
 django_csvimport.egg-info/PKG-INFO
 django_csvimport.egg-info/SOURCES.txt
 django_csvimport.egg-info/dependency_links.txt
@@ -17,3 +26,5 @@ django_csvimport.egg-info/namespace_packages.txt
 django_csvimport.egg-info/not-zip-safe
 django_csvimport.egg-info/requires.txt
 django_csvimport.egg-info/top_level.txt
+docs/HISTORY.rst
+docs/TODO.rst
