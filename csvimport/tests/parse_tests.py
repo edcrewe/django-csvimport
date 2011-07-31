@@ -65,7 +65,7 @@ class CommandParseTest(TestCase):
         item = self.get_item('watercan')
         self.assertEqual(item.code_org, 'CWATCONT20F')
         self.assertEqual(item.quantity, 1000)
-        #FIXME: self.assertEqual(unicode(item.uom), u'pi\u7e26e')
+        # self.assertEqual(unicode(item.uom), u'pi縦e')
         self.assertEqual(item.organisation.name, 'AID-France')
         Item.objects.all().delete()
 
@@ -78,4 +78,15 @@ class CommandParseTest(TestCase):
         self.assertEqual(item.quantity, 101)
         self.assertEqual(unicode(item.uom), u'删除当前图片')
         self.assertEqual(item.organisation.name, 'AID-France')
+        Item.objects.all().delete()
+
+    def test_duplicate(self, filename='test_duplicate.csv'):
+        """ Use custom command to upload file and parse it into Items """
+        self.command(filename)
+        items = Item.objects.all().order_by('code_share')
+        # Check a couple of the fields in Item    
+        self.assertEqual(len(items), 3)
+        codes = (u'bucket', u'tent', u'watercan')
+        for i, item in enumerate(items):
+            self.assertEqual(item.code_share, codes[i])
         Item.objects.all().delete()
