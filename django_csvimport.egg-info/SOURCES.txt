@@ -9,6 +9,10 @@ csvimport/views.py
 csvimport/management/__init__.py
 csvimport/management/commands/__init__.py
 csvimport/management/commands/csvimport.py
+csvimport/tests/__init__.py
+csvimport/tests/models.py
+csvimport/tests/parse_tests.py
+csvimport/tests/settings.py
 django_csvimport.egg-info/PKG-INFO
 django_csvimport.egg-info/SOURCES.txt
 django_csvimport.egg-info/dependency_links.txt

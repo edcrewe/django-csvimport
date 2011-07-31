@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# Use unicode source code to make test character string writing easier
 import os
 
 from django.test import TestCase
@@ -58,11 +60,22 @@ class CommandParseTest(TestCase):
         Item.objects.all().delete()
 
     def test_char(self, filename='test_char.csv'):
-        """ Use custom command to upload file and parse it into Items """
+        """ Use custom command parse file - test with odd non-ascii character """
         self.command(filename)
         item = self.get_item('watercan')
         self.assertEqual(item.code_org, 'CWATCONT20F')
         self.assertEqual(item.quantity, 1000)
         #FIXME: self.assertEqual(unicode(item.uom), u'pi\u7e26e')
+        self.assertEqual(item.organisation.name, 'AID-France')
+        Item.objects.all().delete()
+
+    def test_char2(self, filename='test_char2.csv'):
+        """ Use custom command to parse file with range of unicode characters """
+        self.command(filename)
+        item = self.get_item(u"Cet élément est utilisé par quelqu'un d'autre et ne peux être modifié")
+        self.assertEqual(item.description, 
+                         "TENTE FAMILIALE, 12 m_, COMPLETE (tapis de sol/double toit)")
+        self.assertEqual(item.quantity, 101)
+        self.assertEqual(unicode(item.uom), u'删除当前图片')
         self.assertEqual(item.organisation.name, 'AID-France')
         Item.objects.all().delete()
