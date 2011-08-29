@@ -219,7 +219,7 @@ class Command(LabelCommand):
                 key.__setattr__(fk_field, rowcol)
                 key.save()
 
-            rowcol = fk.objects.filter(**{fk_field+'__exact': rowcol})[0]
+            rowcol = fk_model.objects.filter(**{fk_field+'__exact': rowcol})[0]
         return rowcol
         
     def error(self, message, type=1):
