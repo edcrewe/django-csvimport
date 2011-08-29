@@ -39,7 +39,7 @@ class CSVImportAdmin(ModelAdmin):
         """ Override this method to supply filename based data """
         # example ORG-COUNTRY.csv
         defaults = []
-        splitters = {'/':-1,'.':0,'_':0}
+        splitters = {'/':-1, '.':0, '_':0}
         for splitter, index in splitters.items():
             if filename.find(splitter)>-1:
                 filename = filename.split(splitter)[index]

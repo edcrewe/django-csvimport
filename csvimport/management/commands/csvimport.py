@@ -1,6 +1,6 @@
 # Run sql files via django#
 # www.heliosfoundation.org
-import sys, os, csv, re
+import os, csv, re
 from datetime import datetime
 import codecs
 import chardet
@@ -8,14 +8,12 @@ import chardet
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
-from django.db import connection, transaction
-from django.conf import settings
 from django.db import models
 
 from csvimport import models
 # Note if mappings are manually specified they are of the following form ...
 # MAPPINGS = "column1=shared_code,column2=org(Organisation|name),column3=description"
-statements = re.compile(r";[ \t]*$", re.M)
+# statements = re.compile(r";[ \t]*$", re.M)
 
 def save_csvimport(props={}, instance=None):
     """ To avoid circular imports do saves here """
@@ -43,16 +41,30 @@ class Command(LabelCommand):
                    )
     help = "Imports a CSV file to a model"
 
+
+    def __init__(self):
+        """ Set default attributes data types """
+        self.props = {}
+        self.debug = False
+        self.errors = []
+        self.loglist = []
+        self.mappings = []
+        self.app_label = ''
+        self.model = ''
+        self.filename = ''
+        self.nameindexes = False
+        self.deduplicate = True
+        self.csvfile = []
+
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
             save_csvimport function 
         """
         filename = label 
-        mappings = options.get('mappings', []) #MAPPINGS)
+        mappings = options.get('mappings', []) 
         modelname = options.get('model', 'Item')
         show_traceback = options.get('traceback', True)
         self.setup(mappings, modelname, filename)
-        self.props = {}
         errors = self.run()
         if self.props:
             save_csvimport(self.props)
@@ -62,9 +74,6 @@ class Command(LabelCommand):
     def setup(self, mappings, modelname, csvfile='', defaults='',
               uploaded=None, nameindexes=False, deduplicate=True):
         """ Setup up the attributes for running the import """
-        self.debug = False
-        self.errors = []
-        self.loglist = []
         self.defaults = self.__mappings(defaults)
         if modelname.find('.') > -1:
             app_label, model = modelname.split('.')
@@ -72,8 +81,6 @@ class Command(LabelCommand):
         self.model = models.get_model(app_label, model)
         if mappings:
             self.mappings = self.__mappings(mappings)
-        else:
-            self.mappings = []
         self.nameindexes = bool(nameindexes) 
         self.file_name = csvfile
         self.deduplicate = deduplicate
@@ -176,7 +183,7 @@ class Command(LabelCommand):
                     matchdict[field + '__exact'] = getattr(model_instance, 
                                                            field, None)
                 try:
-                    exists = self.model.objects.get(**matchdict)
+                    self.model.objects.get(**matchdict)
                     continue
                 except ObjectDoesNotExist:
                     pass
@@ -234,8 +241,8 @@ class Command(LabelCommand):
     
     def __csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
-        fh = open(datafile)
-        diagnose = chardet.detect(fh.read())
+        filehandle = open(datafile)
+        diagnose = chardet.detect(filehandle.read())
         charset = diagnose['encoding']
         try:
             csvfile = codecs.open(datafile, 'r', charset)
