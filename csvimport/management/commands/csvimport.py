@@ -66,7 +66,7 @@ class Command(LabelCommand):
         filename = label 
         mappings = options.get('mappings', []) 
         modelname = options.get('model', 'Item')
-        show_traceback = options.get('traceback', True)
+        # show_traceback = options.get('traceback', True)
         self.setup(mappings, modelname, filename)
         errors = self.run()
         if self.props:
@@ -210,12 +210,12 @@ class Command(LabelCommand):
         """
         fk_key, fk_field = foreignkey
         if fk_key and fk_field:
-            fk = models.get_model(self.app_label, fk_key)
-            matches = fk.objects.filter(**{fk_field+'__exact': 
-                                           rowcol})
+            fk_model = models.get_model(self.app_label, fk_key)
+            matches = fk_model.objects.filter(**{fk_field+'__exact': 
+                                                 rowcol})
 
             if not matches:
-                key = fk()
+                key = fk_model()
                 key.__setattr__(fk_field, rowcol)
                 key.save()
 
@@ -289,10 +289,10 @@ class Command(LabelCommand):
             
             mappings = list(mappings)
             for mapping in mappings:
-                m = mappings.index(mapping)
-                mappings[m] = list(mappings[m])
-                mappings[m][2] = parse_foreignkey(mapping[2])
-                mappings[m] = tuple(mappings[m])
+                mapp = mappings.index(mapping)
+                mappings[mapp] = list(mappings[mapp])
+                mappings[mapp][2] = parse_foreignkey(mapping[2])
+                mappings[mapp] = tuple(mappings[mapp])
             mappings = list(mappings)
             
             return mappings
