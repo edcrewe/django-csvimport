@@ -10,17 +10,18 @@ from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
 from django.db import models
 
-from csvimport import models
 # Note if mappings are manually specified they are of the following form ...
 # MAPPINGS = "column1=shared_code,column2=org(Organisation|name),column3=description"
 # statements = re.compile(r";[ \t]*$", re.M)
 
-def save_csvimport(props={}, instance=None):
+def save_csvimport(props=None, instance=None):
     """ To avoid circular imports do saves here """
     if not instance:
-        csvimport = models.CSVImport()
-    for key in props.keys():
-        csvimport.__setattr__(key, value)
+        from csvimport.models import CSVImport
+        csvimport = CSVImport()
+    if props:
+        for key, value in props.items():
+            csvimport.__setattr__(key, value)
     csvimport.save()
     return csvimport.id
 
@@ -44,14 +45,16 @@ class Command(LabelCommand):
 
     def __init__(self):
         """ Set default attributes data types """
+        super(Command, self).__init__()
         self.props = {}
         self.debug = False
         self.errors = []
         self.loglist = []
         self.mappings = []
+        self.defaults = []
         self.app_label = ''
         self.model = ''
-        self.filename = ''
+        self.file_name = ''
         self.nameindexes = False
         self.deduplicate = True
         self.csvfile = []
@@ -266,16 +269,6 @@ class Command(LabelCommand):
     def charset_encoder(self, csv_data, charset='utf-8'):
         for line in csv_data:
             yield line.encode(charset)
-    
-    def __model(self, model='Item'):
-        # In order to properly import the models, and figure out what settings 
-        # to use, we need to figure out the application and project names.
-        try:
-            from iisharing import models
-        except ImportError:
-            self.error('Specified directory does not exist')
-        else:
-            return models.Item
     
     def __mappings(self, mappings):
         """
