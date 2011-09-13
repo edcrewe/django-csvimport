@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 
 from csvimport.management.commands.csvimport import Command
-from csvimport.tests.models import Item
+from csvimport.tests.models import Country, UnitOfMeasure, Item, Organisation
 
 class DummyFileObj:
     """ Use to replace html upload / or command arg 

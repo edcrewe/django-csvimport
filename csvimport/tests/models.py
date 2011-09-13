@@ -1,4 +1,4 @@
-# Test case models for cvsimport - set csvtest app_label for all
+# Test case models for cvsimport - add 'csvimport.tests' to installed apps to run
 from django.db import models
 
 class Country(models.Model):
@@ -31,6 +31,10 @@ class Organisation(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        db_table = u'tests_organisation'
+        managed = True
 
 
 class Item(models.Model):
