@@ -3,7 +3,8 @@ from django.db import models
 CHOICES = (('manual','manual'),('cronjob','cronjob'))
 # Create your models here.
 MODELS = ['%s.%s' % (m._meta.app_label, 
-                     m.__name__) for m in models.loading.get_models() if m._meta.app_label != 'contenttypes']
+                     m.__name__) for m in models.loading.get_models() 
+                     if m._meta.app_label != 'contenttypes']
 MODELS = tuple([(m, m) for m in MODELS])
 
 class CSVImport(models.Model):

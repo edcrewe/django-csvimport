@@ -138,7 +138,12 @@ class Command(LabelCommand):
                         key = self.check_fkey(key, field)
                         mapping.append('column%s=%s' % (i+1, key))
             mappingstr = ','.join(mapping)
+        if mapping:
             self.mappings = self.__mappings(mappingstr)            
+        else:
+            self.loglist.append('No fields in the CSV file match %s.%s' % 
+                                (self.model._meta.app_label, self.model.__name__))
+            return self.loglist
         for row in self.csvfile[1:]:
             counter += 1
             model_instance = self.model()
@@ -155,7 +160,8 @@ class Command(LabelCommand):
                     row[column] = self.insert_fkey(foreignkey, row[column])
 
                 if self.debug:
-                    self.loglist.append('%s.%s = "%s"' % (self.model, field, row[column]))
+                    self.loglist.append('%s.%s = "%s"' % (self.model.__name__, 
+                                                          field, row[column]))
                 #if type(row[column]) == type(''):
                 #    row[column] = unicode(row[column])
                 try:
