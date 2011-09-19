@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3 - Fix issue with adding in admin
+------------------------------------
+
+#. Fix empty mapping submitted
+#. Remove non-generic filename country processing code
+#. Use get_models to populate drop down for admin import form
+
 0.2 - Initial beta release version - 29th July 2011
 ---------------------------------------------------
 

@@ -2,12 +2,16 @@ from django.db import models
 
 CHOICES = (('manual','manual'),('cronjob','cronjob'))
 # Create your models here.
+MODELS = ['%s.%s' % (m._meta.app_label, 
+                     m.__name__) for m in models.loading.get_models() if m._meta.app_label != 'contenttypes']
+MODELS = tuple([(m, m) for m in MODELS])
 
 class CSVImport(models.Model):
     """ Logging model for importing files """
-    model_name = models.CharField(max_length=255, blank=True, 
+    model_name = models.CharField(max_length=255, blank=False, 
                                   default='iisharing.Item',
-                        help_text='Please specify the app_label.model_name')
+                                  help_text='Please specify the app_label.model_name',
+                                  choices=MODELS)
     field_list = models.CharField(max_length=255, blank=True, 
                         help_text='''Enter list of fields in order only if
                                      you dont have a header row with matching field names, eg.

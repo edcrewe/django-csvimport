@@ -274,7 +274,9 @@ class Command(LabelCommand):
         """
         Parse the mappings, and return a list of them.
         """
-        
+        if not mappings:
+            return []
+
         def parse_mapping(args):
             """
             Parse the custom mapping syntax (column1=field1(ForeignKey|field),
@@ -315,7 +317,7 @@ class Command(LabelCommand):
                 return (found.group(1), found.group(2))
             else:
                 return None
-                    
+
         mappings = mappings.replace(',', ' ')
         mappings = mappings.replace('column', '')
         return parse_mapping(mappings)
