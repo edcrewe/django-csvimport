@@ -1,5 +1,6 @@
 from datetime import datetime
-
+from django import forms
+from django.db import models
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin 
 
@@ -12,6 +13,10 @@ class CSVImportAdmin(ModelAdmin):
                        'upload_method',
                        'error_log',
                        'import_user']
+    formfield_overrides = {
+        models.CharField: {'widget': forms.Textarea(attrs={'rows':'4', 
+                                                           'cols':'60'})},
+        }
 
     def save_model(self, request, obj, form, change):
         """ Do save and process command - cant commit False
