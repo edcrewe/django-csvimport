@@ -23,7 +23,6 @@ setup(name='django-csvimport',
       url='https://github.com/edcrewe/django-csvimport',
       license='Apache',
       packages=find_packages(exclude=['ez_setup']),
-      namespace_packages=['csvimport'],
       include_package_data=True,
       package_data = {
         # If any package contains *.csv or *.rst files, include them:
@@ -31,8 +30,6 @@ setup(name='django-csvimport',
       },
       zip_safe=False,
       install_requires=[
-          'setuptools',
-          # -*- Extra requirements: -*-
           'chardet'
       ],
       entry_points="""
