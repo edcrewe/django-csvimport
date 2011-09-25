@@ -1,12 +1,14 @@
 Changelog
 =========
 
-0.3 - Fix issue with adding in admin
-------------------------------------
+0.3 - Fix issue with adding in admin - 25th Sept 2011
+-----------------------------------------------------
 
 #. Fix empty mapping submitted
 #. Remove non-generic filename country processing code
 #. Use get_models to populate drop down for admin import form
+#. Add upload message about whether mapping is from CSV header row
+#. Ensure header row only used if mapping is not supplied.
 
 0.2 - Initial beta release version - 29th July 2011
 ---------------------------------------------------
