@@ -1,6 +1,6 @@
-include README.rst
+include README.txt
 recursive-include csvimport *
 recursive-include docs *
-global-include *rst
+global-include *txt
 global-include *csv
 global-exclude *pyc

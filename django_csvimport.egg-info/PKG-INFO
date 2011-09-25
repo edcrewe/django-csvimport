@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: django-csvimport
-Version: 0.2
+Version: 0.3
 Summary: Import CSV files to django models
 Home-page: https://github.com/edcrewe/django-csvimport
 Author: Ed Crewe
@@ -9,7 +9,7 @@ License: Apache
 Description: Django CSV Import
         =================
         
-        Ed Crewe - July 2011
+        Ed Crewe - September 2011
         
         Overview
         --------
@@ -75,6 +75,15 @@ Description: Django CSV Import
         
         Changelog
         =========
+        
+        0.3 - Fix issue with adding in admin - 25th Sept 2011
+        -----------------------------------------------------
+        
+        #. Fix empty mapping submitted
+        #. Remove non-generic filename country processing code
+        #. Use get_models to populate drop down for admin import form
+        #. Add upload message about whether mapping is from CSV header row
+        #. Ensure header row only used if mapping is not supplied.
         
         0.2 - Initial beta release version - 29th July 2011
         ---------------------------------------------------
