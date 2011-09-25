@@ -127,7 +127,9 @@ class Command(LabelCommand):
         else:
             csvimportid = 0
         mapping = []
-        if not self.mappings:
+        if self.mappings:
+             self.loglist.append('Using manually entered mapping list') 
+        else:
             fieldmap = {}
             for field in self.model._meta.fields:
                 fieldmap[field.name] = field
@@ -138,10 +140,14 @@ class Command(LabelCommand):
                         key = self.check_fkey(key, field)
                         mapping.append('column%s=%s' % (i+1, key))
             mappingstr = ','.join(mapping)
-        if mapping:
-            self.mappings = self.__mappings(mappingstr)            
-        else:
-            self.loglist.append('No fields in the CSV file match %s.%s' % 
+            if mapping:
+                self.loglist.append('''Using mapping list from 
+                                       first row of CSV file''') 
+                self.mappings = self.__mappings(mappingstr)            
+        if not self.mappings:
+            self.loglist.append('''No fields in the CSV file match %s.%s\n
+                                   - you must add a header field name row 
+                                   to the CSV file or supply a mapping list''' % 
                                 (self.model._meta.app_label, self.model.__name__))
             return self.loglist
         for row in self.csvfile[1:]:
