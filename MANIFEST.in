@@ -1,4 +1,5 @@
 include README.txt
+include csvimport/__init__.py
 recursive-include csvimport *
 recursive-include docs *
 global-include *txt
