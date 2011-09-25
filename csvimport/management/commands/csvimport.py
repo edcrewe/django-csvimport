@@ -141,8 +141,7 @@ class Command(LabelCommand):
                         mapping.append('column%s=%s' % (i+1, key))
             mappingstr = ','.join(mapping)
             if mapping:
-                self.loglist.append('''Using mapping list from 
-                                       first row of CSV file''') 
+                self.loglist.append('Using mapping from first row of CSV file') 
                 self.mappings = self.__mappings(mappingstr)            
         if not self.mappings:
             self.loglist.append('''No fields in the CSV file match %s.%s\n

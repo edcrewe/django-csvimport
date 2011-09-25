@@ -34,10 +34,12 @@ class CommandParseTest(TestCase):
 
         # Report back any parse errors and fail test if they exist
         errors = cmd.run(logid='commandtest')
+        error = errors.pop()
+        self.assertEqual(error, 'Using mapping from first row of CSV file')
         if errors:
             for err in errors:
                 print err
-        self.assertEqual(errors, None)
+        self.assertEqual(errors, [])
 
     def get_item(self, code_share='sheeting'):
         """ Get item for confirming import is OK """
