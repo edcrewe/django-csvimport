@@ -1,7 +1,7 @@
 # Settings to be used when running unit tests
 # python manage.py test --settings=django-csvimport.tests.settings django-csvimport
 
-
+DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -15,11 +15,20 @@ DATABASES = {
 
 INSTALLED_APPS = (
     # Add csvimport app itself and the tests models
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.admin',
     'csvimport',
-    'tests'
+    'csvimport.tests'
 )
 SITE_ID = 1
 
 # This merely needs to be present - as long as your test case specifies a
 # urls attribute, it does not need to be populated.
-ROOT_URLCONF = ''
+ROOT_URLCONF = 'csvimport.tests.urls'
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.load_template_source',
+    'django.template.loaders.app_directories.load_template_source',
+)
