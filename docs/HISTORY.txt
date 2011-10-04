@@ -5,6 +5,7 @@ Changelog
 --------------------------------------------------------
 
 #. Add demo countries.csv file
+#. Add MEDIA_ROOT for file uploads
 
 0.3 - Fix issue with adding in admin - 25th Sept 2011
 -----------------------------------------------------
