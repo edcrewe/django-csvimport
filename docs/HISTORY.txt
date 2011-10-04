@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.4 - Add settings to allow demo site install from tests
+--------------------------------------------------------
+
+#. Add demo countries.csv file
+
 0.3 - Fix issue with adding in admin - 25th Sept 2011
 -----------------------------------------------------
 
