@@ -74,8 +74,8 @@ Description: Django CSV Import
         Changelog
         =========
         
-        0.4 - Add settings to allow demo site install from tests
-        --------------------------------------------------------
+        0.4 - Add settings to allow demo site install from tests - 4th October 2011
+        ---------------------------------------------------------------------------
         
         #. Add demo countries.csv file
         #. Add MEDIA_ROOT for file uploads

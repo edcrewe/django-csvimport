@@ -44,6 +44,37 @@ Admin interface import
 Just add a csvimport item, fill in the form and submit. 
 Failed import rows are added to the log field.
 
+Demonstration installation instructions
+---------------------------------------
+
+To see how it works, you can install a demo easily enough eg. via virtual environment, 
+then use the tests settings to have some sample models for importing data, and the fixtures are sample csv files.
+
+virtualenv install mysite
+cd mysite
+/bin/pip install django
+/bin/pip install django-csvimport
+
+Add the following django-admin.py to the bin directory:
+
+>>> #!/path/to/mysite/bin/python
+
+>>> from django.core import management
+>>> import os
+>>> os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
+>>> if __name__ == "__main__":
+>>>     management.execute_from_command_line()
+
+Run 
+bin/django-admin.py syncdb
+bin/django-admin.py runserver
+
+Go to http://127.0.0.1:8000/admin in your browser
+Click on add CSVImport
+Pick the django-csvimport/csvimport/tests/fixtures/countries.csv and upload it
+Check to see if the Country model is now populated.
+
+
 Acknowledgements
 ----------------
 
