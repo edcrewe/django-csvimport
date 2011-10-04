@@ -13,6 +13,9 @@ DATABASES = {
     }
 }
 
+MEDIA_ROOT = '/tmp'
+MEDIA_URL = '/files'
+
 INSTALLED_APPS = (
     # Add csvimport app itself and the tests models
     'django.contrib.auth',

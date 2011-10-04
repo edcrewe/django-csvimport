@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings 
+from django.core.files.storage import FileSystemStorage
 
+fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 CHOICES = (('manual','manual'),('cronjob','cronjob'))
 # Create your models here.
 MODELS = ['%s.%s' % (m._meta.app_label, 
@@ -18,7 +20,7 @@ class CSVImport(models.Model):
                         help_text='''Enter list of fields in order only if
                                      you dont have a header row with matching field names, eg.
                                      "column1=shared_code,column2=org(Organisation|name)"''')
-    upload_file = models.FileField(upload_to='csv')
+    upload_file = models.FileField(upload_to='csv', storage=fs)
     file_name = models.CharField(max_length=255, blank=True)
     encoding = models.CharField(max_length=32, blank=True)
     upload_method = models.CharField(blank=False, max_length=50, 
