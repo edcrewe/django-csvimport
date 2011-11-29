@@ -52,6 +52,9 @@ class Command(LabelCommand):
                make_option('--model', default='iisharing.Item', 
                            help='Please provide the model to import to'),
                    )
+               make_option('--charset', default='utf-8', 
+                           help='Force the charset conversion used rather than detect it'),
+                   )
     help = "Imports a CSV file to a model"
 
 
@@ -79,6 +82,7 @@ class Command(LabelCommand):
         filename = label 
         mappings = options.get('mappings', []) 
         modelname = options.get('model', 'Item')
+        self.charset = options.get('charset','')
         # show_traceback = options.get('traceback', True)
         self.setup(mappings, modelname, filename)
         errors = self.run()
@@ -269,8 +273,9 @@ class Command(LabelCommand):
     def __csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
         filehandle = open(datafile)
-        diagnose = chardet.detect(filehandle.read())
-        self.charset = diagnose['encoding']
+        if not self.charset:
+            diagnose = chardet.detect(filehandle.read())
+            self.charset = diagnose['encoding']
         try:
             csvfile = codecs.open(datafile, 'r', self.charset)
         except IOError:
