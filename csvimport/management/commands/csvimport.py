@@ -84,6 +84,13 @@ class Command(LabelCommand):
         charset = options.get('charset','')
         # show_traceback = options.get('traceback', True)
         self.setup(mappings, modelname, charset, filename)
+        if not hasattr(self.model, '_meta'):
+            msg = 'Sorry your model could not be found please check app_label.modelname'
+            try:
+                print msg
+            except:
+                self.loglist.append(msg)
+            return
         errors = self.run()
         if self.props:
             save_csvimport(self.props, self)
@@ -145,7 +152,7 @@ class Command(LabelCommand):
             csvimportid = 0
         mapping = []
         if self.mappings:
-             self.loglist.append('Using manually entered mapping list') 
+            self.loglist.append('Using manually entered mapping list') 
         else:
             fieldmap = {}
             for field in self.model._meta.fields:
