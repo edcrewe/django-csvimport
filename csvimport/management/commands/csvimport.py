@@ -16,15 +16,27 @@ from django.db import models
 
 def save_csvimport(props=None, instance=None):
     """ To avoid circular imports do saves here """
-    if not instance:
-        from csvimport.models import CSVImport
-        csvimport = CSVImport()
-    if props:
-        for key, value in props.items():
-            csvimport.__setattr__(key, value)
-    csvimport.save()
-    return csvimport.id
-
+    try:
+        if not instance:
+            from csvimport.models import CSVImport
+            csvimp = CSVImport()
+        if props:
+            for key, value in props.items():
+                csvimp.__setattr__(key, value)
+        csvimp.save()
+        return csvimp.id
+    except:
+        # Running as command line
+        print 'Assumed charset = %s\n' % instance.charset
+        print '###############################\n' 
+        for line in instance.loglist:
+            if type(line) != type(''):
+                for subline in line:
+                    print line
+                    print
+            else:
+                print line
+                print
 
 class Command(LabelCommand):
     """
@@ -58,6 +70,7 @@ class Command(LabelCommand):
         self.nameindexes = False
         self.deduplicate = True
         self.csvfile = []
+        self.charset = ''
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
@@ -70,8 +83,8 @@ class Command(LabelCommand):
         self.setup(mappings, modelname, filename)
         errors = self.run()
         if self.props:
-            save_csvimport(self.props)
-        raise Exception(errors)
+            save_csvimport(self.props, self)
+        self.loglist.extend(errors)
         return
 
     def setup(self, mappings, modelname, csvfile='', defaults='',
@@ -257,9 +270,9 @@ class Command(LabelCommand):
         """ Detect file encoding and open appropriately """
         filehandle = open(datafile)
         diagnose = chardet.detect(filehandle.read())
-        charset = diagnose['encoding']
+        self.charset = diagnose['encoding']
         try:
-            csvfile = codecs.open(datafile, 'r', charset)
+            csvfile = codecs.open(datafile, 'r', self.charset)
         except IOError:
             self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
         else:
@@ -267,7 +280,7 @@ class Command(LabelCommand):
             # perform list commands and since list is an acceptable iterable, 
             # we'll just transform it.
             return list(self.charset_csv_reader(csv_data=csvfile, 
-                                                charset=charset))
+                                                charset=self.charset))
 
     def charset_csv_reader(self, csv_data, dialect=csv.excel, 
                            charset='utf-8', **kwargs):
