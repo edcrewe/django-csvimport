@@ -51,9 +51,8 @@ class Command(LabelCommand):
                            help='Please provide the file to import from'),
                make_option('--model', default='iisharing.Item', 
                            help='Please provide the model to import to'),
-                   )
-               make_option('--charset', default='utf-8', 
-                           help='Force the charset conversion used rather than detect it'),
+               make_option('--charset', default='', 
+                           help='Force the charset conversion used rather than detect it')
                    )
     help = "Imports a CSV file to a model"
 
@@ -82,21 +81,22 @@ class Command(LabelCommand):
         filename = label 
         mappings = options.get('mappings', []) 
         modelname = options.get('model', 'Item')
-        self.charset = options.get('charset','')
+        charset = options.get('charset','')
         # show_traceback = options.get('traceback', True)
-        self.setup(mappings, modelname, filename)
+        self.setup(mappings, modelname, charset, filename)
         errors = self.run()
         if self.props:
             save_csvimport(self.props, self)
         self.loglist.extend(errors)
         return
 
-    def setup(self, mappings, modelname, csvfile='', defaults='',
+    def setup(self, mappings, modelname, charset, csvfile='', defaults='',
               uploaded=None, nameindexes=False, deduplicate=True):
         """ Setup up the attributes for running the import """
         self.defaults = self.__mappings(defaults)
         if modelname.find('.') > -1:
             app_label, model = modelname.split('.')
+        self.charset = charset
         self.app_label = app_label
         self.model = models.get_model(app_label, model)
         if mappings:
