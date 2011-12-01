@@ -28,7 +28,8 @@ class CommandParseTest(TestCase):
         uploaded = DummyFileObj()
         uploaded.set_path(filename)
         cmd.setup(mappings='', 
-                  modelname='tests.Item', 
+                  modelname='tests.Item',
+                  charset='',
                   uploaded=uploaded,
                   defaults=defaults)
 
