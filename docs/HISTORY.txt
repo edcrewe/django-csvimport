@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.5 - Add command line encoding option and error return - 18th Dec 2011
+-----------------------------------------------------------------------
+
+#. Make sure command line usage returns errors and warnings
+#. Add the option to force --charset=utf-8 for example rather than chardet 
+
 0.4 - Add settings to allow demo site install from tests - 4th October 2011
 ---------------------------------------------------------------------------
 
