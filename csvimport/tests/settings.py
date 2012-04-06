@@ -14,7 +14,7 @@ DATABASES = {
 }
 
 MEDIA_ROOT = '/tmp'
-MEDIA_URL = '/files'
+MEDIA_URL = '/files/'
 
 INSTALLED_APPS = (
     # Add csvimport app itself and the tests models
@@ -30,6 +30,9 @@ SITE_ID = 1
 # This merely needs to be present - as long as your test case specifies a
 # urls attribute, it does not need to be populated.
 ROOT_URLCONF = 'csvimport.tests.urls'
+
+# Make this unique, and don't share it with anybody.
+SECRET_KEY = 't_8)4w_csvimport_not_secret_test_key_7^b*s%w$zrud'
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
