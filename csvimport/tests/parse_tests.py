@@ -8,6 +8,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from csvimport.management.commands.csvimport import Command
 from csvimport.tests.models import Country, UnitOfMeasure, Item, Organisation
 
+DEFAULT_ERRS = ['Using mapping from first row of CSV file', ]
+
 class DummyFileObj:
     """ Use to replace html upload / or command arg 
         with test fixtures files 
@@ -22,7 +24,8 @@ class DummyFileObj:
 class CommandParseTest(TestCase):
     """ Run test of file parsing """
 
-    def command(self, filename, defaults='country=KE(Country|code)'):
+    def command(self, filename, defaults='country=KE(Country|code)',
+                expected_errs=[]):
         """ Run core csvimport command to parse file """
         cmd = Command()
         uploaded = DummyFileObj()
@@ -33,10 +36,17 @@ class CommandParseTest(TestCase):
                   uploaded=uploaded,
                   defaults=defaults)
 
-        # Report back any parse errors and fail test if they exist
+        # Report back any unnexpected parse errors
+        # and confirm those that are expected.
+        # Fail test if they are not matching
         errors = cmd.run(logid='commandtest')
-        error = errors.pop()
-        self.assertEqual(error, 'Using mapping from first row of CSV file')
+        expected = [err for err in DEFAULT_ERRS]
+        if expected_errs:
+            expected.extend(expected_errs)
+            expected.reverse()
+        for err in expected:
+            error = errors.pop()
+            self.assertEqual(error, err)
         if errors:
             for err in errors:
                 print err
@@ -93,3 +103,23 @@ class CommandParseTest(TestCase):
         for i, item in enumerate(items):
             self.assertEqual(item.code_share, codes[i])
         Item.objects.all().delete()
+
+    def test_number(self, filename='test_number.csv'):
+        """ Use command to parse file with problem numeric fields 
+            Missing field value, negative, fractions and too big
+        """
+        errs = [u'Column quantity = -23, less than zero so set to 0', 
+                u'Column quantity = 1e+28 more than the max integer 9223372036854775807' ]
+        self.command(filename, expected_errs=errs)
+        # check fractional numbers into integers
+        items = Item.objects.filter(code_org='WA017')
+        self.assertEqual(items[0].quantity, 33)
+        # check empty values into zeros
+        items = Item.objects.filter(code_org='WA041')
+        self.assertEqual(items[0].quantity, 0)        
+        # 9223372036854775807 is the reliable limit so this wont work
+        # test is to ensure that 1e+28 error above is reported
+        items = Item.objects.filter(code_org='RF028')
+        self.assertNotEqual(items[0].quantity, 9999999999999999999999999999) 
+        Item.objects.all().delete()
+

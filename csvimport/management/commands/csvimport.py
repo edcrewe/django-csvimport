@@ -10,6 +10,10 @@ from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
 from django.db import models
 
+INTEGER = ['BigIntegerField', 'IntegerField', 'AutoField',
+           'PositiveIntegerField', 'PositiveSmallIntegerField']
+FLOAT = ['DecimalField', 'FloatField']
+NUMERIC = INTEGER + FLOAT
 # Note if mappings are manually specified they are of the following form ...
 # MAPPINGS = "column1=shared_code,column2=org(Organisation|name),column3=description"
 # statements = re.compile(r";[ \t]*$", re.M)
@@ -151,12 +155,13 @@ class Command(LabelCommand):
         else:
             csvimportid = 0
         mapping = []
+        fieldmap = {}
+        for field in self.model._meta.fields:
+            fieldmap[field.name] = field
+
         if self.mappings:
             self.loglist.append('Using manually entered mapping list') 
         else:
-            fieldmap = {}
-            for field in self.model._meta.fields:
-                fieldmap[field.name] = field
             for i, heading in enumerate(self.csvfile[0]):
                 for key in heading, heading.lower():
                     if fieldmap.has_key(key):
@@ -178,6 +183,7 @@ class Command(LabelCommand):
             model_instance = self.model()
             model_instance.csvimport_id = csvimportid
             for (column, field, foreignkey) in self.mappings:
+                field_type = fieldmap.get(field).get_internal_type()
                 if self.nameindexes:
                     column = indexes.index(column)
                 else:
@@ -191,8 +197,22 @@ class Command(LabelCommand):
                 if self.debug:
                     self.loglist.append('%s.%s = "%s"' % (self.model.__name__, 
                                                           field, row[column]))
-                #if type(row[column]) == type(''):
-                #    row[column] = unicode(row[column])
+                # Tidy up numeric data    
+                if field_type in NUMERIC:
+                    if not row[column]:
+                        row[column] = 0
+                    elif field_type in INTEGER:
+                        row[column] = float(row[column])
+                        if row[column] > 9223372036854775807:
+                            self.loglist.append('Column %s = %s more than the max integer 9223372036854775807' \
+                                                % (field, row[column]))
+                        row[column] = int(row[column])
+                        if row[column] < 0 and field_type.startswith('Positive'):
+                            self.loglist.append('Column %s = %s, less than zero so set to 0' \
+                                                % (field, row[column]))
+                            row[column] = 0
+                    else:
+                        row[column] = float(row[column])
                 try:
                     model_instance.__setattr__(field, row[column])
                 except:
