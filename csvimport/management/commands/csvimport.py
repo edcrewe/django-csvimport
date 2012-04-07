@@ -205,13 +205,17 @@ class Command(LabelCommand):
                         try:
                             row[column] = float(row[column])
                         except:
-                            row[column] = 0
-                            self.loglist.append('Column %s = %s is not an integer so is set to 0' \
+                            self.loglist.append('Column %s = %s is not a number so is set to 0' \
                                                 % (field, row[column]))
+                            row[column] = 0
                     if field_type in INTEGER:
                         if row[column] > 9223372036854775807:
                             self.loglist.append('Column %s = %s more than the max integer 9223372036854775807' \
                                                 % (field, row[column]))
+                        if str(row[column]).lower() in ('nan', 'inf', '+inf', '-inf'):
+                            self.loglist.append('Column %s = %s is not an integer so is set to 0' \
+                                                % (field, row[column]))
+                            row[column] = 0
                         row[column] = int(row[column])
                         if row[column] < 0 and field_type.startswith('Positive'):
                             self.loglist.append('Column %s = %s, less than zero so set to 0' \

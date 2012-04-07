@@ -108,8 +108,11 @@ class CommandParseTest(TestCase):
         """ Use command to parse file with problem numeric fields 
             Missing field value, negative, fractions and too big
         """
-        errs = [u'Column quantity = -23, less than zero so set to 0', 
-                u'Column quantity = 1e+28 more than the max integer 9223372036854775807' ]
+        errs = [u'Column quantity = -23, less than zero so set to 0',
+                u'Column quantity = 1e+28 more than the max integer 9223372036854775807',
+                u'Column quantity = Not_a_Number is not a number so is set to 0',
+                u'Column quantity = nan is not an integer so is set to 0',
+                ]
         self.command(filename, expected_errs=errs)
         # check fractional numbers into integers
         items = Item.objects.filter(code_org='WA017')
