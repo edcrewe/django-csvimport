@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.6 - Handle text not number or special float to integer - 7th March 2012
+-------------------------------------------------------------------------
+
+#. Handle numeric columns with text in - zero if not nan or inf
+
+Ed Crewe
+
 0.5 - Add command line encoding option and error return - 6th March 2012
 ------------------------------------------------------------------------
 

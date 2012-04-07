@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.5'
+version = '0.6'
 
 setup(name='django-csvimport',
       version=version,
