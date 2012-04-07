@@ -201,8 +201,14 @@ class Command(LabelCommand):
                 if field_type in NUMERIC:
                     if not row[column]:
                         row[column] = 0
-                    elif field_type in INTEGER:
-                        row[column] = float(row[column])
+                    else:
+                        try:
+                            row[column] = float(row[column])
+                        except:
+                            row[column] = 0
+                            self.loglist.append('Column %s = %s is not an integer so is set to 0' \
+                                                % (field, row[column]))
+                    if field_type in INTEGER:
                         if row[column] > 9223372036854775807:
                             self.loglist.append('Column %s = %s more than the max integer 9223372036854775807' \
                                                 % (field, row[column]))
@@ -211,8 +217,6 @@ class Command(LabelCommand):
                             self.loglist.append('Column %s = %s, less than zero so set to 0' \
                                                 % (field, row[column]))
                             row[column] = 0
-                    else:
-                        row[column] = float(row[column])
                 try:
                     model_instance.__setattr__(field, row[column])
                 except:
