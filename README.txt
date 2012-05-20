@@ -50,28 +50,32 @@ Demonstration installation instructions
 To see how it works, you can install a demo easily enough eg. via virtual environment, 
 then use the tests settings to have some sample models for importing data, and the fixtures are sample csv files.
 
-- virtualenv install mysite
-- cd mysite
-- /bin/pip install django
-- /bin/pip install django-csvimport
+- Run the following in your shell:
 
-Add the following django-admin.py to the bin directory:
+virtualenv mysite
+cd mysite
+source bin/activate
+pip install django
+pip install django-csvimport
 
->>> #!/path/to/mysite/bin/python
->>> from django.core import management
->>> import os
->>> os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
->>> if __name__ == "__main__":
->>>     management.execute_from_command_line()
+cat > bin/django-admin.py << EOF
+#!/usr/bin/env python
+from django.core import management
+import os
+os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
+if __name__ == "__main__":
+    management.execute_from_command_line()
+EOF
 
-- Run 
-- bin/django-admin.py syncdb
-- bin/django-admin.py runserver
+django-admin.py syncdb
+django-admin.py runserver
 
-- Go to http://127.0.0.1:8000/admin in your browser
+- Go to http://127.0.0.1:8000/admin/ in your browser - pay attention to the trailing / !
 - Click on add CSVImport
-- Pick the django-csvimport/csvimport/tests/fixtures/countries.csv and upload it
+- Pick the django-csvimport/csvimport/tests/fixtures/countries.csv [#countries.csv]_ and upload it
 - Check to see if the Country model is now populated.
+
+[#countries.csv]_ also available from https://raw.github.com/edcrewe/django-csvimport/master/csvimport/tests/fixtures/countries.csv
 
 
 Acknowledgements
