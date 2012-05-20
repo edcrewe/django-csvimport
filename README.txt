@@ -72,10 +72,10 @@ django-admin.py runserver
 
 - Go to http://127.0.0.1:8000/admin/ in your browser - pay attention to the trailing / !
 - Click on add CSVImport
-- Pick the django-csvimport/csvimport/tests/fixtures/countries.csv [#countries.csv]_ and upload it
+- Pick the django-csvimport/csvimport/tests/fixtures/countries.csv [1] and upload it
 - Check to see if the Country model is now populated.
 
-[#countries.csv]_ also available from https://raw.github.com/edcrewe/django-csvimport/master/csvimport/tests/fixtures/countries.csv
+[1] also available from https://raw.github.com/edcrewe/django-csvimport/master/csvimport/tests/fixtures/countries.csv
 
 
 Acknowledgements
