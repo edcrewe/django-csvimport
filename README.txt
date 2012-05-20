@@ -55,7 +55,7 @@ then use the tests settings to have some sample models for importing data, and t
 virtualenv mysite
 cd mysite
 source bin/activate
-pip install django
+pip install django==1.3
 pip install django-csvimport
 
 cat > bin/django-admin.py << EOF
