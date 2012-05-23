@@ -25,6 +25,22 @@ custom command etc.
 NB: There is another similar application django-batchimport but it not packaged,
 requires Excel files and doesnt provide a custom command for batch usage.
 
+Installation instructions
+-------------------------
+
+Add the following to the INSTALLED_APPS in the settings.py of your project:
+
+  pip install django-csvimport
+
+  INSTALLED_APPS = (
+    ...
+    'csvimport',
+    ...
+  )
+
+  python manage.py syncdb
+
+
 Custom command
 --------------
 
