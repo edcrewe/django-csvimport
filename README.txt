@@ -28,7 +28,7 @@ requires Excel files and doesnt provide a custom command for batch usage.
 Installation instructions
 -------------------------
 
-Add the following to the INSTALLED_APPS in the settings.py of your project:
+Add the following to the INSTALLED_APPS in the settings.py of your project::
 
   pip install django-csvimport
 
