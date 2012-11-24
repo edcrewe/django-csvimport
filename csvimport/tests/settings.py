@@ -5,7 +5,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/tmp/django-csvimport-test.db',
+        'NAME': 'django-csvimport-test.db',
         'USER': '',     # Not used with sqlite3.
         'PASSWORD': '', # Not used with sqlite3.
         'HOST': '',     # Set to empty string for localhost. 
@@ -15,6 +15,9 @@ DATABASES = {
 
 MEDIA_ROOT = '/tmp'
 MEDIA_URL = '/files/'
+# URL prefix for static files.
+# Example: "http://media.lawrence.com/static/"
+STATIC_URL = '/static/'
 
 INSTALLED_APPS = (
     # Add csvimport app itself and the tests models

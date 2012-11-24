@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: django-csvimport
-Version: 0.5
+Version: 0.6
 Summary: Import CSV files to django models
 Home-page: https://github.com/edcrewe/django-csvimport
 Author: Ed Crewe
@@ -104,6 +104,13 @@ Description: Django CSV Import
         Changelog
         =========
         
+        0.6 - Handle text not number or special float to integer - 7th March 2012
+        -------------------------------------------------------------------------
+        
+        #. Handle numeric columns with text in - zero if not nan or inf
+        
+        Ed Crewe
+        
         0.5 - Add command line encoding option and error return - 6th March 2012
         ------------------------------------------------------------------------
         
@@ -111,11 +118,15 @@ Description: Django CSV Import
         #. Add the option to force --charset=utf-8 for example rather than chardet 
         #. Add numeric type handling for empty fields or other issues plus tests
         
+        Tessa Alexander, Ed Crewe
+        
         0.4 - Add settings to allow demo site install from tests - 4th October 2011
         ---------------------------------------------------------------------------
         
         #. Add demo countries.csv file
         #. Add MEDIA_ROOT for file uploads
+        
+        Ed Crewe
         
         0.3 - Fix issue with adding in admin - 25th Sept 2011
         -----------------------------------------------------
@@ -125,6 +136,8 @@ Description: Django CSV Import
         #. Use get_models to populate drop down for admin import form
         #. Add upload message about whether mapping is from CSV header row
         #. Ensure header row only used if mapping is not supplied.
+        
+        Ed Crewe
         
         0.2 - Initial beta release version - 29th July 2011
         ---------------------------------------------------
