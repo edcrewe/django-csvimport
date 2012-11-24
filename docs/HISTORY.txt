@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.7 - Fixes and merge in changes for running up the test app - 24th Nov 2012
+----------------------------------------------------------------------------
+
+#. Merge in changes for 1.4 templates in settings [elena]
+#. Merge in doc changes [elena  + valhallasw]
+#. bug with columns that are floats [imposeren]
+
 0.6 - Handle text not number or special float to integer - 7th March 2012
 -------------------------------------------------------------------------
 

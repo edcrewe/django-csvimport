@@ -70,8 +70,7 @@ then use the tests settings to have some sample models for importing data, and t
 
 virtualenv mysite
 cd mysite
-source bin/activate
-pip install django==1.3
+pip install django
 pip install django-csvimport
 
 cat > bin/django-admin.py << EOF
@@ -93,6 +92,10 @@ django-admin.py runserver
 
 [1] also available from https://raw.github.com/edcrewe/django-csvimport/master/csvimport/tests/fixtures/countries.csv
 
+Alternatively you can use the command line to upload
+
+django-admin.py csvimport --model='tests.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings=csvimport.tests.settings 
+ 
 
 Acknowledgements
 ----------------

@@ -189,7 +189,10 @@ class Command(LabelCommand):
                 else:
                     column = int(column)-1
 
-                row[column] = row[column].strip()
+                try:
+                    row[column] = row[column].strip()
+                except AttributeError:
+                    pass
                 
                 if foreignkey:
                     row[column] = self.insert_fkey(foreignkey, row[column])
