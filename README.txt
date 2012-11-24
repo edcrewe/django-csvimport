@@ -28,17 +28,16 @@ requires Excel files and doesnt provide a custom command for batch usage.
 Installation instructions
 -------------------------
 
-Add the following to the INSTALLED_APPS in the settings.py of your project::
+Add the following to the INSTALLED_APPS in the settings.py of your project:
 
-  pip install django-csvimport
-
-  INSTALLED_APPS = (
-    ...
-    'csvimport',
-    ...
-  )
-
-  python manage.py syncdb
+>>>  pip install django-csvimport
+...
+...  INSTALLED_APPS = (
+...  ...
+...  'csvimport',
+...  )
+...
+...  python manage.py syncdb
 
 
 Custom command
@@ -68,22 +67,22 @@ then use the tests settings to have some sample models for importing data, and t
 
 - Run the following in your shell:
 
-virtualenv mysite
-cd mysite
-pip install django
-pip install django-csvimport
-
-cat > bin/django-admin.py << EOF
-#!/usr/bin/env python
-from django.core import management
-import os
-os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
-if __name__ == "__main__":
-    management.execute_from_command_line()
-EOF
-
-django-admin.py syncdb
-django-admin.py runserver
+>>> virtualenv mysite
+... cd mysite
+... pip install django
+... pip install django-csvimport
+...
+... cat > bin/django-admin.py << EOF
+... #!/usr/bin/env python
+... from django.core import management
+... import os
+... os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
+... if __name__ == "__main__":
+...     management.execute_from_command_line()
+... EOF
+...
+... django-admin.py syncdb
+... django-admin.py runserver
 
 - Go to http://127.0.0.1:8000/admin/ in your browser - pay attention to the trailing / !
 - Click on add CSVImport

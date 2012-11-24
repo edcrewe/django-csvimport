@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: django-csvimport
-Version: 0.6
+Version: 0.7
 Summary: Import CSV files to django models
 Home-page: https://github.com/edcrewe/django-csvimport
 Author: Ed Crewe
@@ -9,7 +9,7 @@ License: Apache
 Description: Django CSV Import
         =================
         
-        Ed Crewe - March 2012
+        Ed Crewe - November 2012
         
         Overview
         --------
@@ -32,6 +32,21 @@ Description: Django CSV Import
         
         NB: There is another similar application django-batchimport but it not packaged,
         requires Excel files and doesnt provide a custom command for batch usage.
+        
+        Installation instructions
+        -------------------------
+        
+        Add the following to the INSTALLED_APPS in the settings.py of your project:
+        
+        >>>  pip install django-csvimport
+        ...
+        ...  INSTALLED_APPS = (
+        ...  ...
+        ...  'csvimport',
+        ...  )
+        ...
+        ...  python manage.py syncdb
+        
         
         Custom command
         --------------
@@ -58,29 +73,36 @@ Description: Django CSV Import
         To see how it works, you can install a demo easily enough eg. via virtual environment, 
         then use the tests settings to have some sample models for importing data, and the fixtures are sample csv files.
         
-        - virtualenv install mysite
-        - cd mysite
-        - /bin/pip install django
-        - /bin/pip install django-csvimport
+        - Run the following in your shell:
         
-        Add the following django-admin.py to the bin directory:
+        >>> virtualenv mysite
+        ... cd mysite
+        ... pip install django
+        ... pip install django-csvimport
+        ...
+        ... cat > bin/django-admin.py << EOF
+        ... #!/usr/bin/env python
+        ... from django.core import management
+        ... import os
+        ... os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
+        ... if __name__ == "__main__":
+        ...     management.execute_from_command_line()
+        ... EOF
+        ...
+        ... django-admin.py syncdb
+        ... django-admin.py runserver
         
-        >>> #!/path/to/mysite/bin/python
-        >>> from django.core import management
-        >>> import os
-        >>> os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
-        >>> if __name__ == "__main__":
-        >>>     management.execute_from_command_line()
-        
-        - Run 
-        - bin/django-admin.py syncdb
-        - bin/django-admin.py runserver
-        
-        - Go to http://127.0.0.1:8000/admin in your browser
+        - Go to http://127.0.0.1:8000/admin/ in your browser - pay attention to the trailing / !
         - Click on add CSVImport
-        - Pick the django-csvimport/csvimport/tests/fixtures/countries.csv and upload it
+        - Pick the django-csvimport/csvimport/tests/fixtures/countries.csv [1] and upload it
         - Check to see if the Country model is now populated.
         
+        [1] also available from https://raw.github.com/edcrewe/django-csvimport/master/csvimport/tests/fixtures/countries.csv
+        
+        Alternatively you can use the command line to upload
+        
+        django-admin.py csvimport --model='tests.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings=csvimport.tests.settings 
+         
         
         Acknowledgements
         ----------------
@@ -103,6 +125,14 @@ Description: Django CSV Import
         
         Changelog
         =========
+        
+        0.7 - Fixes and merge in changes for running up the test app - 24th Nov 2012
+        ----------------------------------------------------------------------------
+        
+        #. Merge in changes for 1.4 templates in settings [elena]
+        #. Merge in doc changes [elena  + valhallasw]
+        #. Fix bug with columns that are floats [imposeren]
+        #. Fix imports via the admin not having charset encoding argument [Ed Crewe]
         
         0.6 - Handle text not number or special float to integer - 7th March 2012
         -------------------------------------------------------------------------
