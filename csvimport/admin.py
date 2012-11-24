@@ -9,7 +9,6 @@ from csvimport.models import CSVImport
 class CSVImportAdmin(ModelAdmin):
     ''' Custom model to not have much editable! '''
     readonly_fields = ['file_name',
-                       'encoding',
                        'upload_method',
                        'error_log',
                        'import_user']
@@ -31,6 +30,7 @@ class CSVImportAdmin(ModelAdmin):
             defaults = self.filename_defaults(obj.file_name)
             cmd.setup(mappings=obj.field_list, 
                       modelname=obj.model_name, 
+                      charset=obj.encoding,
                       uploaded=obj.upload_file,
                       defaults=defaults)
         errors = cmd.run(logid=obj.id)

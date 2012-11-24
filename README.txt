@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - March 2012
+Ed Crewe - November 2012
 
 Overview
 --------

@@ -8,7 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
-    (r'^', index)
+    (r'^index.html', index)
 )
 
 if settings.DEBUG:

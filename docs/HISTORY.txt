@@ -6,7 +6,8 @@ Changelog
 
 #. Merge in changes for 1.4 templates in settings [elena]
 #. Merge in doc changes [elena  + valhallasw]
-#. bug with columns that are floats [imposeren]
+#. Fix bug with columns that are floats [imposeren]
+#. Fix imports via the admin not having charset encoding argument [Ed Crewe]
 
 0.6 - Handle text not number or special float to integer - 7th March 2012
 -------------------------------------------------------------------------

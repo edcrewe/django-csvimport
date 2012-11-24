@@ -13,7 +13,7 @@ DATABASES = {
     }
 }
 
-MEDIA_ROOT = '/tmp'
+MEDIA_ROOT = ''
 MEDIA_URL = '/files/'
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"

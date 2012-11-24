@@ -52,6 +52,6 @@ class Item(models.Model):
     organisation = models.ForeignKey(Organisation)
     status = models.CharField(max_length = 10, null=True)
     date = models.DateField(auto_now=True, null=True, validators=[])
-    country = models.ForeignKey(Country)
+    country = models.ForeignKey(Country, null=True)
 
 
