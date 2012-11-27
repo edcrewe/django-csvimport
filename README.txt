@@ -100,7 +100,7 @@ Acknowledgements
 ----------------
 
 This egg was created as part of a django dash at the House of Omni, Bristol UK, organised
-by Dan Fairs and the local django users group, DBUG. It was a core component for an application
+by Dan Fairs and my local django users group, #DBBUG. It was a core component for an application
 for aid agency supply chain sharing, prompted by Fraser Stephens of the HELIOS foundation
 and developed by Ed Crewe and Tom Dunham.
 
