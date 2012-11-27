@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.8 - Tidy up logging in admin - UNRELEASED
+-------------------------------------------
+
+#. Fix display of error log so there are newlines for each entry [smeyfroi]
+
 0.7 - Fixes and merge in changes for running up the test app - 24th Nov 2012
 ----------------------------------------------------------------------------
 
