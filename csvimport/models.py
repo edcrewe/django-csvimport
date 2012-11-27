@@ -30,6 +30,10 @@ class CSVImport(models.Model):
     import_user = models.CharField(max_length=255, default='anonymous',
                                    help_text='User id as text', blank=True)
 
+    def error_log_html(self):
+        return re.sub('\n', '<br/>', self.error_log)
+    error_log_html.allow_tags = True
+
     def __unicode__(self):
         return self.upload_file.name
 

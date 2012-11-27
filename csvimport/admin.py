@@ -10,8 +10,17 @@ class CSVImportAdmin(ModelAdmin):
     ''' Custom model to not have much editable! '''
     readonly_fields = ['file_name',
                        'upload_method',
-                       'error_log',
+                       'error_log_html',
                        'import_user']
+    fields = [
+                'model_name',
+                'field_list',
+                'upload_file',
+                'file_name',
+                'encoding',
+                'upload_method',
+                'error_log_html',
+                'import_user']
     formfield_overrides = {
         models.CharField: {'widget': forms.Textarea(attrs={'rows':'4', 
                                                            'cols':'60'})},
