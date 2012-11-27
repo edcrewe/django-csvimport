@@ -123,9 +123,10 @@ class Command(LabelCommand):
     def check_fkey(self, key, field):
         """ Build fkey mapping via introspection of models """
         #TODO fix to find related field name rather than assume second field
-        if field.__class__ == models.ForeignKey:
-            key += '(%s|%s)' % (field.related.parent_model.__name__,
-                                field.related.parent_model._meta.fields[1].name,)
+        if not key.endswith('_id'):
+            if field.__class__ == models.ForeignKey:
+                key += '(%s|%s)' % (field.related.parent_model.__name__,
+                                    field.related.parent_model._meta.fields[1].name,)
         return key
 
     def check_filesystem(self, csvfile):
@@ -158,6 +159,8 @@ class Command(LabelCommand):
         fieldmap = {}
         for field in self.model._meta.fields:
             fieldmap[field.name] = field
+            if field.__class__ == models.ForeignKey:
+                fieldmap[field.name+"_id"] = field
 
         if self.mappings:
             self.loglist.append('Using manually entered mapping list') 
