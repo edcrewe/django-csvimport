@@ -14,6 +14,8 @@ INTEGER = ['BigIntegerField', 'IntegerField', 'AutoField',
            'PositiveIntegerField', 'PositiveSmallIntegerField']
 FLOAT = ['DecimalField', 'FloatField']
 NUMERIC = INTEGER + FLOAT
+BOOLEAN = ['BooleanField', 'NullBooleanField']
+BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
 # Note if mappings are manually specified they are of the following form ...
 # MAPPINGS = "column1=shared_code,column2=org(Organisation|name),column3=description"
 # statements = re.compile(r";[ \t]*$", re.M)
@@ -203,6 +205,10 @@ class Command(LabelCommand):
                 if self.debug:
                     self.loglist.append('%s.%s = "%s"' % (self.model.__name__, 
                                                           field, row[column]))
+                # Tidy up boolean data
+                if field_type in BOOLEAN:
+                    row[column] = row[column] in BOOLEAN_TRUE
+
                 # Tidy up numeric data    
                 if field_type in NUMERIC:
                     if not row[column]:
