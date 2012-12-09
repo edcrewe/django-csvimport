@@ -3,6 +3,11 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+0.9 - Missed import of re for change to display of error log - 9th Dec 2012
+---------------------------------------------------------------------------
+
+#. Import re in csvimport/models.py [blorenz]
+
 0.8 - Tidy up logging and Boolean handling - 9th Dec 2012
 ---------------------------------------------------------
 
