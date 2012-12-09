@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: django-csvimport
-Version: 0.7
+Version: 0.8
 Summary: Import CSV files to django models
 Home-page: https://github.com/edcrewe/django-csvimport
 Author: Ed Crewe
@@ -108,7 +108,7 @@ Description: Django CSV Import
         ----------------
         
         This egg was created as part of a django dash at the House of Omni, Bristol UK, organised
-        by Dan Fairs and the local django users group, DBUG. It was a core component for an application
+        by Dan Fairs and my local django users group, #DBBUG. It was a core component for an application
         for aid agency supply chain sharing, prompted by Fraser Stephens of the HELIOS foundation
         and developed by Ed Crewe and Tom Dunham.
         
@@ -125,6 +125,11 @@ Description: Django CSV Import
         
         Changelog
         =========
+        
+        0.8 - Tidy up logging in admin - UNRELEASED
+        -------------------------------------------
+        
+        #. Fix display of error log so there are newlines for each entry [smeyfroi]
         
         0.7 - Fixes and merge in changes for running up the test app - 24th Nov 2012
         ----------------------------------------------------------------------------

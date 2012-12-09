@@ -1,5 +1,6 @@
 # Settings to be used when running unit tests
 # python manage.py test --settings=django-csvimport.tests.settings django-csvimport
+import os
 
 DEBUG = True
 DATABASES = {
@@ -12,7 +13,27 @@ DATABASES = {
         'PORT': '',     # Set to empty string for default. 
     }
 }
-
+# If not set or CSVIMPORT = 'screen' then it only sends loglines to Admin UI display
+CSVIMPORT_LOG = 'logger'
+# Turn on logger usage and log to a text file to check for in tests ...
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'logfile': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': os.path.join(os.path.dirname(__file__), 
+                                          'csvimport_test.log')
+        },
+    },
+   'loggers': {
+        'csvimport': {
+            'handlers': ['logfile'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}
 MEDIA_ROOT = ''
 MEDIA_URL = '/files/'
 # URL prefix for static files.
