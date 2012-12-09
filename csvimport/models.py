@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings 
 from django.core.files.storage import FileSystemStorage
+import re
 
 fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 CHOICES = (('manual','manual'),('cronjob','cronjob'))
