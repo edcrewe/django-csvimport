@@ -10,6 +10,9 @@ from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
 from django.db import models
 
+import logging
+logger = logging.getLogger(__name__)
+
 INTEGER = ['BigIntegerField', 'IntegerField', 'AutoField',
            'PositiveIntegerField', 'PositiveSmallIntegerField']
 FLOAT = ['DecimalField', 'FloatField']
@@ -184,6 +187,7 @@ class Command(LabelCommand):
                                 (self.model._meta.app_label, self.model.__name__))
             return self.loglist
         for row in self.csvfile[1:]:
+            logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
             model_instance = self.model()
             model_instance.csvimport_id = csvimportid
