@@ -44,7 +44,7 @@ def save_csvimport(props=None, instance=None):
         for line in instance.loglist:
             if type(line) != type(''):
                 for subline in line:
-                    print line
+                    print subline
                     print
             else:
                 print line
