@@ -4,7 +4,7 @@ import os, csv, re
 from datetime import datetime
 import codecs
 import chardet
-from ...signals import imported_csv
+from ...signals import imported_csv, importing_csv
 
 from django.db import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
@@ -197,8 +197,11 @@ class Command(LabelCommand):
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
+
             model_instance = self.model()
             model_instance.csvimport_id = csvimportid
+
+
             for (column, field, foreignkey) in self.mappings:
                 field_type = fieldmap.get(field).get_internal_type()
                 if self.nameindexes:
@@ -272,13 +275,10 @@ class Command(LabelCommand):
                 for (column, field, foreignkey) in self.mappings:
                     matchdict[field + '__exact'] = getattr(model_instance,
                                                            field, None)
-                try:
-                    self.model.objects.get(**matchdict)
-                    continue
-                except ObjectDoesNotExist:
-                    pass
             try:
 
+                importing_csv.send(sender=model_instance,
+                                    row=dict(zip(self.csvfile[:1][0], row)))
                 model_instance.save()
                 imported_csv.send(sender=model_instance,
                                   row=dict(zip(self.csvfile[:1][0], row)))
