@@ -37,7 +37,7 @@ class LogTest(TestCase):
         if self.get_log_path():
             csvlog = open(self.logpath)
             lines = csvlog.read()
-            self.assertIn('Column quantity = 1e+28 more than the max integer', lines)
+            self.assertIn('Column quantity = -23, less than zero so set to 0', lines)
             os.remove(self.logpath)
             print 'Deleted csvimport_test.log'
         return

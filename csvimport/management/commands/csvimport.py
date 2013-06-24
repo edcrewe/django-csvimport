@@ -275,6 +275,8 @@ class Command(LabelCommand):
                     continue
                 except ObjectDoesNotExist:
                     pass
+                except OverflowError:
+                    pass
             try:
                 model_instance.save()
             except Exception, err:
