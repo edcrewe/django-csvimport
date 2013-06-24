@@ -4,7 +4,9 @@ import os, csv, re
 from datetime import datetime
 import codecs
 import chardet
+from ...signals import imported_csv, importing_csv
 
+from django.db import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
@@ -40,7 +42,7 @@ def save_csvimport(props=None, instance=None):
     except:
         # Running as command line
         print 'Assumed charset = %s\n' % instance.charset
-        print '###############################\n' 
+        print '###############################\n'
         for line in instance.loglist:
             if type(line) != type(''):
                 for subline in line:
@@ -53,17 +55,17 @@ def save_csvimport(props=None, instance=None):
 class Command(LabelCommand):
     """
     Parse and map a CSV resource to a Django model.
-    
-    Notice that the doc tests are merely illustrational, and will not run 
+
+    Notice that the doc tests are merely illustrational, and will not run
     as is.
     """
-    
+
     option_list = BaseCommand.option_list + (
-               make_option('--mappings', default='', 
+               make_option('--mappings', default='',
                            help='Please provide the file to import from'),
-               make_option('--model', default='iisharing.Item', 
+               make_option('--model', default='iisharing.Item',
                            help='Please provide the model to import to'),
-               make_option('--charset', default='', 
+               make_option('--charset', default='',
                            help='Force the charset conversion used rather than detect it')
                    )
     help = "Imports a CSV file to a model"
@@ -88,10 +90,10 @@ class Command(LabelCommand):
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
-            save_csvimport function 
+            save_csvimport function
         """
-        filename = label 
-        mappings = options.get('mappings', []) 
+        filename = label
+        mappings = options.get('mappings', [])
         modelname = options.get('model', 'Item')
         charset = options.get('charset','')
         # show_traceback = options.get('traceback', True)
@@ -120,12 +122,12 @@ class Command(LabelCommand):
         self.model = models.get_model(app_label, model)
         if mappings:
             self.mappings = self.__mappings(mappings)
-        self.nameindexes = bool(nameindexes) 
+        self.nameindexes = bool(nameindexes)
         self.file_name = csvfile
         self.deduplicate = deduplicate
         if uploaded:
             self.csvfile = self.__csvfile(uploaded.path)
-        else:    
+        else:
             self.check_filesystem(csvfile)
 
     def check_fkey(self, key, field):
@@ -154,7 +156,7 @@ class Command(LabelCommand):
                 self.csvfile = self.__csvfile(csvfile)
         if not getattr(self, 'csvfile', []):
             raise Exception('File %s not found' % csvfile)
-    
+
     def run(self, logid=0):
         """ Run the csvimport """
         loglist = []
@@ -173,7 +175,7 @@ class Command(LabelCommand):
                 fieldmap[field.name+"_id"] = field
 
         if self.mappings:
-            loglist.append('Using manually entered mapping list') 
+            loglist.append('Using manually entered mapping list')
         else:
             for i, heading in enumerate(self.csvfile[0]):
                 for key in ((heading, heading.lower(),) if heading != heading.lower() else (heading,)):
@@ -183,20 +185,23 @@ class Command(LabelCommand):
                         mapping.append('column%s=%s' % (i+1, key))
             mappingstr = ','.join(mapping)
             if mapping:
-                loglist.append('Using mapping from first row of CSV file') 
-                self.mappings = self.__mappings(mappingstr)            
+                loglist.append('Using mapping from first row of CSV file')
+                self.mappings = self.__mappings(mappingstr)
         if not self.mappings:
             loglist.append('''No fields in the CSV file match %s.%s\n
-                                   - you must add a header field name row 
-                                   to the CSV file or supply a mapping list''' % 
+                                   - you must add a header field name row
+                                   to the CSV file or supply a mapping list''' %
                                 (self.model._meta.app_label, self.model.__name__))
             return loglist
         for row in self.csvfile[1:]:
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
+
             model_instance = self.model()
             model_instance.csvimport_id = csvimportid
+
+
             for (column, field, foreignkey) in self.mappings:
                 field_type = fieldmap.get(field).get_internal_type()
                 if self.nameindexes:
@@ -208,18 +213,18 @@ class Command(LabelCommand):
                     row[column] = row[column].strip()
                 except AttributeError:
                     pass
-                
+
                 if foreignkey:
                     row[column] = self.insert_fkey(foreignkey, row[column])
 
                 if self.debug:
-                    loglist.append('%s.%s = "%s"' % (self.model.__name__, 
+                    loglist.append('%s.%s = "%s"' % (self.model.__name__,
                                                           field, row[column]))
                 # Tidy up boolean data
                 if field_type in BOOLEAN:
                     row[column] = row[column] in BOOLEAN_TRUE
 
-                # Tidy up numeric data    
+                # Tidy up numeric data
                 if field_type in NUMERIC:
                     if not row[column]:
                         row[column] = 0
@@ -268,7 +273,7 @@ class Command(LabelCommand):
             if self.deduplicate:
                 matchdict = {}
                 for (column, field, foreignkey) in self.mappings:
-                    matchdict[field + '__exact'] = getattr(model_instance, 
+                    matchdict[field + '__exact'] = getattr(model_instance,
                                                            field, None)
                 try:
                     self.model.objects.get(**matchdict)
@@ -278,9 +283,25 @@ class Command(LabelCommand):
                 except OverflowError:
                     pass
             try:
+
+                importing_csv.send(sender=model_instance,
+                                    row=dict(zip(self.csvfile[:1][0], row)))
                 model_instance.save()
-            except Exception, err:
-                loglist.append('Exception found... %s Instance %s not saved.' % (err, counter))
+                imported_csv.send(sender=model_instance,
+                                  row=dict(zip(self.csvfile[:1][0], row)))
+
+            except DatabaseError, err:
+                error_number, error_message = err
+
+                # Catch duplicate key error.
+                if error_number != 1062:
+
+                    loglist.append(
+                        'Database Error: %s, Number:' % (error_message,
+                                                         error_number))
+            except OverflowError:
+                pass 
+
             if CSVIMPORT_LOG == 'logger':
                 for line in loglist:
                     logger.info(line)
@@ -297,7 +318,7 @@ class Command(LabelCommand):
             return ['No logging', ]
 
     def insert_fkey(self, foreignkey, rowcol):
-        """ Add fkey if not present 
+        """ Add fkey if not present
             If there is corresponding data in the model already,
             we do not need to add more, since we are dealing with
             foreign keys, therefore foreign data
@@ -305,7 +326,7 @@ class Command(LabelCommand):
         fk_key, fk_field = foreignkey
         if fk_key and fk_field:
             fk_model = models.get_model(self.app_label, fk_key)
-            matches = fk_model.objects.filter(**{fk_field+'__exact': 
+            matches = fk_model.objects.filter(**{fk_field+'__exact':
                                                  rowcol})
 
             if not matches:
@@ -315,27 +336,27 @@ class Command(LabelCommand):
 
             rowcol = fk_model.objects.filter(**{fk_field+'__exact': rowcol})[0]
         return rowcol
-        
+
     def error(self, message, type=1):
         """
         Types:
             0. A fatal error. The most drastic one. Will quit the program.
             1. A notice. Some minor thing is in disorder.
         """
-        
+
         types = (
             ('Fatal error', FatalError),
             ('Notice', None),
         )
-        
+
         self.errors.append((message, type))
-        
+
         if type == 0:
             # There is nothing to do. We have to quite at this point
             raise types[0][1], message
         elif self.debug == True:
             print "%s: %s" % (types[type][0], message)
-    
+
     def __csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
         filehandle = open(datafile)
@@ -348,12 +369,12 @@ class Command(LabelCommand):
             self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
         else:
             # CSV Reader returns an iterable, but as we possibly need to
-            # perform list commands and since list is an acceptable iterable, 
+            # perform list commands and since list is an acceptable iterable,
             # we'll just transform it.
-            return list(self.charset_csv_reader(csv_data=csvfile, 
+            return list(self.charset_csv_reader(csv_data=csvfile,
                                                 charset=self.charset))
 
-    def charset_csv_reader(self, csv_data, dialect=csv.excel, 
+    def charset_csv_reader(self, csv_data, dialect=csv.excel,
                            charset='utf-8', **kwargs):
         csv_reader = csv.reader(self.charset_encoder(csv_data, charset),
                                 dialect=dialect, **kwargs)
@@ -364,7 +385,7 @@ class Command(LabelCommand):
     def charset_encoder(self, csv_data, charset='utf-8'):
         for line in csv_data:
             yield line.encode(charset)
-    
+
     def __mappings(self, mappings):
         """
         Parse the mappings, and return a list of them.
@@ -376,14 +397,14 @@ class Command(LabelCommand):
             """
             Parse the custom mapping syntax (column1=field1(ForeignKey|field),
             etc.)
-            
+
             >>> parse_mapping('a=b(c|d)')
             [('a', 'b', '(c|d)')]
             """
-            
+
             pattern = re.compile(r'(\w+)=(\w+)(\(\w+\|\w+\))?')
             mappings = pattern.findall(args)
-            
+
             mappings = list(mappings)
             for mapping in mappings:
                 mapp = mappings.index(mapping)
@@ -391,23 +412,23 @@ class Command(LabelCommand):
                 mappings[mapp][2] = parse_foreignkey(mapping[2])
                 mappings[mapp] = tuple(mappings[mapp])
             mappings = list(mappings)
-            
+
             return mappings
-            
+
         def parse_foreignkey(key):
             """
             Parse the foreignkey syntax (Key|field)
-            
+
             >>> parse_foreignkey('(a|b)')
             ('a', 'b')
             """
-            
+
             pattern = re.compile(r'(\w+)\|(\w+)', re.U)
             if key.startswith('(') and key.endswith(')'):
                 key = key[1:-1]
-                
+
             found = pattern.search(key)
-            
+
             if found != None:
                 return (found.group(1), found.group(2))
             else:
@@ -424,7 +445,7 @@ class FatalError(Exception):
     """
     def __init__(self, value):
         self.value = value
-        
+
     def __str__(self):
         return repr(self.value)
 

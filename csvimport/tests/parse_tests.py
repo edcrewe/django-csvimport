@@ -110,7 +110,6 @@ class CommandParseTest(TestCase):
         """
         errs = [u'Column quantity = -23, less than zero so set to 0',
                 u'Column quantity = 1e+28 more than the max integer 9223372036854775807',
-                u'Exception found... Python int too large to convert to SQLite INTEGER Instance 5 not saved.',
                 u'Column quantity = Not_a_Number is not a number so is set to 0',
                 u'Column quantity = nan is not an integer so is set to 0',
                 ]
