@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 
-def index(request, template='README.txt', **kwargs):
+def index(request, template='README.rst', **kwargs):
     return HttpResponse ('''<html><body><h1>django-csvimport Test app</h1>
                   <p>You have installed the test django-csvimport 
                   application. Click on the <a href="/admin/">admin</a> 
