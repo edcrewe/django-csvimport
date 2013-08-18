@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
 
 from django.conf import settings
 CSVIMPORT_LOG = getattr(settings, 'CSVIMPORT_LOG', 'screen')
@@ -325,7 +326,11 @@ class Command(LabelCommand):
         """
         fk_key, fk_field = foreignkey
         if fk_key and fk_field:
-            fk_model = models.get_model(self.app_label, fk_key)
+            try:
+                new_app_label = ContentType.objects.get(model= fk_key).app_label
+            except:
+                new_app_label = self.app_label
+            fk_model = models.get_model(new_app_label, fk_key)            
             matches = fk_model.objects.filter(**{fk_field+'__exact':
                                                  rowcol})
 

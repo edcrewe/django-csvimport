@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: django-csvimport
-Version: 0.9
+Version: 1.0
 Summary: Import CSV files to django models
 Home-page: https://github.com/edcrewe/django-csvimport
 Author: Ed Crewe
@@ -9,7 +9,7 @@ License: Apache
 Description: Django CSV Import
         =================
         
-        Ed Crewe - December 2012
+        Ed Crewe - June 2013
         
         Overview
         --------
@@ -127,6 +127,16 @@ Description: Django CSV Import
         =========
         
         Contributors listed as [github.com username] where they are on github 
+        
+        1.0 - Added signals and code cleanup - 29th January 2013
+        --------------------------------------------------------
+        
+        #. Fixed number overflow test and tested with django 1.5.1 [edcrewe]
+        #. Added signals to the app, to allow the model to custom format a row. 
+        #. added appconf to allow the app to be more customizable - eg. select models for import.
+        #. Removed except all and return database errors.
+        
+        [cwood]
         
         0.9 - Missed import of re for change to display of error log - 9th Dec 2012
         ---------------------------------------------------------------------------
