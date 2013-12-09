@@ -32,9 +32,11 @@ BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
 def save_csvimport(props=None, instance=None):
     """ To avoid circular imports do saves here """
     try:
-        if not instance:
-            from csvimport.models import CSVImport
-            csvimp = CSVImport()
+        if instance:
+            return
+
+        from csvimport.models import CSVImport
+        csvimp = CSVImport()
         if props:
             for key, value in props.items():
                 csvimp.__setattr__(key, value)
@@ -45,7 +47,7 @@ def save_csvimport(props=None, instance=None):
         print 'Assumed charset = %s\n' % instance.charset
         print '###############################\n'
         for line in instance.loglist:
-            if type(line) != type(''):
+            if not isinstance(line, basestring):
                 for subline in line:
                     print subline
                     print
