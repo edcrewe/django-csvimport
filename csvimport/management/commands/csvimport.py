@@ -297,8 +297,8 @@ class Command(LabelCommand):
                 # Catch duplicate key error.
                 if error_number != 1062:
                     loglist.append(
-                        'Database Error: %s, %s:' % (error_message,
-                                                     error_number))
+                        'Database Error: %s, Number: %d' % (error_message,
+                                                            error_number))
             except OverflowError:
                 pass
 
