@@ -2,7 +2,7 @@ from datetime import datetime
 from django import forms
 from django.db import models
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin 
+from django.contrib.admin import ModelAdmin
 
 from csvimport.models import CSVImport
 
@@ -22,7 +22,7 @@ class CSVImportAdmin(ModelAdmin):
                 'error_log_html',
                 'import_user']
     formfield_overrides = {
-        models.CharField: {'widget': forms.Textarea(attrs={'rows':'4', 
+        models.CharField: {'widget': forms.Textarea(attrs={'rows':'4',
                                                            'cols':'60'})},
         }
 
@@ -37,8 +37,8 @@ class CSVImportAdmin(ModelAdmin):
             obj.file_name = obj.upload_file.name
             obj.encoding = ''
             defaults = self.filename_defaults(obj.file_name)
-            cmd.setup(mappings=obj.field_list, 
-                      modelname=obj.model_name, 
+            cmd.setup(mappings=obj.field_list,
+                      modelname=obj.model_name,
                       charset=obj.encoding,
                       uploaded=obj.upload_file,
                       defaults=defaults)

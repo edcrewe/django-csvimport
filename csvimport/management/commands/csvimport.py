@@ -37,7 +37,7 @@ def save_csvimport(props=None, instance=None):
             csvimp = CSVImport()
         if props:
             for key, value in props.items():
-                csvimp.__setattr__(key, value)
+                setattr(csvimp, key, value)
         csvimp.save()
         return csvimp.id
     except:
@@ -96,7 +96,7 @@ class Command(LabelCommand):
         filename = label
         mappings = options.get('mappings', [])
         modelname = options.get('model', 'Item')
-        charset = options.get('charset','')
+        charset = options.get('charset', '')
         # show_traceback = options.get('traceback', True)
         self.setup(mappings, modelname, charset, filename)
         if not hasattr(self.model, '_meta'):
@@ -296,12 +296,11 @@ class Command(LabelCommand):
 
                 # Catch duplicate key error.
                 if error_number != 1062:
-
                     loglist.append(
-                        'Database Error: %s, Number:' % (error_message,
-                                                         error_number))
+                        'Database Error: %s, %s:' % (error_message,
+                                                     error_number))
             except OverflowError:
-                pass 
+                pass
 
             if CSVIMPORT_LOG == 'logger':
                 for line in loglist:
@@ -309,11 +308,11 @@ class Command(LabelCommand):
             self.loglist.extend(loglist)
             loglist = []
         if self.loglist:
-            self.props = { 'file_name':self.file_name,
-                           'import_user':'cron',
-                           'upload_method':'cronjob',
-                           'error_log':'\n'.join(loglist),
-                           'import_date':datetime.now()}
+            self.props = {'file_name':self.file_name,
+                          'import_user':'cron',
+                          'upload_method':'cronjob',
+                          'error_log':'\n'.join(loglist),
+                          'import_date':datetime.now()}
             return self.loglist
         else:
             return ['No logging', ]
@@ -327,10 +326,10 @@ class Command(LabelCommand):
         fk_key, fk_field = foreignkey
         if fk_key and fk_field:
             try:
-                new_app_label = ContentType.objects.get(model= fk_key).app_label
+                new_app_label = ContentType.objects.get(model=fk_key).app_label
             except:
                 new_app_label = self.app_label
-            fk_model = models.get_model(new_app_label, fk_key)            
+            fk_model = models.get_model(new_app_label, fk_key)
             matches = fk_model.objects.filter(**{fk_field+'__exact':
                                                  rowcol})
 
@@ -357,7 +356,7 @@ class Command(LabelCommand):
         self.errors.append((message, type))
 
         if type == 0:
-            # There is nothing to do. We have to quite at this point
+            # There is nothing to do. We have to quit at this point
             raise types[0][1], message
         elif self.debug == True:
             print "%s: %s" % (types[type][0], message)

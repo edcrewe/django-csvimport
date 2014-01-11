@@ -13,22 +13,22 @@ class LogTest(TestCase):
     def get_log_path(self):
         """ Get the log file that should of been written by the parse tests """
         if CSVIMPORT_LOG != 'logger':
-            print '''CSVIMPORT_LOG is not set to 'logger' in settings 
-                     - assume not using csvimport.tests.settings 
+            print '''CSVIMPORT_LOG is not set to 'logger' in settings
+                     - assume not using csvimport.tests.settings
                      - so cannot test the log'''
             return False
         logging = getattr(settings, 'LOGGING', '')
         if logging:
             handlers = logging.get('handlers', {})
             if handlers:
-                logfile = handlers.get('logfile',{})
+                logfile = handlers.get('logfile', {})
                 if logfile:
                     self.logpath = logfile.get('filename', '')
         if self.logpath.endswith('.log'):
-           if os.path.exists(self.logpath):
-               print 'Found csvimport_test.log'
-               return True
-        print '''cvsimport logging is not set up for %s from 
+            if os.path.exists(self.logpath):
+                print 'Found csvimport_test.log'
+                return True
+        print '''cvsimport logging is not set up for %s from
                  csvimport.tests.settings so cannot test the log''' % self.logpath
         return False
 
