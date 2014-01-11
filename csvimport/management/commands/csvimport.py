@@ -292,8 +292,11 @@ class Command(LabelCommand):
                                   row=dict(zip(self.csvfile[:1][0], row)))
 
             except DatabaseError, err:
-                error_number, error_message = err
-
+                try:
+                    error_number, error_message = err
+                except:
+                    error_message = err
+                    error_number = 0
                 # Catch duplicate key error.
                 if error_number != 1062:
                     loglist.append(
