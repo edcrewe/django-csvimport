@@ -6,18 +6,18 @@ from django.test import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 
 from csvimport.management.commands.csvimport import Command
-from csvimport.tests.models import Country, UnitOfMeasure, Item, Organisation
+from csvimport.tests.models import Item
 
 DEFAULT_ERRS = ['Using mapping from first row of CSV file', ]
 
-class DummyFileObj:
-    """ Use to replace html upload / or command arg 
-        with test fixtures files 
+class DummyFileObj():
+    """ Use to replace html upload / or command arg
+        with test fixtures files
     """
     path = ''
 
     def set_path(self, filename):
-        self.path = os.path.join(os.path.dirname(__file__), 
+        self.path = os.path.join(os.path.dirname(__file__),
                                  'fixtures',
                                  filename)
 
@@ -30,7 +30,7 @@ class CommandParseTest(TestCase):
         cmd = Command()
         uploaded = DummyFileObj()
         uploaded.set_path(filename)
-        cmd.setup(mappings='', 
+        cmd.setup(mappings='',
                   modelname='tests.Item',
                   charset='',
                   uploaded=uploaded,
@@ -65,7 +65,7 @@ class CommandParseTest(TestCase):
         """ Use custom command to upload file and parse it into Items """
         self.command(filename)
         item = self.get_item('sheeting')
-        # Check a couple of the fields in Item    
+        # Check a couple of the fields in Item
         self.assertEqual(item.code_org, 'RF007')
         self.assertEqual(item.description, 'Plastic sheeting, 4*60m, roll')
         # Check related Organisation model is created
@@ -86,7 +86,7 @@ class CommandParseTest(TestCase):
         """ Use custom command to parse file with range of unicode characters """
         self.command(filename)
         item = self.get_item(u"Cet élément est utilisé par quelqu'un d'autre et ne peux être modifié")
-        self.assertEqual(item.description, 
+        self.assertEqual(item.description,
                          "TENTE FAMILIALE, 12 m_, COMPLETE (tapis de sol/double toit)")
         self.assertEqual(item.quantity, 101)
         self.assertEqual(unicode(item.uom), u'删除当前图片')
@@ -97,7 +97,7 @@ class CommandParseTest(TestCase):
         """ Use custom command to upload file and parse it into Items """
         self.command(filename)
         items = Item.objects.all().order_by('code_share')
-        # Check a couple of the fields in Item    
+        # Check a couple of the fields in Item
         self.assertEqual(len(items), 3)
         codes = (u'bucket', u'tent', u'watercan')
         for i, item in enumerate(items):
@@ -105,7 +105,7 @@ class CommandParseTest(TestCase):
         Item.objects.all().delete()
 
     def test_number(self, filename='test_number.csv'):
-        """ Use command to parse file with problem numeric fields 
+        """ Use command to parse file with problem numeric fields
             Missing field value, negative, fractions and too big
         """
         errs = [u'Column quantity = -23, less than zero so set to 0',
@@ -119,10 +119,10 @@ class CommandParseTest(TestCase):
         self.assertEqual(items[0].quantity, 33)
         # check empty values into zeros
         items = Item.objects.filter(code_org='WA041')
-        self.assertEqual(items[0].quantity, 0)        
+        self.assertEqual(items[0].quantity, 0)
         # 9223372036854775807 is the reliable limit so this wont work
         # test is to ensure that 1e+28 error above is reported
         items = Item.objects.filter(code_org='RF028')
-        self.assertNotEqual(items[0].quantity, 9999999999999999999999999999) 
+        self.assertNotEqual(items[0].quantity, 9999999999999999999999999999)
         Item.objects.all().delete()
 
