@@ -3,6 +3,12 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+1.1 - Added mappings and defaults tests - 18 March 2014
+-------------------------------------------------------
+
+#. Allow mapping format to be simple header row style
+#. Refactored heading parsing and added tests for optional args
+
 1.0 - Added signals and code cleanup - 29th January 2013
 --------------------------------------------------------
 
