@@ -83,6 +83,7 @@ class Command(LabelCommand):
         self.defaults = []
         self.app_label = ''
         self.model = ''
+        self.fieldmap = {}
         self.file_name = ''
         self.nameindexes = False
         self.deduplicate = True
@@ -121,7 +122,14 @@ class Command(LabelCommand):
         self.charset = charset
         self.app_label = app_label
         self.model = models.get_model(app_label, model)
+        for field in self.model._meta.fields:
+            self.fieldmap[field.name] = field
+            if field.__class__ == models.ForeignKey:
+                self.fieldmap[field.name+"_id"] = field
         if mappings:
+            # Test for column=name or just name list format
+            if mappings.find('=') == -1:
+                mappings = self.parse_header(mappings.split(','))
             self.mappings = self.__mappings(mappings)
         self.nameindexes = bool(nameindexes)
         self.file_name = csvfile
@@ -168,24 +176,12 @@ class Command(LabelCommand):
             csvimportid = logid
         else:
             csvimportid = 0
-        mapping = []
-        fieldmap = {}
-        for field in self.model._meta.fields:
-            fieldmap[field.name] = field
-            if field.__class__ == models.ForeignKey:
-                fieldmap[field.name+"_id"] = field
 
         if self.mappings:
             loglist.append('Using manually entered mapping list')
         else:
-            for i, heading in enumerate(self.csvfile[0]):
-                for key in ((heading, heading.lower(),) if heading != heading.lower() else (heading,)):
-                    if fieldmap.has_key(key):
-                        field = fieldmap[key]
-                        key = self.check_fkey(key, field)
-                        mapping.append('column%s=%s' % (i+1, key))
-            mappingstr = ','.join(mapping)
-            if mapping:
+            mappingstr = self.parse_header(self.csvfile[0])
+            if mappingstr:
                 loglist.append('Using mapping from first row of CSV file')
                 self.mappings = self.__mappings(mappingstr)
         if not self.mappings:
@@ -204,7 +200,7 @@ class Command(LabelCommand):
 
 
             for (column, field, foreignkey) in self.mappings:
-                field_type = fieldmap.get(field).get_internal_type()
+                field_type = self.fieldmap.get(field).get_internal_type()
                 if self.nameindexes:
                     column = indexes.index(column)
                 else:
@@ -320,6 +316,20 @@ class Command(LabelCommand):
         else:
             return ['No logging', ]
 
+    def parse_header(self, headlist):
+        """ Parse the list of headings and match with self.fieldmap """
+        mapping = []
+        for i, heading in enumerate(headlist):
+            for key in ((heading, heading.lower(),
+                         ) if heading != heading.lower() else (heading,)):
+                if self.fieldmap.has_key(key):
+                    field = self.fieldmap[key]
+                    key = self.check_fkey(key, field)
+                    mapping.append('column%s=%s' % (i+1, key))
+        if mapping:
+            return ','.join(mapping)
+        return ''
+
     def insert_fkey(self, foreignkey, rowcol):
         """ Add fkey if not present
             If there is corresponding data in the model already,
@@ -419,7 +429,7 @@ class Command(LabelCommand):
                 mappings[mapp][2] = parse_foreignkey(mapping[2])
                 mappings[mapp] = tuple(mappings[mapp])
             mappings = list(mappings)
-
+            
             return mappings
 
         def parse_foreignkey(key):
