@@ -6,7 +6,7 @@ import codecs
 import chardet
 from ...signals import imported_csv, importing_csv
 
-from django.db import DatabaseError
+from django.db import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
@@ -87,6 +87,7 @@ class Command(LabelCommand):
         self.deduplicate = True
         self.csvfile = []
         self.charset = ''
+        self.show_traceback = False
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
@@ -96,7 +97,7 @@ class Command(LabelCommand):
         mappings = options.get('mappings', [])
         modelname = options.get('model', 'Item')
         charset = options.get('charset','')
-        # show_traceback = options.get('traceback', True)
+        self.show_traceback = options.get('traceback', False)
         self.setup(mappings, modelname, charset, filename)
         if not hasattr(self.model, '_meta'):
             msg = 'Sorry your model could not be found please check app_label.modelname'
@@ -290,17 +291,14 @@ class Command(LabelCommand):
                 imported_csv.send(sender=model_instance,
                                   row=dict(zip(self.csvfile[:1][0], row)))
 
-            except DatabaseError, err:
-                error_number, error_message = err
+            except IntegrityError as err:
+                loglist.append('Database IntegrityError: %s' % err.message)
+                if self.show_traceback:
+                    raise
 
-                # Catch duplicate key error.
-                if error_number != 1062:
-
-                    loglist.append(
-                        'Database Error: %s, Number:' % (error_message,
-                                                         error_number))
             except OverflowError:
-                pass 
+                if self.show_traceback:
+                    raise
 
             if CSVIMPORT_LOG == 'logger':
                 for line in loglist:
