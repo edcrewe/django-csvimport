@@ -6,7 +6,7 @@ import codecs
 import chardet
 from ...signals import imported_csv, importing_csv
 
-from django.db import DatabaseError
+from django.db import DatabaseError, transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
@@ -267,25 +267,27 @@ class Command(LabelCommand):
                         if foreignkey:
                             value = self.insert_fkey(foreignkey, value)
                         model_instance.__setattr__(field, value)
+
             if self.deduplicate:
                 matchdict = {}
                 for (column, field, foreignkey) in self.mappings:
                     matchdict[field + '__exact'] = getattr(model_instance,
                                                            field, None)
                 try:
-                    self.model.objects.get(**matchdict)
+                    with transaction.atomic():
+                        self.model.objects.get(**matchdict)
                     continue
-                except ObjectDoesNotExist:
+                except (ObjectDoesNotExist, OverflowError):
                     pass
-                except OverflowError:
-                    pass
-            try:
 
-                importing_csv.send(sender=model_instance,
-                                    row=dict(zip(self.csvfile[:1][0], row)))
-                model_instance.save()
-                imported_csv.send(sender=model_instance,
-                                  row=dict(zip(self.csvfile[:1][0], row)))
+
+            try:
+                with transaction.atomic():
+                    importing_csv.send(sender=model_instance,
+                                        row=dict(zip(self.csvfile[:1][0], row)))
+                    model_instance.save()
+                    imported_csv.send(sender=model_instance,
+                                      row=dict(zip(self.csvfile[:1][0], row)))
 
             except DatabaseError, err:
                 try:
@@ -429,7 +431,7 @@ class Command(LabelCommand):
                 mappings[mapp][2] = parse_foreignkey(mapping[2])
                 mappings[mapp] = tuple(mappings[mapp])
             mappings = list(mappings)
-            
+
             return mappings
 
         def parse_foreignkey(key):
@@ -465,4 +467,3 @@ class FatalError(Exception):
 
     def __str__(self):
         return repr(self.value)
-
