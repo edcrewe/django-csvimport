@@ -1,0 +1,8 @@
+django_csvimport.egg-info
+build
+dist
+*.pyc
+.pydevproject
+.project
+reports
+*-old
