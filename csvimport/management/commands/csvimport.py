@@ -400,6 +400,12 @@ class Command(LabelCommand):
             yield [unicode(cell, charset) for cell in row]
 
     def charset_encoder(self, csv_data, charset='utf-8'):
+        """ Check passed a valid charset then encode """
+        test_string = 'test_real_charset'
+        try:
+            test_string.encode(charset)
+        except:
+            charset = 'utf-8'
         for line in csv_data:
             yield line.encode(charset)
 
