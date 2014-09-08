@@ -3,10 +3,11 @@
 import os
 
 from csvimport.management.commands.csvimport import CSVIMPORT_LOG
+from csvimport.tests.testcase import CommandTestCase
 from django.conf import settings
 from django.test import TestCase
 
-class LogTest(TestCase):
+class LogTest(CommandTestCase):
     """ Run test of file parsing """
     logpath = ''
 
@@ -41,3 +42,13 @@ class LogTest(TestCase):
             os.remove(self.logpath)
             print 'Deleted csvimport_test.log'
         return
+
+
+    def test_new_model(self, filename='test_new_model.csv'):
+        """ Use custom command to upload file and create model """
+        pkey = 'wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)'        
+        self.command(filename=filename, modelname='create_new_model.shiny')
+        if self.get_log_path():
+            csvlog = open(self.logpath)
+            lines = csvlog.read()
+            self.assertIn(pkey, lines)

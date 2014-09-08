@@ -27,13 +27,14 @@ class CommandTestCase(TestCase):
     def command(self, filename, 
                 defaults='country=KE(Country|code)',
                 mappings='',
-                expected_errs=[]):
+                expected_errs=[],
+                modelname='tests.Item'):
         """ Run core csvimport command to parse file """
         cmd = Command()
         uploaded = DummyFileObj()
         uploaded.set_path(filename)
         cmd.setup(mappings=mappings,
-                  modelname='tests.Item',
+                  modelname=modelname,
                   charset='',
                   uploaded=uploaded,
                   defaults=defaults)

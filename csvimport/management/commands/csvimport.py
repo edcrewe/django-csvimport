@@ -4,6 +4,7 @@ import os, csv, re
 from datetime import datetime
 import codecs
 import chardet
+#FIXMEs name clash between management command and module
 from ...signals import imported_csv, importing_csv
 
 from django.db import DatabaseError
@@ -89,6 +90,8 @@ class Command(LabelCommand):
         self.deduplicate = True
         self.csvfile = []
         self.charset = ''
+        self.filehandle = None
+        self.makemodel = ''
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
@@ -119,6 +122,18 @@ class Command(LabelCommand):
         self.defaults = self.__mappings(defaults)
         if modelname.find('.') > -1:
             app_label, model = modelname.split('.')
+        if uploaded:
+            self.csvfile = self.__csvfile(uploaded.path)
+        else:
+            self.check_filesystem(csvfile)
+        if app_label == 'create_new_model':
+            app_label = 'csvimport'
+            self.makemodel = 'Please create a model as below then rerun the csv import'
+            self.makemodel += '(TODO: Write this to a models.py, syncdb, and do import all at once?)'
+            self.makemodel += self.create_new_model(model)
+            self.loglist.append(self.makemodel)
+            print self.makemodel
+            return
         self.charset = charset
         self.app_label = app_label
         self.model = models.get_model(app_label, model)
@@ -134,10 +149,53 @@ class Command(LabelCommand):
         self.nameindexes = bool(nameindexes)
         self.file_name = csvfile
         self.deduplicate = deduplicate
-        if uploaded:
-            self.csvfile = self.__csvfile(uploaded.path)
-        else:
-            self.check_filesystem(csvfile)
+        return 
+
+    def create_new_model(self, modelname):
+        """ Use messytables to guess field types and build a new model """
+        try:
+            from messytables import any_tableset, type_guess
+        except:
+            self.errors.append('If you want to create tables, you must install https://messytables.readthedocs.org')
+            self.modelname = ''
+            return
+        try:
+            table_set = any_tableset(self.filehandle)
+            row_set = table_set.tables[0]
+            types = type_guess(row_set.sample)
+            types = [str(typeobj) for typeobj in types]
+        except:
+            self.errors.append('messytables could not guess your column types')
+            self.modelname = ''
+            return
+
+        cols = self.csvfile[0]
+        fieldset = []
+        maximums = self.get_maxlengths(cols)
+        for i, col in enumerate(cols):
+            length = maximums[i]
+            if types[i] == 'String' and length>255:
+                types[i] = 'Text'
+            integer = length
+            decimal = length
+            blank = ''
+            default = ''
+            column = (col, types[i], length, length, integer, decimal, blank, default)
+            fieldset.append(column)
+        from ...make_model import MakeModel
+        maker = MakeModel()
+        return maker.model_from_table(modelname, fieldset)
+
+    def get_maxlengths(self, cols):
+        """ Get maximum column length values to avoid truncation 
+            -- can always manually reduce size of fields after auto model creation
+        """
+        maximums = [0]*len(cols)
+        for line in self.csvfile[0:]:
+            for i, value in enumerate(line):
+                if value and len(value) > maximums[i]:
+                    maximums[i] = len(value)
+        return maximums
 
     def check_fkey(self, key, field):
         """ Build fkey mapping via introspection of models """
@@ -185,11 +243,15 @@ class Command(LabelCommand):
                 loglist.append('Using mapping from first row of CSV file')
                 self.mappings = self.__mappings(mappingstr)
         if not self.mappings:
-            loglist.append('''No fields in the CSV file match %s.%s\n
+            if not self.model:
+                loglist.append('Outputting setup message')
+            else:
+                loglist.append('''No fields in the CSV file match %s.%s\n
                                    - you must add a header field name row
                                    to the CSV file or supply a mapping list''' %
                                 (self.model._meta.app_label, self.model.__name__))
             return loglist
+
         for row in self.csvfile[1:]:
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
@@ -282,10 +344,10 @@ class Command(LabelCommand):
             try:
 
                 importing_csv.send(sender=model_instance,
-                                    row=dict(zip(self.csvfile[:1][0], row)))
+                                                            row=dict(zip(self.csvfile[:1][0], row)))
                 model_instance.save()
                 imported_csv.send(sender=model_instance,
-                                  row=dict(zip(self.csvfile[:1][0], row)))
+                                                           row=dict(zip(self.csvfile[:1][0], row)))
 
             except DatabaseError, err:
                 try:
@@ -376,9 +438,9 @@ class Command(LabelCommand):
 
     def __csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
-        filehandle = open(datafile)
+        self.filehandle = open(datafile)
         if not self.charset:
-            diagnose = chardet.detect(filehandle.read())
+            diagnose = chardet.detect(self.filehandle.read())
             self.charset = diagnose['encoding']
         try:
             csvfile = codecs.open(datafile, 'r', self.charset)

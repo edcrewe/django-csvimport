@@ -72,4 +72,3 @@ class CommandParseTest(CommandTestCase):
         items = Item.objects.filter(code_org='RF028')
         self.assertNotEqual(items[0].quantity, 9999999999999999999999999999)
         Item.objects.all().delete()
-
