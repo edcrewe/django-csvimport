@@ -294,7 +294,6 @@ class Command(LabelCommand):
             model_instance.csvimport_id = csvimportid
 
             for (column, field, foreignkey) in self.mappings:
-                field_type = self.fieldmap.get(field).get_internal_type()
                 if self.nameindexes:
                     column = indexes.index(column)
                 else:
@@ -307,7 +306,7 @@ class Command(LabelCommand):
                     loglist.append('%s.%s = "%s"' % (self.model.__name__,
                                                           field, row[column]))
 
-                row[column] = self.type_clean(field_type, row[column], loglist)
+                row[column] = self.type_clean(field, row[column], loglist, i)
 
                 try:
                     model_instance.__setattr__(field, row[column])
@@ -329,8 +328,7 @@ class Command(LabelCommand):
                         if foreignkey:
                             value = self.insert_fkey(foreignkey, value)
                         else:
-                            field_type = self.fieldmap.get(field).get_internal_type()
-                            value = self.type_clean(field_type, value, loglist)
+                            value = self.type_clean(field, value, loglist)
                         model_instance.__setattr__(field, value)
                            
             if self.deduplicate:
@@ -380,8 +378,10 @@ class Command(LabelCommand):
         else:
             return ['No logging', ]
 
-    def type_clean(self, field_type, value, loglist):
+    def type_clean(self, field, value, loglist, row=0):
         """ Data value clean up - type formatting"""
+        field_type = self.fieldmap.get(field).get_internal_type()
+
         try:
             value = value.strip()
         except AttributeError:
@@ -400,20 +400,20 @@ class Command(LabelCommand):
                     value = float(value)
                 except:
                     loglist.append('row %s: Column %s = %s is not a number so is set to 0' \
-                                        % (i, field, value))
+                                        % (row, field, value))
                     value = 0
             if field_type in INTEGER:
                 if value > 9223372036854775807:
                     loglist.append('row %s: Column %s = %s more than the max integer 9223372036854775807' \
-                                        % (i, field, value))
+                                        % (row, field, value))
                 if str(value).lower() in ('nan', 'inf', '+inf', '-inf'):
                     loglist.append('row %s: Column %s = %s is not an integer so is set to 0' \
-                                        % (i, field, value))
+                                        % (row, field, value))
                     value = 0
                 value = int(value)
                 if value < 0 and field_type.startswith('Positive'):
                     loglist.append('row %s: Column %s = %s, less than zero so set to 0' \
-                                        % (i, field, value))
+                                        % (row, field, value))
                     value = 0
         # date data - remove the date if it doesn't convert so null=True can work
         if field_type in DATE:

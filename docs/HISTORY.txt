@@ -7,6 +7,7 @@ Contributors listed as [github.com username] where they are on github
 ------------------------------------------------
 
 #. Generate django model files based on CSV data type sniffing with messytables
+#. Use flag to generate model code eg. --model=create_new_model.modelname and add test
 #. Use the settings date formats and add clean up for them
 #. Factor out type clean up method for data values
 #. Allow defaults to be passed as a command line argument
