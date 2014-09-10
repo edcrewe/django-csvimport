@@ -3,11 +3,24 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+1.2 - Added model creation and datetime clean up
+------------------------------------------------
+
+#. Generate django model files based on CSV data type sniffing with messytables
+#. Use the settings date formats and add clean up for them
+#. Factor out type clean up method for data values
+#. Allow defaults to be passed as a command line argument
+#. Use --mappings=none for CSV created models with no column name row
+
+[edcrewe]
+
 1.1 - Added mappings and defaults tests - 18 March 2014
 -------------------------------------------------------
 
 #. Allow mapping format to be simple header row style
 #. Refactored heading parsing and added tests for optional args
+
+[edcrewe]
 
 1.0 - Added signals and code cleanup - 29th January 2013
 --------------------------------------------------------

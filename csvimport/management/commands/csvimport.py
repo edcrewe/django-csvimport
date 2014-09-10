@@ -300,11 +300,6 @@ class Command(LabelCommand):
                 else:
                     column = int(column)-1
 
-                try:
-                    row[column] = row[column].strip()
-                except AttributeError:
-                    pass
-
                 if foreignkey:
                     row[column] = self.insert_fkey(foreignkey, row[column])
 
@@ -386,7 +381,12 @@ class Command(LabelCommand):
             return ['No logging', ]
 
     def type_clean(self, field_type, value, loglist):
-        """ Data type clean up """
+        """ Data value clean up - type formatting"""
+        try:
+            value = value.strip()
+        except AttributeError:
+            pass
+
         # Tidy up boolean data
         if field_type in BOOLEAN:
             value = value in BOOLEAN_TRUE
