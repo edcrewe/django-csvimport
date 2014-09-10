@@ -68,7 +68,12 @@ class Command(LabelCommand):
 
     option_list = BaseCommand.option_list + (
                make_option('--mappings', default='',
-                           help='Please provide the file to import from'),
+                           help='''Provide comma separated column names or format like
+                                   (column1=field1(ForeignKey|field),column2=field2(ForeignKey|field), ...)
+                                   for the import (use none for no names -> col_#)'''),
+               make_option('--defaults', default='',
+                           help='''Provide comma separated defaults for the import 
+                                   (field1=value,field3=value, ...)'''),
                make_option('--model', default='iisharing.Item',
                            help='Please provide the model to import to'),
                make_option('--charset', default='',
@@ -96,6 +101,7 @@ class Command(LabelCommand):
         self.charset = ''
         self.filehandle = None
         self.makemodel = ''
+        self.start = 1
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
@@ -103,10 +109,11 @@ class Command(LabelCommand):
         """
         filename = label
         mappings = options.get('mappings', [])
+        defaults = options.get('defaults', [])
         modelname = options.get('model', 'Item')
         charset = options.get('charset', '')
         # show_traceback = options.get('traceback', True)
-        self.setup(mappings, modelname, charset, filename)
+        self.setup(mappings, modelname, charset, filename, defaults)
         if not hasattr(self.model, '_meta'):
             msg = 'Sorry your model could not be found please check app_label.modelname'
             try:
@@ -146,6 +153,9 @@ class Command(LabelCommand):
             if field.__class__ == models.ForeignKey:
                 self.fieldmap[field.name+"_id"] = field
         if mappings:
+            if mappings == 'none':
+                # Use auto numbered cols instead - eg. from create_new_model
+                mappings = self.parse_header(['col_%s' % num for num in range(1, len(self.csvfile[0]))])
             # Test for column=name or just name list format
             if mappings.find('=') == -1:
                 mappings = self.parse_header(mappings.split(','))
@@ -192,9 +202,11 @@ class Command(LabelCommand):
             if types[i] == 'String' and length>255:
                 types[i] = 'Text'
             integer = length
-            decimal = length
-            blank = ''
-            default = ''
+            decimal = int(length/2)
+            if decimal > 10:
+                decimal = 10
+            blank = True
+            default = True
             column = (col, types[i], length, length, integer, decimal, blank, default)
             fieldset.append(column)
         print 'Done column setup'
@@ -211,6 +223,10 @@ class Command(LabelCommand):
             for i, value in enumerate(line):
                 if value and len(value) > maximums[i]:
                     maximums[i] = len(value)
+                if maximums[i] > 10:
+                    maximums[i] += 10
+                if not maximums[i]:
+                    maximums[i] = 10
         return maximums
 
     def check_fkey(self, key, field):
@@ -252,7 +268,8 @@ class Command(LabelCommand):
             csvimportid = 0
 
         if self.mappings:
-            loglist.append('Using manually entered mapping list')
+            self.start = 0
+            loglist.append('Using manually entered (or default) mapping list')
         else:
             mappingstr = self.parse_header(self.csvfile[0])
             if mappingstr:
@@ -268,14 +285,13 @@ class Command(LabelCommand):
                                 (self.model._meta.app_label, self.model.__name__))
             return loglist
 
-        for i, row in enumerate(self.csvfile[1:]):
+        for i, row in enumerate(self.csvfile[self.start:]):
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
 
             model_instance = self.model()
             model_instance.csvimport_id = csvimportid
-
 
             for (column, field, foreignkey) in self.mappings:
                 field_type = self.fieldmap.get(field).get_internal_type()
@@ -295,56 +311,19 @@ class Command(LabelCommand):
                 if self.debug:
                     loglist.append('%s.%s = "%s"' % (self.model.__name__,
                                                           field, row[column]))
-                # Tidy up boolean data
-                if field_type in BOOLEAN:
-                    row[column] = row[column] in BOOLEAN_TRUE
 
-                # Tidy up numeric data
-                if field_type in NUMERIC:
-                    if not row[column]:
-                        row[column] = 0
-                    else:
-                        try:
-                            row[column] = float(row[column])
-                        except:
-                            loglist.append('row %s: Column %s = %s is not a number so is set to 0' \
-                                                % (i, field, row[column]))
-                            row[column] = 0
-                    if field_type in INTEGER:
-                        if row[column] > 9223372036854775807:
-                            loglist.append('row %s: Column %s = %s more than the max integer 9223372036854775807' \
-                                                % (i, field, row[column]))
-                        if str(row[column]).lower() in ('nan', 'inf', '+inf', '-inf'):
-                            loglist.append('row %s: Column %s = %s is not an integer so is set to 0' \
-                                                % (i, field, row[column]))
-                            row[column] = 0
-                        row[column] = int(row[column])
-                        if row[column] < 0 and field_type.startswith('Positive'):
-                            loglist.append('row %s: Column %s = %s, less than zero so set to 0' \
-                                                % (i, field, row[column]))
-                            row[column] = 0
-                # date data - remove the date if it doesn't convert so null=True can work
-                if field_type in DATE:
-                    try:
-                        row[column] = datetime(row[column])
-                    except:
-                        for datefmt in DATE_INPUT_FORMATS:
-                            try:
-                                row[column] = datetime.strptime(row[column], datefmt)
-                            except:
-                                pass
-                    if not row[column] or len(str(row[column])) < 4:
-                        loglist.append('row %s: Column %s = %s not date format' % (i, field, row[column]))
-                        row[column] = None
+                row[column] = self.type_clean(field_type, row[column], loglist)
+
                 try:
                     model_instance.__setattr__(field, row[column])
                 except:
                     try:
-                        row[column] = model_instance.getattr(field).to_python(row[column])
+                        value = model_instance.getattr(field).to_python(row[column])
                     except:
                         msg = 'row %s: Column %s = %s couldnt be set for row' % (i, field, row[column])
                         loglist.append(msg)
-                           
+
+
             if self.defaults:
                 for (field, value, foreignkey) in self.defaults:
                     try:
@@ -354,7 +333,11 @@ class Command(LabelCommand):
                     if not done:
                         if foreignkey:
                             value = self.insert_fkey(foreignkey, value)
+                        else:
+                            field_type = self.fieldmap.get(field).get_internal_type()
+                            value = self.type_clean(field_type, value, loglist)
                         model_instance.__setattr__(field, value)
+                           
             if self.deduplicate:
                 matchdict = {}
                 for (column, field, foreignkey) in self.mappings:
@@ -401,6 +384,51 @@ class Command(LabelCommand):
             return self.loglist
         else:
             return ['No logging', ]
+
+    def type_clean(self, field_type, value, loglist):
+        """ Data type clean up """
+        # Tidy up boolean data
+        if field_type in BOOLEAN:
+            value = value in BOOLEAN_TRUE
+
+        # Tidy up numeric data
+        if field_type in NUMERIC:
+            if not value:
+                value = 0
+            else:
+                try:
+                    value = float(value)
+                except:
+                    loglist.append('row %s: Column %s = %s is not a number so is set to 0' \
+                                        % (i, field, value))
+                    value = 0
+            if field_type in INTEGER:
+                if value > 9223372036854775807:
+                    loglist.append('row %s: Column %s = %s more than the max integer 9223372036854775807' \
+                                        % (i, field, value))
+                if str(value).lower() in ('nan', 'inf', '+inf', '-inf'):
+                    loglist.append('row %s: Column %s = %s is not an integer so is set to 0' \
+                                        % (i, field, value))
+                    value = 0
+                value = int(value)
+                if value < 0 and field_type.startswith('Positive'):
+                    loglist.append('row %s: Column %s = %s, less than zero so set to 0' \
+                                        % (i, field, value))
+                    value = 0
+        # date data - remove the date if it doesn't convert so null=True can work
+        if field_type in DATE:
+            try:
+                value = datetime(value)
+            except:
+                for datefmt in DATE_INPUT_FORMATS:
+                    try:
+                        value = datetime.strptime(value, datefmt)
+                    except:
+                        pass
+            if not value or len(str(value)) < 4:
+                # loglist.append('row %s: Column %s = %s not date format' % (i, field, value))
+                value = None
+        return value
 
     def parse_header(self, headlist):
         """ Parse the list of headings and match with self.fieldmap """
@@ -512,8 +540,8 @@ class Command(LabelCommand):
             >>> parse_mapping('a=b(c|d)')
             [('a', 'b', '(c|d)')]
             """
-
-            pattern = re.compile(r'(\w+)=(\w+)(\(\w+\|\w+\))?')
+            # value = word or date format match
+            pattern = re.compile(r'(\w+)=(\d+/\d+/\d+|\d+-\d+-\d+|\w+)(\(\w+\|\w+\))?')
             mappings = pattern.findall(args)
 
             mappings = list(mappings)

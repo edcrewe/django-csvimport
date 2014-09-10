@@ -116,7 +116,11 @@ class MakeModel(object):
             if extra_params.has_key('primary_key') or extra_params.has_key('unique'):
                 for key in ('null','blank'):
                     extra_params[key] = False
-
+            if row[7]:
+                if field_type in ('TextField(', 'CharField('):
+                    extra_params['default'] = ''
+                elif field_type in ('DecimalField(', 'IntegerField('):
+                    extra_params['default'] = 0
             field_desc = '%s = models.%s' % (att_name, field_type)
             if extra_params:
                 if not field_desc.endswith('('):
