@@ -285,6 +285,7 @@ class Command(LabelCommand):
                                 (self.model._meta.app_label, self.model.__name__))
             return loglist
 
+        rowcount = 0
         for i, row in enumerate(self.csvfile[self.start:]):
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
@@ -342,7 +343,7 @@ class Command(LabelCommand):
                 except:
                     pass
             try:
-
+                rowcount += 1
                 importing_csv.send(sender=model_instance,
                                    row=dict(zip(self.csvfile[:1][0], row)))
                 model_instance.save()
@@ -368,7 +369,11 @@ class Command(LabelCommand):
                     logger.info(line)
             self.loglist.append(loglist)
             loglist = []
+        countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
+        if CSVIMPORT_LOG == 'logger':
+            logger.info(countmsg)            
         if self.loglist:
+            self.loglist.append(countmsg)
             self.props = {'file_name':self.file_name,
                           'import_user':'cron',
                           'upload_method':'cronjob',
@@ -378,7 +383,7 @@ class Command(LabelCommand):
         else:
             return ['No logging', ]
 
-    def type_clean(self, field, value, loglist, row=0):
+    def type_clean(self, field, value, loglist, row=0, datelimit='1900'):
         """ Data value clean up - type formatting"""
         field_type = self.fieldmap.get(field).get_internal_type()
 
@@ -417,15 +422,21 @@ class Command(LabelCommand):
                     value = 0
         # date data - remove the date if it doesn't convert so null=True can work
         if field_type in DATE:
+            datevalue = None
             try:
-                value = datetime(value)
+                datevalue = datetime(value)
             except:
                 for datefmt in DATE_INPUT_FORMATS:
                     try:
-                        value = datetime.strptime(value, datefmt)
+                        datevalue = datetime.strptime(value, datefmt)
                     except:
                         pass
-            if not value or len(str(value)) < 4:
+            # Django strftime bug chokes on dates before 1900            
+            if datelimit and datevalue and datevalue.year < datelimit:
+                datevalue = datetime.strptime('01/01/1900', '%d/%m/%Y')
+            if datevalue:
+                value = datevalue
+            else:
                 # loglist.append('row %s: Column %s = %s not date format' % (i, field, value))
                 value = None
         return value
@@ -504,8 +515,31 @@ class Command(LabelCommand):
             # CSV Reader returns an iterable, but as we possibly need to
             # perform list commands and since list is an acceptable iterable,
             # we'll just transform it.
-            return list(self.charset_csv_reader(csv_data=csvfile,
+            try:
+                return list(self.charset_csv_reader(csv_data=csvfile,
                                                 charset=self.charset))
+            except:
+                output = []
+                count = 0
+                # Sometimes encoding is too mashed to be able to open the file as text
+                # so reopen as raw unencoded and just try and get lines out one by one
+                # Assumes "," \r\n delimiters
+                try:
+                    with open(datafile, 'rb') as content_file:
+                        content = content_file.read()
+                    if content:
+                        rows = content.split('\r\n')
+                        for row in rows:
+                            rowlist = row[1:-1].split('","')
+                            if row:
+                                count += 1
+                                try:
+                                    output.append(rowlist)
+                                except:
+                                    self.loglist.append('Failed to parse row %s' % count)
+                except:
+                    self.loglist.append('Failed to open file %s' % datafile)
+                return output
 
     def charset_csv_reader(self, csv_data, dialect=csv.excel,
                            charset='utf-8', **kwargs):
