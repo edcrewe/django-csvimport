@@ -28,6 +28,7 @@ DATE = ['DateField', 'TimeField', 'DateTimeField']
 BOOLEAN = ['BooleanField', 'NullBooleanField']
 BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
 DATE_INPUT_FORMATS = settings.DATE_INPUT_FORMATS or ('%d/%m/%Y','%Y/%m/%d')
+CSV_DATE_INPUT_FORMATS = DATE_INPUT_FORMATS + ('%d-%m-%Y','%Y-%m-%d')
 cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
 
 # Note if mappings are manually specified they are of the following form ...
@@ -321,6 +322,7 @@ class Command(LabelCommand):
 
             if self.defaults:
                 for (field, value, foreignkey) in self.defaults:
+                    value = self.type_clean(field, value, loglist)
                     try:
                         done = model_instance.getattr(field)
                     except:
@@ -328,10 +330,9 @@ class Command(LabelCommand):
                     if not done:
                         if foreignkey:
                             value = self.insert_fkey(foreignkey, value)
-                        else:
-                            value = self.type_clean(field, value, loglist)
+                    if value:
                         model_instance.__setattr__(field, value)
-                           
+
             if self.deduplicate:
                 matchdict = {}
                 for (column, field, foreignkey) in self.mappings:
@@ -343,13 +344,12 @@ class Command(LabelCommand):
                 except:
                     pass
             try:
-                rowcount += 1
                 importing_csv.send(sender=model_instance,
                                    row=dict(zip(self.csvfile[:1][0], row)))
                 model_instance.save()
                 imported_csv.send(sender=model_instance,
                                   row=dict(zip(self.csvfile[:1][0], row)))
-
+                rowcount += 1
             except DatabaseError, err:
                 try:
                     error_number, error_message = err
@@ -361,8 +361,8 @@ class Command(LabelCommand):
                     loglist.append(
                         'Database Error: %s, Number: %d' % (error_message,
                                                             error_number))
-            except OverflowError:
-                pass
+            #except OverflowError:
+            #    pass
 
             if CSVIMPORT_LOG == 'logger':
                 for line in loglist:
@@ -383,7 +383,7 @@ class Command(LabelCommand):
         else:
             return ['No logging', ]
 
-    def type_clean(self, field, value, loglist, row=0, datelimit='1900'):
+    def type_clean(self, field, value, loglist, row=0, datelimits=[1900, 2099]):
         """ Data value clean up - type formatting"""
         field_type = self.fieldmap.get(field).get_internal_type()
 
@@ -426,14 +426,17 @@ class Command(LabelCommand):
             try:
                 datevalue = datetime(value)
             except:
-                for datefmt in DATE_INPUT_FORMATS:
+                for datefmt in CSV_DATE_INPUT_FORMATS:
                     try:
                         datevalue = datetime.strptime(value, datefmt)
                     except:
                         pass
             # Django strftime bug chokes on dates before 1900            
-            if datelimit and datevalue and datevalue.year < datelimit:
-                datevalue = datetime.strptime('01/01/1900', '%d/%m/%Y')
+            if datelimits and datevalue:
+                thisyear = int(datevalue.year)
+                if thisyear < datelimits[0] or thisyear > datelimits[0]:
+                    # value = None
+                    datevalue = datetime.strptime('01/01/2099', '%d/%m/%Y')
             if datevalue:
                 value = datevalue
             else:

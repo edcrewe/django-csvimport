@@ -12,6 +12,8 @@ Contributors listed as [github.com username] where they are on github
 #. Factor out type clean up method for data values
 #. Allow defaults to be passed as a command line argument
 #. Use --mappings=none for CSV created models with no column name row
+#. Handle badly encoded files as raw
+#. Set date limit in case of strftime bug for pre-1900 dates
 
 [edcrewe]
 
