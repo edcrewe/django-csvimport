@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - March 2014
+Ed Crewe - September 2014
 
 Overview
 --------
@@ -17,6 +17,10 @@ By default duplicate value rows are not inserted.
 
 The import can also be run as a custom command, ie manage.py csvimport filename
 for possible use via cronjob etc.
+
+For CSV files import where their schema is unknown, and there is no existing model to import to, there
+is another command, csvinspect, to generate the model code from the CSV file, guessing data types from the data
+using https://messytables.readthedocs.org - to use this command please pip install messytables.
 
 The core import code was based on http://djangosnippets.org/snippets/633/ by Jonathan Holst.
 It adds character encoding handling, model field and column autodetection, admin interface,
