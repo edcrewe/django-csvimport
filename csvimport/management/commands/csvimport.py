@@ -1,5 +1,6 @@
-# Run sql files via django#
-# www.heliosfoundation.org
+""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham 
+    Django command to import CSV files
+"""
 import os, csv, re
 from datetime import datetime
 import codecs
@@ -383,7 +384,7 @@ class Command(LabelCommand):
         else:
             return ['No logging', ]
 
-    def type_clean(self, field, value, loglist, row=0, datelimits=[1900, 2099]):
+    def type_clean(self, field, value, loglist, row=0):
         """ Data value clean up - type formatting"""
         field_type = self.fieldmap.get(field).get_internal_type()
 
@@ -431,12 +432,7 @@ class Command(LabelCommand):
                         datevalue = datetime.strptime(value, datefmt)
                     except:
                         pass
-            # Django strftime bug chokes on dates before 1900            
-            if datelimits and datevalue:
-                thisyear = int(datevalue.year)
-                if thisyear < datelimits[0] or thisyear > datelimits[0]:
-                    # value = None
-                    datevalue = datetime.strptime('01/01/2099', '%d/%m/%Y')
+
             if datevalue:
                 value = datevalue
             else:
