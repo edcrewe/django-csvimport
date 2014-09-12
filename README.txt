@@ -44,10 +44,26 @@ Add the following to the INSTALLED_APPS in the settings.py of your project:
 ...  python manage.py syncdb
 
 
-Custom command
---------------
+Custom commands
+---------------
 
-Use manage.py csvimport --mappings='' --model='app_label.model_name' importfile.csv
+CSVINSPECT
+
+manage.py csvinspect importfile.csv > models.py
+
+This returns the code for a new models file with a guesstimated model for the CSV file.
+Add it to your project then run syncdb.
+
+You can then run the import to that model for importfile.csv
+
+NB: As it says its a guesstimate, you may have to manually tweak the generated models.py to get 
+the import to work better.
+
+If there are no headings in the CSV file, then it just uses automated ones col_1, col_2 ... etc.
+
+CSVIMPORT
+
+manage.py csvimport --mappings='' --model='app_label.model_name' importfile.csv
 
 For mappings enter a list of fields in order only if you dont have a header row 
 with matching field names - or you want to override it, eg.
@@ -56,6 +72,9 @@ with matching field names - or you want to override it, eg.
 
 where (model|foreign key field) is used to specify relations if again, you want to
 override what would be looked up from your models.
+
+If you have no real field names in your csv file, then you can use 
+--mappings='none' and it will assume the fields are named col_1, col_2 ... etc.
 
 Admin interface import
 ----------------------
@@ -98,7 +117,12 @@ then use the tests settings to have some sample models for importing data, and t
 Alternatively you can use the command line to upload
 
 django-admin.py csvimport --model='tests.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings=csvimport.tests.settings 
- 
+
+tzinfo monkeypatch
+------------------
+
+In order for dates to be imported outside of the timezone range of 1970-2037 
+for certain database backends such as sqlite there is a patch of django.utils.timezone 
 
 Acknowledgements
 ----------------
