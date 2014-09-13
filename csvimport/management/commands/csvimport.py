@@ -62,7 +62,7 @@ def save_csvimport(props=None, instance=None):
 
 class Command(LabelCommand):
     """
-    Parse and map a CSV resource to a Django model.
+    Parse and import a CSV resource to a Django model.
 
     Notice that the doc tests are merely illustrational, and will not run
     as is.
