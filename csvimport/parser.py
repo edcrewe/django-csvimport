@@ -1,14 +1,8 @@
-""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham 
-    Django command to import CSV files
-"""
-import os, csv, re
+""" Core CSV parser class that is used by the management commands """
+import os, re
+import csv
 import codecs
 import chardet
-
-from django.core.management.base import LabelCommand, BaseCommand
-from optparse import make_option
-
-cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
 
 class CSVParser(object):
     """ Open a CSV file, check its encoding and parse it into memory 
@@ -147,111 +141,3 @@ class CSVParser(object):
                 self.csvfile = self.__csvfile(csvfile)
         if not getattr(self, 'csvfile', []):
             raise Exception('File %s not found' % csvfile)
-
-class Command(LabelCommand, CSVParser):
-    """
-    Inspect a CSV resource to generate the code for a Django model.
-    """
-
-    option_list = BaseCommand.option_list + (
-               make_option('--defaults', default='',
-                           help='''Provide comma separated defaults for the import 
-                                   (field1=value,field3=value, ...)'''),
-               make_option('--model', default='',
-                           help='Please provide the model to import to'),
-               make_option('--charset', default='',
-                           help='Force the charset conversion used rather than detect it')
-                   )
-    help = "Analyses CSV file date to generate a Django model"
-
-    def __init__(self):
-        """ Set default attributes data types """
-        super(Command, self).__init__()
-        self.csvfile = []
-        self.charset = ''
-        self.filehandle = None
-        self.makemodel = ''
-
-    def handle_label(self, label, **options):
-        """ Handle the circular reference by passing the nested
-            save_csvimport function
-        """
-        csvfile = label
-        defaults = options.get('defaults', [])
-        model = options.get('model', '')
-        if not model:
-            model = label.split('.')[0]
-        charset = options.get('charset', '')
-
-        self.defaults = self.set_mappings(defaults)
-        self.check_filesystem(csvfile)
-        app_label = 'csvimport'
-        self.makemodel = '""" A django model generated with django-csvimport csvinspect\n'
-        self.makemodel += '    which used OKN messytables to guess data types - may need some manual tweaks!\n"""'
-        self.makemodel += '\nfrom django.db import models\n\n'
-        self.makemodel += self.create_new_model(model)
-        print self.makemodel
-        return
-
-    def create_new_model(self, modelname):
-        """ Use messytables to guess field types and build a new model """
-
-        nocols = False
-        cols = self.csvfile[0]
-        for col in cols:
-            if not col:
-                nocols = True
-        if nocols:
-            cols = ['col_%s' % num for num in range(1, len(cols))]
-            print 'No column names for %s columns' % len(cols)
-        else:
-            cols = [cleancol.sub('_', col).lower() for col in cols]
-        try:
-            from messytables import any_tableset, type_guess
-        except:
-            self.errors.append('If you want to inspect CSV files to generate model code, you must install https://messytables.readthedocs.org')
-            self.modelname = ''
-            return
-        try:
-            table_set = any_tableset(self.filehandle)
-            row_set = table_set.tables[0]
-            types = type_guess(row_set.sample)
-            types = [str(typeobj) for typeobj in types]
-        except:
-            self.errors.append('messytables could not guess your column types')
-            self.modelname = ''
-            return
-
-        fieldset = []
-        maximums = self.get_maxlengths(cols)
-        for i, col in enumerate(cols):
-            length = maximums[i]
-            if types[i] == 'String' and length>255:
-                types[i] = 'Text'
-            integer = length
-            decimal = int(length/2)
-            if decimal > 10:
-                decimal = 10
-            blank = True
-            default = True
-            column = (col, types[i], length, length, integer, decimal, blank, default)
-            fieldset.append(column)
-        from ...make_model import MakeModel
-        maker = MakeModel()
-        return maker.model_from_table(modelname, fieldset)
-
-    def get_maxlengths(self, cols):
-        """ Get maximum column length values to avoid truncation 
-            -- can always manually reduce size of fields after auto model creation
-        """
-        maximums = [0]*len(cols)
-        for line in self.csvfile[1:100]:
-            for i, value in enumerate(line):
-                if value and len(value) > maximums[i]:
-                    maximums[i] = len(value)
-                if maximums[i] > 10:
-                    maximums[i] += 10
-                if not maximums[i]:
-                    maximums[i] = 10
-        return maximums
-

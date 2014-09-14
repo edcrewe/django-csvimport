@@ -15,19 +15,24 @@ field names to the fields in the selected model. Importing any rows that include
 Optionally required fields can be specified as part of the upload.
 By default duplicate value rows are not inserted.
 
-The import can also be run as a custom command, ie manage.py csvimport filename
+The import can also be run as a custom command, ie manage.py importcsv filename
 for possible use via cronjob etc.
 
 For CSV files import where their schema is unknown, and there is no existing model to import to, there
-is another command, csvinspect, to generate the model code from the CSV file, guessing data types from the data
+is another command, inspectcsv, to generate the model code from the CSV file, guessing data types from the data
 using https://messytables.readthedocs.org - to use this command please pip install messytables.
 
 The core import code was based on http://djangosnippets.org/snippets/633/ by Jonathan Holst.
 It adds character encoding handling, model field and column autodetection, admin interface,
 custom command etc.
 
-NB: There is another similar application django-batchimport but it not packaged,
-requires Excel files and doesnt provide a custom command for batch usage.
+Version 2 - Sept 2014
+---------------------
+
+#. New management command csvinspect to generate models from CSV files
+#. General code refactor 
+#. Management command renamed from csvimport to importcsv
+#. More features to cope with bad encoding and date types
 
 Installation instructions
 -------------------------
@@ -47,9 +52,9 @@ Add the following to the INSTALLED_APPS in the settings.py of your project:
 Custom commands
 ---------------
 
-CSVINSPECT
+INSPECTCSV
 
-manage.py csvinspect importfile.csv > models.py
+manage.py inspectcsv importfile.csv > models.py
 
 This returns the code for a new models file with a guesstimated model for the CSV file.
 Add it to your project then run syncdb.
@@ -61,9 +66,11 @@ the import to work better.
 
 If there are no headings in the CSV file, then it just uses automated ones col_1, col_2 ... etc.
 
-CSVIMPORT
+IMPORTCSV
 
-manage.py csvimport --mappings='' --model='app_label.model_name' importfile.csv
+(Please note this command used to be csvimport but that caused name clash issues with the module)
+
+manage.py importcsv --mappings='' --model='app_label.model_name' importfile.csv
 
 For mappings enter a list of fields in order only if you dont have a header row 
 with matching field names - or you want to override it, eg.
@@ -108,15 +115,15 @@ then use the tests settings to have some sample models for importing data, and t
 ... django-admin.py runserver
 
 - Go to http://127.0.0.1:8000/admin/ in your browser - pay attention to the trailing / !
-- Click on add CSVImport
+- Click on add Csvimport
 - Pick the django-csvimport/csvimport/tests/fixtures/countries.csv [1] and upload it
 - Check to see if the Country model is now populated.
 
-[1] also available from https://raw.github.com/edcrewe/django-csvimport/master/csvimport/tests/fixtures/countries.csv
+[1] also available from https://raw.github.com/edcrewe/django-importcsv/master/importcsv/tests/fixtures/countries.csv
 
 Alternatively you can use the command line to upload
 
-django-admin.py csvimport --model='tests.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings=csvimport.tests.settings 
+django-admin.py importcsv --model='tests.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings=csvimport.tests.settings 
 
 tzinfo monkeypatch
 ------------------
