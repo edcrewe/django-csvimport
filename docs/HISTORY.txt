@@ -3,7 +3,7 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
-1.2 - Added model creation and datetime clean up
+2.0 - Added model creation and datetime clean up
 ------------------------------------------------
 
 #. Generate django model files based on CSV data type sniffing with messytables
