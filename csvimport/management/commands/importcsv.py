@@ -157,7 +157,7 @@ class Command(LabelCommand, CSVParser):
             # Test for column=name or just name list format
             if mappings.find('=') == -1:
                 mappings = self.parse_header(mappings.split(','))
-            self.mappings = self.__mappings(mappings)
+            self.mappings = self.set_mappings(mappings)
         self.nameindexes = bool(nameindexes)
         self.file_name = csvfile
         self.deduplicate = deduplicate
