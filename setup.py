@@ -6,7 +6,7 @@ version = '2.0'
 setup(name='django-csvimport',
       version=version,
       description="Import CSV files to django models",
-      long_description=open(os.path.join("docs","README.txt").read() + "\n" +
+      long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "TODO.txt")).read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
