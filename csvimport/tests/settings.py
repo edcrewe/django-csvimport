@@ -1,18 +1,79 @@
 # Settings to be used when running unit tests
-# python manage.py test --settings=django-csvimport.tests.settings django-csvimport
-import os
+# python manage.py test --settings=csvimport.tests.settings csvimport
 
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+
+# Quick-start development settings - unsuitable for production
+# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '(2^xk$^us_v$zd-qhd1_z8a!89*cc415b(*%*o(med4bk^w3ui'
+
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+
+TEMPLATE_DEBUG = True
+
+ALLOWED_HOSTS = []
+
+
+# Application definition
+
+INSTALLED_APPS = (
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'csvimport',
+    'csvimport.tests'
+)
+
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+SITE_ID = 1
+
+# This merely needs to be present - as long as your test case specifies a
+# urls attribute, it does not need to be populated.
+ROOT_URLCONF = 'csvimport.tests.urls'
+
+WSGI_APPLICATION = 'csvimport.wsgi.application'
+
+# Database
+# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'django-csvimport-test.db',
-        'USER': '',     # Not used with sqlite3.
-        'PASSWORD': '', # Not used with sqlite3.
-        'HOST': '',     # Set to empty string for localhost. 
-        'PORT': '',     # Set to empty string for default. 
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# Internationalization
+# https://docs.djangoproject.com/en/1.6/topics/i18n/
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+
 # If not set or CSVIMPORT = 'screen' then it only sends loglines to Admin UI display
 CSVIMPORT_LOG = 'logger'
 # Turn on logger usage and log to a text file to check for in tests ...
@@ -34,34 +95,7 @@ LOGGING = {
         },
     }
 }
-MEDIA_ROOT = ''
-MEDIA_URL = '/files/'
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
 
-INSTALLED_APPS = (
-    # Add csvimport app itself and the tests models
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.admin',
-    'csvimport',
-    'csvimport.tests'
-)
-SITE_ID = 1
-
-# This merely needs to be present - as long as your test case specifies a
-# urls attribute, it does not need to be populated.
-ROOT_URLCONF = 'csvimport.tests.urls'
-
-# Make this unique, and don't share it with anybody.
-SECRET_KEY = 't_8)4w_csvimport_not_secret_test_key_7^b*s%w$zrud'
-
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
 
 # For CI testing of releases
 try:
