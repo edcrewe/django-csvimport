@@ -5,7 +5,7 @@ import os, csv, re
 from datetime import datetime
 import codecs
 import chardet
-# from csvimport.signals import imported_csv, importing_csv
+from csvimport.signals import imported_csv, importing_csv
 
 from django.db import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
