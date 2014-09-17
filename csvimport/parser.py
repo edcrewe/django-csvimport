@@ -140,4 +140,5 @@ class CSVParser(object):
             else:
                 self.csvfile = self.__csvfile(csvfile)
         if not getattr(self, 'csvfile', []):
-            raise Exception('File %s not found' % csvfile)
+            return 'File %s not found' % csvfile
+        return ''
