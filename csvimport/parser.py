@@ -13,7 +13,7 @@ class CSVParser(object):
     charset = ''
     filehandle = None
 
-    def __csvfile(self, datafile):
+    def open_csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
         self.filehandle = open(datafile)
         if not self.charset:
