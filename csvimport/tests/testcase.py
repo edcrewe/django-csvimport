@@ -4,7 +4,7 @@ import os
 from django.test import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 
-from csvimport.management.commands.csvimport import Command
+from csvimport.management.commands.importcsv import Command
 from csvimport.tests.models import Item
 
 DEFAULT_ERRS = ['Using mapping from first row of CSV file', ]

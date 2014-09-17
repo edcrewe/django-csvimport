@@ -1,6 +1,5 @@
 """ Test use of optional command line args """
 from csvimport.tests.testcase import CommandTestCase
-from csvimport.management.commands.csvimport import Command
 from csvimport.tests.models import Item
 
 class CommandArgsTest(CommandTestCase):

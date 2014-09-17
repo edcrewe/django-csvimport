@@ -2,7 +2,7 @@
 # Use unicode source code to make test character string writing easier
 import os
 
-from csvimport.management.commands.csvimport import CSVIMPORT_LOG
+from csvimport.management.commands.importcsv import CSVIMPORT_LOG
 from csvimport.tests.testcase import CommandTestCase
 from django.conf import settings
 from django.test import TestCase

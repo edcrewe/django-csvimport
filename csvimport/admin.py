@@ -31,7 +31,7 @@ class CSVImportAdmin(ModelAdmin):
             since then file wont be found for reopening via right charset
         """
         form.save()
-        from csvimport.management.commands.csvimport import Command
+        from csvimport.management.commands.importcsv import Command
         cmd = Command()
         if obj.upload_file:
             obj.file_name = obj.upload_file.name

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Use unicode source code to make test character string writing easier
 from csvimport.tests.testcase import CommandTestCase
-from csvimport.management.commands.csvimport import Command
 from csvimport.tests.models import Item
 
 
