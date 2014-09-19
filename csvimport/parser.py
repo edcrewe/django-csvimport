@@ -13,7 +13,7 @@ class CSVParser(object):
     charset = ''
     filehandle = None
 
-    def __csvfile(self, datafile):
+    def open_csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
         self.filehandle = open(datafile)
         if not self.charset:
@@ -140,4 +140,5 @@ class CSVParser(object):
             else:
                 self.csvfile = self.__csvfile(csvfile)
         if not getattr(self, 'csvfile', []):
-            raise Exception('File %s not found' % csvfile)
+            return 'File %s not found' % csvfile
+        return ''

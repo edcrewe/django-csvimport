@@ -116,13 +116,14 @@ class Command(LabelCommand, CSVParser):
         modelname = options.get('model', 'Item')
         charset = options.get('charset', '')
         # show_traceback = options.get('traceback', True)
-        self.setup(mappings, modelname, charset, filename, defaults)
-        if not hasattr(self.model, '_meta'):
-            msg = 'Sorry your model could not be found please check app_label.modelname = %s' % modelname
+        warn = self.setup(mappings, modelname, charset, filename, defaults)
+        if not warn and not hasattr(self.model, '_meta'):
+            warn = 'Sorry your model could not be found please check app_label.modelname = %s' % modelname
+        if warn:
             try:
-                print msg
+                print warn
             except:
-                self.loglist.append(msg)
+                self.loglist.append(warn)
             return
         errors = self.run()
         if self.props:
@@ -137,14 +138,16 @@ class Command(LabelCommand, CSVParser):
         if modelname.find('.') > -1:
             app_label, model = modelname.split('.')
         if uploaded:
-            self.csvfile = self.__csvfile(uploaded.path)
+            self.csvfile = self.open_csvfile(uploaded.path)
         else:
-            self.check_filesystem(csvfile)
+            failed = self.check_filesystem(csvfile)
+            if failed:
+                return failed
         self.charset = charset
         self.app_label = app_label
         self.model = models.get_model(app_label, model)
         if not self.model:
-            return
+            return 'No model found for %s.%s' % (app_label, model)
         for field in self.model._meta.fields:
             self.fieldmap[field.name] = field
             if field.__class__ == models.ForeignKey:
