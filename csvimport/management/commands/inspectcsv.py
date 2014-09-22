@@ -5,9 +5,11 @@ import re
 from optparse import make_option
 from django.core.management.base import LabelCommand, BaseCommand
 
-from csvimport.parser import CSVParser
+# from csvimport import CSVParser
 
 cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
+
+from csvimport import CSVParser
 
 class Command(LabelCommand, CSVParser):
     """
@@ -98,7 +100,7 @@ class Command(LabelCommand, CSVParser):
             column = (col, types[i], length, length, integer, decimal, blank, default)
             fieldset.append(column)
         # Import here so that messytables is not a dependency for just using csvimport cmd
-        from csvimport.make_model import MakeModel
+        from csvimport import MakeModel
         maker = MakeModel()
         return maker.model_from_table(modelname, fieldset)
 

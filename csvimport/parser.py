@@ -133,12 +133,12 @@ class CSVParser(object):
                     if afile.endswith('.csv'):
                         filepath = os.path.join(csvfile, afile)
                         try:
-                            lines = self.__csvfile(filepath)
+                            lines = self.open_csvfile(filepath)
                             self.csvfile.extend(lines)
                         except:
                             pass
             else:
-                self.csvfile = self.__csvfile(csvfile)
+                self.csvfile = self.open_csvfile(csvfile)
         if not getattr(self, 'csvfile', []):
             return 'File %s not found' % csvfile
         return ''

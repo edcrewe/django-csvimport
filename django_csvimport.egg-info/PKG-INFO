@@ -154,7 +154,6 @@ Description: Django CSV Import
         ====
         
         #. Add more tests
-        #. Add option to create model from CSV file
         #. Add use of xlrd for Excel file upload
         #. Improve related model creation - use of related csv file?
         

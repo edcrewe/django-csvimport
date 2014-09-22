@@ -24,6 +24,7 @@ setup(name='django-csvimport',
       license='Apache',
       packages=find_packages(exclude=['ez_setup']),
       include_package_data=True,
+      namespace_packages=['csvimport'],
       package_data = {
         # If any package contains *.csv or *.rst files, include them:
         '': ['*.csv', '*.rst'],

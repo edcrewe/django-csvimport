@@ -5,7 +5,6 @@ import os, csv, re
 from datetime import datetime
 import codecs
 import chardet
-from csvimport.signals import imported_csv, importing_csv
 
 from django.db import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,7 +14,8 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 from django.conf import settings
-from csvimport.parser import CSVParser
+from csvimport import CSVParser
+from csvimport.signals import imported_csv, importing_csv
 
 CSVIMPORT_LOG = getattr(settings, 'CSVIMPORT_LOG', 'screen')
 if CSVIMPORT_LOG == 'logger':
@@ -32,6 +32,12 @@ BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
 DATE_INPUT_FORMATS = settings.DATE_INPUT_FORMATS or ('%d/%m/%Y','%Y/%m/%d')
 CSV_DATE_INPUT_FORMATS = DATE_INPUT_FORMATS + ('%d-%m-%Y','%Y-%m-%d')
 cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
+
+from django import dispatch
+
+imported_csv = dispatch.Signal(providing_args=['instance', 'row'])
+importing_csv = dispatch.Signal(providing_args=['instance', 'row'])
+
 
 # Note if mappings are manually specified they are of the following form ...
 # MAPPINGS = "column1=shared_code,column2=org(Organisation|name),column3=description"
