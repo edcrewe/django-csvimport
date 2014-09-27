@@ -43,12 +43,17 @@ class LogTest(CommandTestCase):
             print 'Deleted csvimport_test.log'
         return
 
-
     def test_new_model(self, filename='test_new_model.csv'):
         """ Use custom command to upload file and create model """
-        pkey = 'wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)'        
-        self.command(csvfile=filename, modelname='create_new_model.shiny')
-        if self.get_log_path():
-            csvlog = open(self.logpath)
-            lines = csvlog.read()
-            self.assertIn(pkey, lines)
+        try:
+            import messytables
+            runtest = True
+        except:
+            print 'Install messytables to run the inspectcsv test'
+            runtest = False
+        if runtest:
+            pkey = 'wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)'        
+            makemodel = self.inspectcsv(csvfile=filename, model='create_new_model.shiny')
+            self.assertIn('wordcol = models.CharField', makemodel)
+            self.assertIn('class Shiny', makemodel)
+            self.assertIn('create_new_model_shiny', makemodel)

@@ -42,21 +42,21 @@ class Command(LabelCommand, CSVParser):
         csvfile = label
         defaults = options.get('defaults', [])
         model = options.get('model', '')
-        if not model:
-            model = label.split('.')[0]
         charset = options.get('charset', '')
-
         self.defaults = self.set_mappings(defaults)
         self.check_filesystem(csvfile)
-        app_label = 'csvimport'
+        if model.find('.') > -1:
+            app_label, model = model.split('.')
+        if not app_label:
+            app_label = 'csvimport'
         self.makemodel = '""" A django model generated with django-csvimport csvinspect\n'
         self.makemodel += '    which used OKN messytables to guess data types - may need some manual tweaks!\n"""'
         self.makemodel += '\nfrom django.db import models\n\n'
-        self.makemodel += self.create_new_model(model)
+        self.makemodel += self.create_new_model(mode, app_label)
         print self.makemodel
         return
 
-    def create_new_model(self, modelname):
+    def create_new_model(self, modelname, app_label):
         """ Use messytables to guess field types and build a new model """
 
         nocols = False
@@ -102,7 +102,7 @@ class Command(LabelCommand, CSVParser):
         # Import here so that messytables is not a dependency for just using csvimport cmd
         from csvimport import MakeModel
         maker = MakeModel()
-        return maker.model_from_table(modelname, fieldset)
+        return maker.model_from_table('%s_%s' % (app_label, modelname), fieldset)
 
     def get_maxlengths(self, cols):
         """ Get maximum column length values to avoid truncation 

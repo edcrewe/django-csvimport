@@ -4,7 +4,8 @@ import os
 from django.test import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 
-from csvimport.management.commands.importcsv import Command
+from csvimport.management.commands.importcsv import Command as ImportCommand
+from csvimport.management.commands.inspectcsv import Command as InspectCommand
 from csvimport.tests.models import Item
 
 DEFAULT_ERRS = ["Columns = CODE_SHARE, CODE_ORG, ORGANISATION, DESCRIPTION, UOM, QUANTITY, STATUS",
@@ -31,6 +32,16 @@ class DummyFileObj():
 class CommandTestCase(TestCase):
     """ Run test of use of optional command line args - mappings, default and charset """
 
+
+    def inspectcsv(self, csvfile, model='', charset='', defaults=''):
+        """ Run insepctcsv command to parse file """
+        cmd = InspectCommand()
+        uploaded = DummyFileObj()
+        uploaded.set_path(csvfile)
+        cmd.csvfile = cmd.open_csvfile(uploaded.path)
+        cmd.handle_label(csvfile, **{'model':model, 'charset':charset, 'defaults':defaults})
+        return cmd.makemodel
+
     def command(self, 
                 csvfile=None, 
                 mappings='',
@@ -43,7 +54,7 @@ class CommandTestCase(TestCase):
                 deduplicate=True
                 ):
         """ Run core csvimport command to parse file """
-        cmd = Command()
+        cmd = ImportCommand()
         uploaded = DummyFileObj()
         uploaded.set_path(csvfile)
         cmd.setup(mappings=mappings,
