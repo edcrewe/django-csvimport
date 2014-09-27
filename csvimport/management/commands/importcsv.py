@@ -358,7 +358,7 @@ class Command(LabelCommand, CSVParser):
         """ Parse the list of headings and match with self.fieldmap """
         mapping = []
         headlist = [cleancol.sub('_', col) for col in headlist]
-        self.loglist.append('Columns = %s' % str(headlist)[1:-1])
+        self.loglist.append('Columns = %s' % ', '.join(headlist))
         for i, heading in enumerate(headlist):
             for key in ((heading, heading.lower(),
                          ) if heading != heading.lower() else (heading,)):
