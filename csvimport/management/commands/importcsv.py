@@ -134,7 +134,8 @@ class Command(LabelCommand, CSVParser):
         errors = self.run()
         if self.props:
             save_csvimport(self.props, self)
-        self.loglist.extend(errors)
+        for error in errors:
+            self.loglist.append(errors)
         return
 
     def setup(self, mappings, modelname, charset, csvfile='', defaults='',
@@ -281,7 +282,7 @@ class Command(LabelCommand, CSVParser):
             if CSVIMPORT_LOG == 'logger':
                 for line in loglist:
                     logger.info(line)
-            self.loglist.append(loglist)
+            self.loglist.extend(loglist)
             loglist = []
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
         if CSVIMPORT_LOG == 'logger':
