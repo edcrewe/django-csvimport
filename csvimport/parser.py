@@ -2,7 +2,6 @@
 import os, re
 import csv
 import codecs
-import chardet
 
 class CSVParser(object):
     """ Open a CSV file, check its encoding and parse it into memory 
@@ -17,6 +16,7 @@ class CSVParser(object):
         """ Detect file encoding and open appropriately """
         self.filehandle = open(datafile)
         if not self.charset:
+            import chardet
             diagnose = chardet.detect(self.filehandle.read())
             self.charset = diagnose['encoding']
         try:
