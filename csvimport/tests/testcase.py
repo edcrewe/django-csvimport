@@ -31,20 +31,29 @@ class DummyFileObj():
 class CommandTestCase(TestCase):
     """ Run test of use of optional command line args - mappings, default and charset """
 
-    def command(self, filename, 
-                defaults='country=KE(Country|code)',
+    def command(self, 
+                csvfile=None, 
                 mappings='',
+                modelname='tests.Item',
+                charset='',
                 expected_errs=[],
-                modelname='tests.Item'):
+                defaults='country=KE(Country|code)',
+                uploaded=None,
+                nameindexes=False,
+                deduplicate=True
+                ):
         """ Run core csvimport command to parse file """
         cmd = Command()
         uploaded = DummyFileObj()
-        uploaded.set_path(filename)
+        uploaded.set_path(csvfile)
         cmd.setup(mappings=mappings,
                   modelname=modelname,
-                  charset='',
+                  charset=charset,
+                  defaults=defaults,
                   uploaded=uploaded,
-                  defaults=defaults)
+                  nameindexes=nameindexes,
+                  deduplicate=deduplicate
+                  )
 
         # Report back any unnexpected parse errors
         # and confirm those that are expected.
@@ -54,12 +63,9 @@ class CommandTestCase(TestCase):
         expected = [err for err in DEFAULT_ERRS]
         if expected_errs:
             expected.extend(expected_errs)
-            expected.reverse()
         for err in expected:
             try:
                 errors.remove(err)
-                #error = errors.pop()
-                #self.assertEqual(error, err)
             except:
                 pass
         if errors:

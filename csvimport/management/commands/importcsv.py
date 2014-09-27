@@ -105,7 +105,7 @@ class Command(LabelCommand, CSVParser):
         self.fieldmap = {}
         self.file_name = ''
         self.nameindexes = False
-        self.deduplicate = False
+        self.deduplicate = True
         self.csvfile = []
         self.charset = ''
         self.filehandle = None
@@ -139,7 +139,7 @@ class Command(LabelCommand, CSVParser):
         return
 
     def setup(self, mappings, modelname, charset, csvfile='', defaults='',
-              uploaded=None, nameindexes=False, deduplicate=False):
+              uploaded=None, nameindexes=False, deduplicate=True):
         """ Setup up the attributes for running the import """
         self.defaults = self.set_mappings(defaults)
         if modelname.find('.') > -1:

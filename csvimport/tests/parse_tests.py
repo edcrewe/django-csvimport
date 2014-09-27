@@ -41,25 +41,29 @@ class CommandParseTest(CommandTestCase):
 
     def test_duplicate(self, filename='test_duplicate.csv'):
         """ Use custom command to upload file and parse it into Items """
-        self.command(filename)
+        self.deduplicate = True
+        self.command(filename, expected_errs = ['Imported 3 rows to Item'])
         items = Item.objects.all().order_by('code_share')
-        # Check a couple of the fields in Item
         self.assertEqual(len(items), 3)
+        # Check a couple of the fields in Item
         codes = (u'bucket', u'tent', u'watercan')
         for i, item in enumerate(items):
             self.assertEqual(item.code_share, codes[i])
+        self.command(filename, expected_errs = ['Imported 6 rows to Item'], deduplicate=False)
+        items = Item.objects.all().order_by('code_share')
+        self.assertEqual(len(items), 3 + 6)
         Item.objects.all().delete()
 
     def test_number(self, filename='test_number.csv'):
         """ Use command to parse file with problem numeric fields
             Missing field value, negative, fractions and too big
         """
-        errs = [u'Column quantity = -23, less than zero so set to 0',
-                u'Column quantity = 1e+28 more than the max integer 9223372036854775807',
-                u'Column quantity = Not_a_Number is not a number so is set to 0',
-                u'Column quantity = nan is not an integer so is set to 0',
+        errs = [u'row 0: Column quantity = -23, less than zero so set to 0',
+                u'row 4: Column quantity = 1e+28 more than the max integer 9223372036854775807',
+                u'row 5: Column quantity = Not_a_Number is not a number so is set to 0',
+                u'row 6: Column quantity = nan is not an integer so is set to 0',
                 ]
-        self.command(filename, expected_errs=errs)
+        self.command(csvfile=filename, expected_errs=errs)
         # check fractional numbers into integers
         items = Item.objects.filter(code_org='WA017')
         self.assertEqual(items[0].quantity, 33)
