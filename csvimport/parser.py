@@ -93,11 +93,10 @@ class CSVParser(object):
             mappings = list(mappings)
             for mapping in mappings:
                 mapp = mappings.index(mapping)
-                mappings[mapp] = list(mappings[mapp])
+                mappings[mapp] = list(mappings[mapp]) #[unicode(item) for item in list(mappings[mapp])]
                 mappings[mapp][2] = parse_foreignkey(mapping[2])
                 mappings[mapp] = tuple(mappings[mapp])
             mappings = list(mappings)
-            
             return mappings
 
         def parse_foreignkey(key):

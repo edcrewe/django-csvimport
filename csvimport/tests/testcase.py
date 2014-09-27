@@ -8,12 +8,14 @@ from csvimport.management.commands.importcsv import Command
 from csvimport.tests.models import Item
 
 DEFAULT_ERRS = ["Columns = u'CODE_SHARE', u'CODE_ORG', u'ORGANISATION', u'DESCRIPTION', u'UOM', u'QUANTITY', u'STATUS'", 
+                "Columns = 'CODE_SHARE', 'CODE_ORG', 'ORGANISATION', 'DESCRIPTION', 'UOM', 'QUANTITY', 'STATUS'",
                 'Using mapping from first row of CSV file', 
                 'Imported 4 rows to Item',
                 'Imported 6 rows to Item',
                 'Imported 7 rows to Item',
                 'Imported 8 rows to Item',
-                'Outputting setup message'
+                'Outputting setup message',
+                'Using manually entered (or default) mapping list'
                 ]
 
 class DummyFileObj():
