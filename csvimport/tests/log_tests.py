@@ -55,5 +55,5 @@ class LogTest(CommandTestCase):
             pkey = 'wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)'        
             makemodel = self.inspectcsv(csvfile=filename, model='create_new_model.shiny')
             self.assertIn('wordcol = models.CharField', makemodel)
-            self.assertIn('class Shiny', makemodel)
+            self.assertIn('class CreateNewModelShiny', makemodel)
             self.assertIn('create_new_model_shiny', makemodel)

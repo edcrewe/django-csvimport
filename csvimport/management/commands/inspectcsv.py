@@ -52,7 +52,7 @@ class Command(LabelCommand, CSVParser):
         self.makemodel = '""" A django model generated with django-csvimport csvinspect\n'
         self.makemodel += '    which used OKN messytables to guess data types - may need some manual tweaks!\n"""'
         self.makemodel += '\nfrom django.db import models\n\n'
-        self.makemodel += self.create_new_model(mode, app_label)
+        self.makemodel += self.create_new_model(model, app_label)
         print self.makemodel
         return
 
