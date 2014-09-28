@@ -2,7 +2,6 @@
     the DB backends that do not handle this
 """
 import time
-from django.utils.timezone import ReferenceLocalTimezone
 
 def _isdst(self, dt):
     """ Monkeypatch from https://code.djangoproject.com/ticket/3418
@@ -22,6 +21,10 @@ def _isdst(self, dt):
         pass
     raise Exception('Cannot process dates from %s' % year)
 
-ReferenceLocalTimezone._isdst = _isdst
-
+try:
+    from django.utils.timezone import ReferenceLocalTimezone
+    ReferenceLocalTimezone._isdst = _isdst
+except:
+    # Don't patch it if it isnt there to be patched!
+    pass
 
