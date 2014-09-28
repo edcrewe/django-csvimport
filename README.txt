@@ -54,6 +54,8 @@ Custom commands
 
 INSPECTCSV
 
+(pip install messytables to use this command)
+
 manage.py inspectcsv importfile.csv > models.py
 
 This returns the code for a new models file with a guesstimated model for the CSV file.

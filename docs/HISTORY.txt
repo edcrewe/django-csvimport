@@ -3,8 +3,8 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
-2.0 - Added model creation and datetime clean up
-------------------------------------------------
+2.0 - Added model creation and datetime clean up - 29th Sept 2014
+-----------------------------------------------------------------
 
 #. Generate django model files based on CSV data type sniffing with messytables
 #. Use flag to generate model code eg. --model=create_new_model.modelname and add test
