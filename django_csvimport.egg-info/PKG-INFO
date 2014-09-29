@@ -62,6 +62,8 @@ Description: Django CSV Import
         
         INSPECTCSV
         
+        (pip install messytables to use this command)
+        
         manage.py inspectcsv importfile.csv > models.py
         
         This returns the code for a new models file with a guesstimated model for the CSV file.
@@ -162,8 +164,8 @@ Description: Django CSV Import
         
         Contributors listed as [github.com username] where they are on github 
         
-        2.0 - Added model creation and datetime clean up
-        ------------------------------------------------
+        2.0 - Added model creation and datetime clean up - 29th Sept 2014
+        -----------------------------------------------------------------
         
         #. Generate django model files based on CSV data type sniffing with messytables
         #. Use flag to generate model code eg. --model=create_new_model.modelname and add test

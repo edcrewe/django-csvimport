@@ -26,8 +26,8 @@ setup(name='django-csvimport',
       include_package_data=True,
       namespace_packages=['csvimport'],
       package_data = {
-        # If any package contains *.csv or *.rst files, include them:
-        '': ['*.csv', '*.rst'],
+        # If any package contains *.csv or *.rst files, include them: ['*.csv', '*.rst']
+        '': 'csvimport',
       },
       zip_safe=False,
       install_requires=[
