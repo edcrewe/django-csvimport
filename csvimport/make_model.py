@@ -32,7 +32,7 @@ class MakeModel(object):
                 if parts:
                     break
         for part in parts:
-            klass += part[0].upper() + part[1:]
+            klass += part.title()
         return klass
 
     def model_from_table(self, table_name, fieldset):
