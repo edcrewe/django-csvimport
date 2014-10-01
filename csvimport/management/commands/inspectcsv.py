@@ -34,6 +34,7 @@ class Command(LabelCommand, CSVParser):
         self.charset = ''
         self.filehandle = None
         self.makemodel = ''
+        self.errors = []
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
