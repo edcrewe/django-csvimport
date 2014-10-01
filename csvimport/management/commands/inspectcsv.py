@@ -48,7 +48,7 @@ class Command(LabelCommand, CSVParser):
         self.check_filesystem(csvfile)
         if model.find('.') > -1:
             app_label, model = model.split('.')
-        if not app_label:
+        else:
             app_label = 'csvimport'
         self.makemodel = '""" A django model generated with django-csvimport csvinspect\n'
         self.makemodel += '    which used OKN messytables to guess data types - may need some manual tweaks!\n"""'
