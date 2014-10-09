@@ -134,8 +134,12 @@ class Command(LabelCommand, CSVParser):
         errors = self.run()
         if self.props:
             save_csvimport(self.props, self)
-        for error in errors:
-            self.loglist.append(errors)
+        # can cause memoryerror if its too big
+        try:
+            for error in errors:
+                self.loglist.append(errors)
+        except:
+            pass
         return
 
     def setup(self, mappings, modelname, charset, csvfile='', defaults='',
@@ -358,7 +362,8 @@ class Command(LabelCommand, CSVParser):
         """ Parse the list of headings and match with self.fieldmap """
         mapping = []
         headlist = [cleancol.sub('_', col) for col in headlist]
-        self.loglist.append('Columns = %s' % ', '.join(headlist))
+        columnstr = ', '.join(headlist)
+        self.loglist.append('Columns = %s' % columnstr)
         for i, heading in enumerate(headlist):
             for key in ((heading, heading.lower(),
                          ) if heading != heading.lower() else (heading,)):
