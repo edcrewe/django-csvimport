@@ -68,6 +68,8 @@ class MakeModel(object):
             if '-' in att_name:
                 att_name = att_name.replace('-', '_')
                 comment_notes.append('Field renamed to remove dashes.')
+            # Dunder not allowed in field names
+            att_name = att_name.replace('__', '_')
             if keyword.iskeyword(att_name):
                 att_name += '_field'
                 comment_notes.append('Field renamed because it was a Python reserved word.')
@@ -121,6 +123,8 @@ class MakeModel(object):
                     extra_params['default'] = ''
                 elif field_type in ('DecimalField(', 'IntegerField('):
                     extra_params['default'] = 0
+                elif field_type = 'BooleanField(':
+                    extra_params['default'] = False                    
             field_desc = '%s = models.%s' % (att_name, field_type)
             if extra_params:
                 if not field_desc.endswith('('):
