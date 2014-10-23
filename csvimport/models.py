@@ -6,24 +6,42 @@ import re
 
 fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 CHOICES = (('manual', 'manual'), ('cronjob', 'cronjob'))
+MODELS = []
 
-# Create your models here.
-if not settings.CSVIMPORT_MODELS:
-    MODELS = ['%s.%s' % (m._meta.app_label,
-                         m.__name__) for m in models.loading.get_models()
-                         if m._meta.app_label != 'contenttypes']
-else:
-    MODELS = deepcopy(settings.CSVIMPORT_MODELS)
+def get_models():
+    """ Cannot load at module level for later djangos - since its too early 
+    """
+    global MODELS
+    if MODELS:
+        return MODELS
+    # Create your models here.
+    if not settings.CSVIMPORT_MODELS:
+        try:
+            allmodels = models.loading.get_models()
+        except:
+            # django1.7 or later ...
+            try:
+                allmodels = models.get_models()
+            except:
+                allmodels = []
+        if allmodels:
+            MODELS = ['%s.%s' % (m._meta.app_label,
+                                            m.__name__) for m in allmodels
+                                 if m._meta.app_label != 'contenttypes']
+    else:
+        MODELS = deepcopy(settings.CSVIMPORT_MODELS)
 
-MODELS = tuple([(m, m) for m in MODELS])
+    MODELS = tuple([(m, m) for m in MODELS])
+    return MODELS
 
 
 class CSVImport(models.Model):
     """ Logging model for importing files """
+    model_choice = []
     model_name = models.CharField(max_length=255, blank=False,
                                   default='iisharing.Item',
                                   help_text='Please specify the app_label.model_name',
-                                  choices=MODELS)
+                                  choices=get_models())
     field_list = models.CharField(max_length=255, blank=True,
                         help_text='''Enter list of fields in order only if
                                      you dont have a header row with matching field names, eg.
