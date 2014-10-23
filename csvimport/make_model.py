@@ -123,7 +123,7 @@ class MakeModel(object):
                     extra_params['default'] = ''
                 elif field_type in ('DecimalField(', 'IntegerField('):
                     extra_params['default'] = 0
-                elif field_type = 'BooleanField(':
+                elif field_type == 'BooleanField(':
                     extra_params['default'] = False                    
             field_desc = '%s = models.%s' % (att_name, field_type)
             if extra_params:
