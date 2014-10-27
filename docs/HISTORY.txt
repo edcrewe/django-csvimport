@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+2.1 - Fix for django 1.7 - 27 October 2014
+------------------------------------------
+
 2.0 - Added model creation and datetime clean up - 29th Sept 2014
 -----------------------------------------------------------------
 
