@@ -1,14 +1,20 @@
-from setuptools import setup, find_packages
-import os
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
-version = '2.2'
+version = '2.3'
+
+with open("README,txt", "r") as fp:
+    csvimport_description = fp.read() + "\n" 
+for fname in ("TODO.txt", "HISTORY.txt"):
+    with open(os.path.join("docs", fname), "r") as fp:
+        csvimport_description += fp.read() + "\n" 
 
 setup(name='django-csvimport',
       version=version,
       description="Import CSV files to django models",
-      long_description=open("README.txt").read() + "\n" +
-                       open(os.path.join("docs", "TODO.txt")).read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+      long_description=csvimport_description,
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
         "Programming Language :: Python",
@@ -22,7 +28,7 @@ setup(name='django-csvimport',
       author_email='edmundcrewe@gmail.com',
       url='https://github.com/edcrewe/django-csvimport',
       license='Apache',
-      packages=find_packages(exclude=['ez_setup']),
+      # packages=find_packages(exclude=['ez_setup']),
       include_package_data=True,
       namespace_packages=['csvimport'],
       package_data = {

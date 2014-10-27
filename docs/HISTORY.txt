@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+2.3 - Fix setup.py so it works with pypi pip install - 27 October 2014
+----------------------------------------------------------------------
+
 2.2 - Missed fixtures and PyPi wouldnt refresh tarball cache for 2.1 - 27 October 2014
 --------------------------------------------------------------------------------------
 
