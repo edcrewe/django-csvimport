@@ -34,6 +34,7 @@ class Command(LabelCommand, CSVParser):
         self.charset = ''
         self.filehandle = None
         self.makemodel = ''
+        self.errors = []
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
@@ -47,12 +48,18 @@ class Command(LabelCommand, CSVParser):
         self.check_filesystem(csvfile)
         if model.find('.') > -1:
             app_label, model = model.split('.')
-        if not app_label:
+        else:
             app_label = 'csvimport'
+
+        model_definition = self.create_new_model(model, app_label)
+        if self.errors:
+            print self.errors
+            return
+
         self.makemodel = '""" A django model generated with django-csvimport csvinspect\n'
         self.makemodel += '    which used OKN messytables to guess data types - may need some manual tweaks!\n"""'
         self.makemodel += '\nfrom django.db import models\n\n'
-        self.makemodel += self.create_new_model(model, app_label)
+        self.makemodel += model_definition
         print self.makemodel
         return
 
