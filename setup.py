@@ -5,7 +5,7 @@ except ImportError:
 
 version = '2.3'
 
-with open("README,txt", "r") as fp:
+with open("README.txt", "r") as fp:
     csvimport_description = fp.read() + "\n" 
 for fname in ("TODO.txt", "HISTORY.txt"):
     with open(os.path.join("docs", fname), "r") as fp:
