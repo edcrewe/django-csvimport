@@ -30,7 +30,7 @@ setup(name='django-csvimport',
       author_email='edmundcrewe@gmail.com',
       url='https://github.com/edcrewe/django-csvimport',
       license='Apache',
-      # packages=find_packages(exclude=['ez_setup']),
+      packages=['csvimport'],
       include_package_data=True,
       namespace_packages=['csvimport'],
       package_data = {
