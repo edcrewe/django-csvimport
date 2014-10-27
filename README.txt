@@ -125,7 +125,7 @@ then use the tests settings to have some sample models for importing data, and t
 
 Alternatively you can use the command line to upload
 
-django-admin.py importcsv --model='tests.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings=csvimport.tests.settings 
+django-admin.py importcsv --model='csvimport.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings=csvimport.tests.settings 
 
 tzinfo monkeypatch
 ------------------

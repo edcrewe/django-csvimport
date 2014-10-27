@@ -45,7 +45,7 @@ class CommandTestCase(TestCase):
     def command(self, 
                 csvfile=None, 
                 mappings='',
-                modelname='tests.Item',
+                modelname='csvimport.Item',
                 charset='',
                 expected_errs=[],
                 defaults='country=KE(Country|code)',

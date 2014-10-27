@@ -12,6 +12,10 @@ class Country(models.Model):
     longitude = models.FloatField(null=True)
     alias = models.CharField(max_length=255, null=True)
 
+    class Meta:
+        app_label = u'csvimport'
+        db_table = u'csvtests_country'
+        managed = True
 
     def __unicode__(self):
         return u"%s (%s)" % (self.name, self.code)
@@ -20,6 +24,10 @@ class Country(models.Model):
 class UnitOfMeasure(models.Model):
     name = models.CharField(max_length=32)
 
+    class Meta:
+        app_label = u'csvimport'
+        db_table = u'csvtests_unitofmeasure'
+        managed = True
 
     def __unicode__(self):
         return self.name
@@ -33,7 +41,8 @@ class Organisation(models.Model):
         return self.name
 
     class Meta:
-        db_table = u'tests_organisation'
+        app_label = u'csvimport'
+        db_table = u'csvtests_organisation'
         managed = True
 
 
@@ -54,4 +63,8 @@ class Item(models.Model):
     date = models.DateField(auto_now=True, null=True, validators=[])
     country = models.ForeignKey(Country, null=True)
 
+    class Meta:
+        app_label = u'csvimport'
+        db_table = u'csvtests_item'
+        managed = True
 
