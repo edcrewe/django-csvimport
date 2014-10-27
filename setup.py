@@ -5,9 +5,9 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = '2.3'
+version = '2.1'
 
-with open("README.txt", "r") as fp:
+with open("README.rst", "r") as fp:
     csvimport_description = fp.read() + "\n" 
 for fname in ("TODO.txt", "HISTORY.txt"):
     with open(os.path.join("docs", fname), "r") as fp:
@@ -30,12 +30,12 @@ setup(name='django-csvimport',
       author_email='edmundcrewe@gmail.com',
       url='https://github.com/edcrewe/django-csvimport',
       license='Apache',
-      packages=['csvimport'],
+      packages=['csvimport', ],
       include_package_data=True,
-      namespace_packages=['csvimport'],
+      namespace_packages=['csvimport', ],
       package_data = {
-        # If any package contains *.csv or *.rst files, include them: ['*.csv', '*.rst']
-        '': 'csvimport',
+        # If any package contains *.csv or *.rst files, include them: 
+        '': ['*.csv', '*.rst'],
       },
       zip_safe=False,
       install_requires=[

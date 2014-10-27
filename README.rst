@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - September 2014
+Ed Crewe - October 2014
 
 Overview
 --------
@@ -53,6 +53,8 @@ Custom commands
 ---------------
 
 INSPECTCSV
+
+(pip install messytables to use this command)
 
 manage.py inspectcsv importfile.csv > models.py
 
