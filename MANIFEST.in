@@ -3,6 +3,7 @@ include csvimport/__init__.py
 include __init__.py
 recursive-include csvimport *
 recursive-include docs *
+recursive-include csvimport/tests/fixtures *
 global-include *txt
 global-include *csv
 global-exclude *pyc
