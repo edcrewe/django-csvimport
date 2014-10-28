@@ -11,5 +11,5 @@ class CSVImportConf(AppConfig):
 
     @classmethod
     @property
-    def name(cls):
+    def path(cls):
         return os.path.abspath(cls.__module__.__file__)

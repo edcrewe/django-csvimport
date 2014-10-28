@@ -9,7 +9,7 @@ from django.core.management.base import LabelCommand, BaseCommand
 
 cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
 
-from csvimport import CSVParser
+from csvimport.parser import CSVParser
 
 class Command(LabelCommand, CSVParser):
     """
@@ -107,7 +107,7 @@ class Command(LabelCommand, CSVParser):
             column = (col, types[i], length, length, integer, decimal, blank, default)
             fieldset.append(column)
         # Import here so that messytables is not a dependency for just using csvimport cmd
-        from csvimport import MakeModel
+        from csvimport.make_model import MakeModel
         maker = MakeModel()
         return maker.model_from_table('%s_%s' % (app_label, modelname), fieldset)
 

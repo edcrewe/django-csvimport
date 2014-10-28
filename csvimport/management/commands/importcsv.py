@@ -14,7 +14,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
 from django.conf import settings
-from csvimport import CSVParser
+from csvimport.parser import CSVParser
 from csvimport.signals import imported_csv, importing_csv
 
 CSVIMPORT_LOG = getattr(settings, 'CSVIMPORT_LOG', 'screen')

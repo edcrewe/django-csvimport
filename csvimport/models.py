@@ -1,3 +1,5 @@
+import csvimport.monkeypatch_tzinfo
+
 from django.db import models
 from csvimport.app import settings
 from copy import deepcopy
