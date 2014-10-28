@@ -59,7 +59,7 @@ class CommandParseTest(CommandTestCase):
             Missing field value, negative, fractions and too big
         """
         errs = [u'row 0: Column quantity = -23, less than zero so set to 0',
-                u'row 4: Column quantity = 1e+28 more than the max integer 9223372036854775807',
+                u'row 4: Column quantity = 1e+28 more than the max integer 9223372036854775807 sqlite may error with big integers so rounded down',
                 u'row 5: Column quantity = Not_a_Number is not a number so is set to 0',
                 u'row 6: Column quantity = nan is not an integer so is set to 0',
                 ]

@@ -26,6 +26,7 @@ INTEGER = ['BigIntegerField', 'IntegerField', 'AutoField',
            'PositiveIntegerField', 'PositiveSmallIntegerField']
 FLOAT = ['DecimalField', 'FloatField']
 NUMERIC = INTEGER + FLOAT
+SMALLINT_DBS = ['sqlite3', ]
 DATE = ['DateField', 'TimeField', 'DateTimeField']
 BOOLEAN = ['BooleanField', 'NullBooleanField']
 BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
@@ -111,6 +112,7 @@ class Command(LabelCommand, CSVParser):
         self.filehandle = None
         self.makemodel = ''
         self.start = 1
+        self.db_backend = ''
 
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
@@ -159,6 +161,11 @@ class Command(LabelCommand, CSVParser):
         self.model = models.get_model(app_label, model)
         if not self.model:
             return 'No model found for %s.%s' % (app_label, model)
+        try:
+            db_name = self.model()._state.db or 'default'
+            self.db_backend = settings.DATABASES[db_name]['ENGINE'].split('.')[-1]
+        except:
+            pass
         for field in self.model._meta.fields:
             self.fieldmap[field.name] = field
             if field.__class__ == models.ForeignKey:
@@ -327,9 +334,14 @@ class Command(LabelCommand, CSVParser):
                                         % (row, field, value))
                     value = 0
             if field_type in INTEGER:
+                # 1e+28 = 9999999999999999583119736832L
                 if value > 9223372036854775807:
-                    loglist.append('row %s: Column %s = %s more than the max integer 9223372036854775807' \
-                                        % (row, field, value))
+                    intmsg = 'row %s: Column %s = %s more than the max integer 9223372036854775807' \
+                                        % (row, field, value)
+                    if self.db_backend in SMALLINT_DBS:
+                        intmsg += ' sqlite may error with big integers so rounded down'
+                        value = 9223372036854775807
+                    loglist.append(intmsg)
                 if str(value).lower() in ('nan', 'inf', '+inf', '-inf'):
                     loglist.append('row %s: Column %s = %s is not an integer so is set to 0' \
                                         % (row, field, value))
