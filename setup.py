@@ -5,7 +5,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = '2.1'
+version = '2.2'
 
 with open("README.rst", "r") as fp:
     csvimport_description = fp.read() + "\n" 
@@ -39,8 +39,7 @@ setup(name='django-csvimport',
       },
       zip_safe=False,
       install_requires=[
-          'django-appconf>=0.5',
-          'django>=1.4',
+          'django>=1.7',
           'chardet',
       ],
       entry_points="""

@@ -3,6 +3,12 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+2.2 - Move to core appconfig usage - 28 October 2014
+----------------------------------------------------
+
+#. Add appconfig path to cater for module install test running
+#. Check for SMALLINT_DBS including sqlite - since can fail big int imports
+
 2.1 - Fix for django 1.7 - 27 October 2014
 ------------------------------------------
 

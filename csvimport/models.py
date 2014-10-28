@@ -1,5 +1,5 @@
 from django.db import models
-from csvimport.conf import settings
+from csvimport.app import settings
 from copy import deepcopy
 from django.core.files.storage import FileSystemStorage
 import re
@@ -15,7 +15,7 @@ def get_models():
     if MODELS:
         return MODELS
     # Create your models here.
-    if not settings.CSVIMPORT_MODELS:
+    if not getattr(settings, 'CSVIMPORT_MODELS', []):
         try:
             allmodels = models.loading.get_models()
         except:
