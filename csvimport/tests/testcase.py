@@ -34,7 +34,7 @@ class CommandTestCase(TestCase):
 
 
     def inspectcsv(self, csvfile, model='', charset='', defaults=''):
-        """ Run insepctcsv command to parse file """
+        """ Run inspectcsv command to parse file """
         cmd = InspectCommand()
         uploaded = DummyFileObj()
         uploaded.set_path(csvfile)
@@ -70,7 +70,6 @@ class CommandTestCase(TestCase):
         # and confirm those that are expected.
         # Fail test if they are not matching
         errors = cmd.run(logid='commandtest')
-        #raise Exception(errors)
         expected = [err for err in DEFAULT_ERRS]
         if expected_errs:
             expected.extend(expected_errs)

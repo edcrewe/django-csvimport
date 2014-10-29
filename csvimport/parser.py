@@ -28,30 +28,43 @@ class CSVParser(object):
             # perform list commands and since list is an acceptable iterable,
             # we'll just transform it.
             try:
-                return list(self.charset_csv_reader(csv_data=csvfile,
-                                                charset=self.charset))
+                csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset)
+                rows = [row for row in csvgenerator]
+                if rows:
+                    return list(rows)
             except:
-                output = []
-                count = 0
-                # Sometimes encoding is too mashed to be able to open the file as text
-                # so reopen as raw unencoded and just try and get lines out one by one
-                # Assumes "," \r\n delimiters
+                rows = []
+            output = []
+            count = 0
+            # Sometimes encoding is too mashed to be able to open the file as text with csv_reader
+            # so reopen as raw unencoded and just try and get lines out one by one
+            # Assumes "," \r\n delimiters
+            if not rows:
                 try:
                     with open(datafile, 'rb') as content_file:
                         content = content_file.read()
-                    if content:
-                        rows = content.split('\r\n')
-                        for row in rows:
-                            rowlist = row[1:-1].split('","')
-                            if row:
-                                count += 1
-                                try:
-                                    output.append(rowlist)
-                                except:
-                                    self.loglist.append('Failed to parse row %s' % count)
                 except:
                     self.loglist.append('Failed to open file %s' % datafile)
-                return output
+                if content:
+                    content = str(content)
+                    for ending in ('\r\n', '\\r', '\n'):
+                        if content.find(ending) > -1:
+                            rows = content.split(ending)
+                    # Python 3 handling
+                    if rows[0].startswith("b'"):
+                        rows[0] = rows[0][2:]
+            if rows:
+                for row in rows:
+                    if type(row) == type(''):
+                        row = row.split(',')
+                    if row:
+                        count += 1
+                        try:
+                            output.append(row)
+                        except:
+                            self.loglist.append('Failed to parse row %s' % count)
+            return output
+                
 
     def charset_csv_reader(self, csv_data, dialect=csv.excel,
                            charset='utf-8', **kwargs):
