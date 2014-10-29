@@ -17,7 +17,7 @@ class Country(models.Model):
         db_table = u'csvtests_country'
         managed = True
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.code)
 
 
@@ -29,15 +29,14 @@ class UnitOfMeasure(models.Model):
         db_table = u'csvtests_unitofmeasure'
         managed = True
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
-
 
 class Organisation(models.Model):
     name = models.CharField(max_length=255)
 
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -68,3 +67,6 @@ class Item(models.Model):
         db_table = u'csvtests_item'
         managed = True
 
+    def __str__(self):
+        return self.description
+        

@@ -2,7 +2,8 @@
 # Use unicode source code to make test character string writing easier
 from csvimport.tests.testcase import CommandTestCase
 from csvimport.tests.models import Item
-
+import sys
+pyversion = sys.version_info[0] # python 2 or 3
 
 class CommandParseTest(CommandTestCase):
     """ Run test of file parsing """
@@ -35,7 +36,10 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.description,
                          "TENTE FAMILIALE, 12 m_, COMPLETE (tapis de sol/double toit)")
         self.assertEqual(item.quantity, 101)
-        self.assertEqual(unicode(item.uom), u'删除当前图片')
+        if pyversion == 2:
+            self.assertEqual(unicode(item.uom), u'删除当前图片')
+        else:
+            self.assertEqual(str(item.uom), '删除当前图片')
         self.assertEqual(item.organisation.name, 'AID-France')
         Item.objects.all().delete()
 

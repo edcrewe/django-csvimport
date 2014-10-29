@@ -89,5 +89,5 @@ class CommandTestCase(TestCase):
             item = Item.objects.get(code_share__exact=code_share)
         except ObjectDoesNotExist:
             item = None
-        self.assertTrue(item, 'Failed to get row from imported test.csv Items')
+            self.assertTrue(item, 'Failed to get row from imported test.csv Items')
         return item

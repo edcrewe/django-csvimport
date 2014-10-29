@@ -51,14 +51,13 @@ class CSVParser(object):
                 except:
                     self.loglist.append('Failed to open file %s' % datafile)
                 if content:
-                    content = str(content[0])
+                    content = content[0]
+                    if pyversion == 3:
+                        content = content.decode(self.charset)
                     for ending in ('\r\n', '\r', '\\r', '\n'):
                         if content.find(ending) > -1:
                             rows = content.split(ending)
                             break
-                    # Python 3 handling
-                    if rows and rows[0].startswith("b'"):
-                        rows[0] = rows[0][2:]
             if rows:
                 for row in rows:
                     if type(row) == type(''):
@@ -66,7 +65,7 @@ class CSVParser(object):
                         row = row.replace(',,', ', ,')
                         row = csvsplit.split(row)
                         row = [item for item in row if item and item not in (',', '"', "'")]
-                        if pyversion == 2: # Its all unicode if its 3
+                        if pyversion == 2: 
                             try:
                                 row = [unicode(item, self.charset) for item in row]
                             except:
