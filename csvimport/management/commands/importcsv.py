@@ -232,9 +232,10 @@ class Command(LabelCommand, CSVParser):
                 if self.debug:
                     loglist.append('%s.%s = "%s"' % (self.model.__name__,
                                                           field, row[column]))
-
-                row[column] = self.type_clean(field, row[column], loglist, i)
-
+                try:    
+                    row[column] = self.type_clean(field, row[column], loglist, i)
+                except:
+                    raise Exception(row, column)
                 try:
                     model_instance.__setattr__(field, row[column])
                 except:

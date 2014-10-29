@@ -33,7 +33,7 @@ class CSVParser(object):
                 csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset)
                 rows = [row for row in csvgenerator]
                 csvrows = list(rows)
-                # rows = []
+                #rows = []
                 if rows:
                     return list(rows)
             except:
@@ -64,9 +64,9 @@ class CSVParser(object):
                         row = csvsplit.split(row)
                         row = [item for item in row if item and item not in (',', '"')]
                         try:
-                            row = [unicode(item) for item in row]
+                            row = [unicode(item, self.charset) for item in row]
                         except:
-                            pass
+                            row = []
                     if row:
                         count += 1
                         try:
