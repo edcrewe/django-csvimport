@@ -35,15 +35,15 @@ class CSVParser(object):
                 rows = [row for row in csvgenerator]
                 csvrows = list(rows)
                 rows = []
-                #if rows:
-                #    return list(rows)
+                if rows:
+                    return list(rows)
             except:
                 rows = []
             output = []
             count = 0
             # Sometimes encoding is too mashed to be able to open the file as text with csv_reader
+            # ... especially in Python 3 - its a lot stricter
             # so reopen as raw unencoded and just try and get lines out one by one
-            # Assumes "," \r\n delimiters
             if not rows:
                 try:
                     with open(datafile, 'rb') as content_file:
@@ -62,6 +62,8 @@ class CSVParser(object):
             if rows:
                 for row in rows:
                     if type(row) == type(''):
+                        #FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
+                        row = row.replace(',,', ', ,')
                         row = csvsplit.split(row)
                         row = [item for item in row if item and item not in (',', '"', "'")]
                         if pyversion == 2: # Its all unicode if its 3
