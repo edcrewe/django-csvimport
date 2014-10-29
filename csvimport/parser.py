@@ -2,6 +2,8 @@
 import os, re
 import csv
 import codecs
+import re
+csvsplit = re.compile(r"""(['"]*)(.*?)\1(,|$)""") 
 
 class CSVParser(object):
     """ Open a CSV file, check its encoding and parse it into memory 
@@ -30,6 +32,8 @@ class CSVParser(object):
             try:
                 csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset)
                 rows = [row for row in csvgenerator]
+                csvrows = list(rows)
+                # rows = []
                 if rows:
                     return list(rows)
             except:
@@ -42,21 +46,27 @@ class CSVParser(object):
             if not rows:
                 try:
                     with open(datafile, 'rb') as content_file:
-                        content = content_file.read()
+                        content = content_file.readlines()
                 except:
                     self.loglist.append('Failed to open file %s' % datafile)
                 if content:
-                    content = str(content)
-                    for ending in ('\r\n', '\\r', '\n'):
+                    content = str(content[0])
+                    for ending in ('\r\n', '\r', '\\r', '\n'):
                         if content.find(ending) > -1:
                             rows = content.split(ending)
+                            break
                     # Python 3 handling
-                    if rows[0].startswith("b'"):
+                    if rows and rows[0].startswith("b'"):
                         rows[0] = rows[0][2:]
             if rows:
                 for row in rows:
                     if type(row) == type(''):
-                        row = row.split(',')
+                        row = csvsplit.split(row)
+                        row = [item for item in row if item and item not in (',', '"')]
+                        try:
+                            row = [unicode(item) for item in row]
+                        except:
+                            pass
                     if row:
                         count += 1
                         try:
@@ -64,7 +74,6 @@ class CSVParser(object):
                         except:
                             self.loglist.append('Failed to parse row %s' % count)
             return output
-                
 
     def charset_csv_reader(self, csv_data, dialect=csv.excel,
                            charset='utf-8', **kwargs):
