@@ -115,7 +115,7 @@ class MakeModel(object):
                 extra_params['blank'] = True
                 if not field_type in ('TextField(', 'CharField('):
                     extra_params['null'] = True
-            if extra_params.has_key('primary_key') or extra_params.has_key('unique'):
+            if 'primary_key' in extra_params or 'unique' in extra_params:
                 for key in ('null','blank'):
                     extra_params[key] = False
             if row[7]:

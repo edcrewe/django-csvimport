@@ -14,7 +14,7 @@ class CSVParser(object):
 
     def open_csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
-        self.filehandle = open(datafile)
+        self.filehandle = open(datafile, 'rb')
         if not self.charset:
             import chardet
             diagnose = chardet.detect(self.filehandle.read())

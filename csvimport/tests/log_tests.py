@@ -14,9 +14,9 @@ class LogTest(CommandTestCase):
     def get_log_path(self):
         """ Get the log file that should of been written by the parse tests """
         if CSVIMPORT_LOG != 'logger':
-            print '''CSVIMPORT_LOG is not set to 'logger' in settings
+            print ('''CSVIMPORT_LOG is not set to 'logger' in settings
                      - assume not using csvimport.settings
-                     - so cannot test the log'''
+                     - so cannot test the log''')
             return False
         logging = getattr(settings, 'LOGGING', '')
         if logging:
@@ -27,10 +27,10 @@ class LogTest(CommandTestCase):
                     self.logpath = logfile.get('filename', '')
         if self.logpath.endswith('.log'):
             if os.path.exists(self.logpath):
-                print 'Found csvimport_test.log'
+                print ('Found csvimport_test.log')
                 return True
-        print '''cvsimport logging is not set up for %s from
-                 csvimport.tests.settings so cannot test the log''' % self.logpath
+        print ('''cvsimport logging is not set up for %s from
+                 csvimport.tests.settings so cannot test the log''' % self.logpath)
         return False
 
     def test_log(self):
@@ -40,7 +40,7 @@ class LogTest(CommandTestCase):
             lines = csvlog.read()
             self.assertIn('Column quantity = -23, less than zero so set to 0', lines)
             os.remove(self.logpath)
-            print 'Deleted csvimport_test.log'
+            print ('Deleted csvimport_test.log')
         return
 
     def test_new_model(self, filename='test_new_model.csv'):
@@ -49,7 +49,7 @@ class LogTest(CommandTestCase):
             import messytables
             runtest = True
         except:
-            print 'Install messytables to run the inspectcsv test'
+            print ('Install messytables to run the inspectcsv test')
             runtest = False
         if runtest:
             pkey = 'wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)'        

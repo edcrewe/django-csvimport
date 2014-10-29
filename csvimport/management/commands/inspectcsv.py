@@ -53,14 +53,14 @@ class Command(LabelCommand, CSVParser):
 
         model_definition = self.create_new_model(model, app_label)
         if self.errors:
-            print self.errors
+            print (self.errors)
             return
 
         self.makemodel = '""" A django model generated with django-csvimport csvinspect\n'
         self.makemodel += '    which used OKN messytables to guess data types - may need some manual tweaks!\n"""'
         self.makemodel += '\nfrom django.db import models\n\n'
         self.makemodel += model_definition
-        print self.makemodel
+        print (self.makemodel)
         return
 
     def create_new_model(self, modelname, app_label):
@@ -73,7 +73,7 @@ class Command(LabelCommand, CSVParser):
                 nocols = True
         if nocols:
             cols = ['col_%s' % num for num in range(1, len(cols))]
-            print 'No column names for %s columns' % len(cols)
+            print ('No column names for %s columns' % len(cols))
         else:
             cols = [cleancol.sub('_', col).lower() for col in cols]
         try:

@@ -57,16 +57,16 @@ def save_csvimport(props=None, instance=None):
         return csvimp.id
     except:
         # Running as command line
-        print 'Assumed charset = %s\n' % instance.charset
-        print '###############################\n'
+        print ('Assumed charset = %s\n' % instance.charset)
+        print ('###############################\n')
         for line in instance.loglist:
             if type(line) != type(''):
                 for subline in line:
-                    print subline
-                    print
+                    print (subline)
+                    print ()
             else:
-                print line
-                print
+                print (line)
+                print ()
 
 class Command(LabelCommand, CSVParser):
     """
@@ -129,7 +129,7 @@ class Command(LabelCommand, CSVParser):
             warn = 'Sorry your model could not be found please check app_label.modelname = %s' % modelname
         if warn:
             try:
-                print warn
+                print (warn)
             except:
                 self.loglist.append(warn)
             return
@@ -206,10 +206,9 @@ class Command(LabelCommand, CSVParser):
             if not self.model:
                 loglist.append('Outputting setup message')
             else:
-                loglist.append('''No fields in the CSV file match %s.%s\n
-                                   - you must add a header field name row
-                                   to the CSV file or supply a mapping list''' %
-                                (self.model._meta.app_label, self.model.__name__))
+                warn = 'No fields in the CSV file match ' + self.model._meta.app_label + '.' + self.model.__name__
+                warn += ' - you must add a header field name row to the CSV file or supply a mapping list'
+                loglist.append(warn)
             return loglist
 
         rowcount = 0
@@ -276,7 +275,7 @@ class Command(LabelCommand, CSVParser):
                 imported_csv.send(sender=model_instance,
                                   row=dict(zip(self.csvfile[:1][0], row)))
                 rowcount += 1
-            except DatabaseError, err:
+            except DatabaseError as err:
                 try:
                     error_number, error_message = err
                 except:
@@ -379,7 +378,7 @@ class Command(LabelCommand, CSVParser):
         for i, heading in enumerate(headlist):
             for key in ((heading, heading.lower(),
                          ) if heading != heading.lower() else (heading,)):
-                if self.fieldmap.has_key(key):
+                if key in self.fieldmap:
                     field = self.fieldmap[key]
                     key = self.check_fkey(key, field)
                     mapping.append('column%s=%s' % (i+1, key))
@@ -436,9 +435,9 @@ class Command(LabelCommand, CSVParser):
 
         if type == 0:
             # There is nothing to do. We have to quit at this point
-            raise types[0][1], message
+            raise Exception(types[0][1], message)
         elif self.debug == True:
-            print "%s: %s" % (types[type][0], message)
+            print ("%s: %s" % (types[type][0], message))
 
 class FatalError(Exception):
     """

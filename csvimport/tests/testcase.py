@@ -81,7 +81,7 @@ class CommandTestCase(TestCase):
                 pass
         if errors:
             for err in errors:
-                print err
+                print (err)
         self.assertEqual(errors, [])
 
     def get_item(self, code_share='sheeting'):

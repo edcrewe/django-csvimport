@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+2.3 - Make compatible with Python 3 - 29 October 2014
+-----------------------------------------------------
+
 2.2 - Move to core appconfig usage - 28 October 2014
 ----------------------------------------------------
 
