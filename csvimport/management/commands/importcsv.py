@@ -235,12 +235,14 @@ class Command(LabelCommand, CSVParser):
                 try:    
                     row[column] = self.type_clean(field, row[column], loglist, i)
                 except:
-                    raise Exception(row, column)
+                    pass
                 try:
                     model_instance.__setattr__(field, row[column])
                 except:
                     try:
-                        value = model_instance.getattr(field).to_python(row[column])
+                        field = getattr(model_instance, field)
+                        if field:
+                            value = field.to_python(row[column])
                     except:
                         msg = 'row %s: Column %s = %s couldnt be set for row' % (i, field, row[column])
                         loglist.append(msg)

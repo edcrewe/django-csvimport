@@ -1,9 +1,10 @@
 """ Core CSV parser class that is used by the management commands """
 import os, re
-import csv
+import csv, sys
 import codecs
 import re
 csvsplit = re.compile(r"""(['"]*)(.*?)\1(,|$)""") 
+pyversion = sys.version_info[0] # python 2 or 3
 
 class CSVParser(object):
     """ Open a CSV file, check its encoding and parse it into memory 
@@ -33,9 +34,9 @@ class CSVParser(object):
                 csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset)
                 rows = [row for row in csvgenerator]
                 csvrows = list(rows)
-                #rows = []
-                if rows:
-                    return list(rows)
+                rows = []
+                #if rows:
+                #    return list(rows)
             except:
                 rows = []
             output = []
@@ -62,11 +63,12 @@ class CSVParser(object):
                 for row in rows:
                     if type(row) == type(''):
                         row = csvsplit.split(row)
-                        row = [item for item in row if item and item not in (',', '"')]
-                        try:
-                            row = [unicode(item, self.charset) for item in row]
-                        except:
-                            row = []
+                        row = [item for item in row if item and item not in (',', '"', "'")]
+                        if pyversion == 2: # Its all unicode if its 3
+                            try:
+                                row = [unicode(item, self.charset) for item in row]
+                            except:
+                                row = []
                     if row:
                         count += 1
                         try:
