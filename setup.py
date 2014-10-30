@@ -37,10 +37,8 @@ setup(name='django-csvimport',
       packages=['csvimport', ],
       include_package_data=True,
       namespace_packages=['csvimport', ],
-      package_data = {
-        # If any package contains *.csv or *.rst files, include them: 
-        '': ['*.csv', '*.rst'],
-      },
+      # this line always breaks install?
+      # package_data = {'csvimport': ['*.csv', '*.rst']},
       zip_safe=False,
       install_requires=[
           'django>=1.7',
