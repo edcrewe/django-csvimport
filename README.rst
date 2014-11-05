@@ -34,6 +34,20 @@ Version 2 - Sept 2014
 #. Management command renamed from csvimport to importcsv
 #. More features to cope with bad encoding and date types
 
+Version Compatibility
+---------------------
+
+Version 2.3 tested with Django 1.7, Python 2.7 and Python 3.4
+
+Please use version 2.1, ie. django-csvimport=2.1 for Django versions prior to 1.7
+Since django-csvimport uses the newly added AppConfig for versions > 2.1
+(NB: You could install django-appconf to django 1.6 or earlier and tweak csvimport
+to use it in csvimport.app)
+For really old Django versions < 2.4 you may have to dial back the versions until it works!
+
+Note that only versions > 2.2 are compatible with Python 3.4
+
+
 Installation instructions
 -------------------------
 
