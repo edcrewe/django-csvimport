@@ -59,14 +59,14 @@ def save_csvimport(props=None, instance=None):
         # Running as command line
         print ('Assumed charset = %s\n' % instance.charset)
         print ('###############################\n')
+        string_types = (type(u''), type(''))
         for line in instance.loglist:
-            if type(line) != type(''):
+            if type(line) not in string_types:
                 for subline in line:
                     print (subline)
-                    print ()
             else:
                 print (line)
-                print ()
+        return
 
 class Command(LabelCommand, CSVParser):
     """
