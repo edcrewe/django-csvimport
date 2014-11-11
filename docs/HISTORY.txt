@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+2.4 - Fix app config path so that management commands are found - 11 Nov 2014
+-----------------------------------------------------------------------------
+
 2.3 - Make compatible with Python 3 - 29 October 2014
 -----------------------------------------------------
 

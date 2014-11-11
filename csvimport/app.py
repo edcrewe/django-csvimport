@@ -7,4 +7,4 @@ class CSVImportConf(AppConfig):
     verbose_name = 'CSV importer'
     MODELS = []
     MEDIA_ROOT = settings.MEDIA_ROOT
-    path = os.path.abspath(__file__)
+    path = os.path.dirname(os.path.abspath(__file__))
