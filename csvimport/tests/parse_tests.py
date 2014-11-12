@@ -25,7 +25,10 @@ class CommandParseTest(CommandTestCase):
         item = self.get_item('watercan')
         self.assertEqual(item.code_org, 'CWATCONT20F')
         self.assertEqual(item.quantity, 1000)
-        # self.assertEqual(unicode(item.uom), u'pi縦e')
+        if pyversion == 2:
+            self.assertEqual(unicode(item.uom), u'pi图e')
+        else:
+            self.assertEqual(str(item.uom), u'pi图e')            
         self.assertEqual(item.organisation.name, 'AID-France')
         Item.objects.all().delete()
 
@@ -78,4 +81,23 @@ class CommandParseTest(CommandTestCase):
         # test is to ensure that 1e+28 error above is reported
         items = Item.objects.filter(code_org='RF028')
         self.assertNotEqual(items[0].quantity, 9999999999999999999999999999)
+        Item.objects.all().delete()
+
+    def test_quoted(self, filename='test_quoted.csv'):
+        """ Use custom command parse file - test always double quote except some numbers 
+            - test empty double quotes doesnt make the import skip a column """
+        errs = ['Imported 3 rows to Item']
+        self.command(filename, expected_errs=errs)
+        item = self.get_item('heater')
+        self.assertEqual(item.code_org, 'CWATCONT20F')
+        self.assertEqual(item.status, 'Goods')
+        self.assertEqual(item.quantity, 1000)
+        self.assertEqual(item.organisation.name, 'AID-France')
+        self.assertEqual(str(item.uom), 'pie')
+        self.assertEqual(item.description, '')
+        item = self.get_item('blanket')
+        self.assertEqual(item.quantity, 0) # empty double quote
+        self.assertEqual(item.status, 'Stock')
+        item = self.get_item('shed')
+        self.assertEqual(item.quantity, 180) 
         Item.objects.all().delete()

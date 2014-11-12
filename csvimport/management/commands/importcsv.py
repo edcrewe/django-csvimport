@@ -210,8 +210,8 @@ class Command(LabelCommand, CSVParser):
                 warn += ' - you must add a header field name row to the CSV file or supply a mapping list'
                 loglist.append(warn)
             return loglist
-
-        rowcount = 0
+        # count before import
+        rowcount = self.model.objects.count()
         for i, row in enumerate(self.csvfile[self.start:]):
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
@@ -277,7 +277,6 @@ class Command(LabelCommand, CSVParser):
                 model_instance.save()
                 imported_csv.send(sender=model_instance,
                                   row=dict(zip(self.csvfile[:1][0], row)))
-                rowcount += 1
             except DatabaseError as err:
                 try:
                     error_number, error_message = err
@@ -297,6 +296,8 @@ class Command(LabelCommand, CSVParser):
                     logger.info(line)
             self.loglist.extend(loglist)
             loglist = []
+        # count after import
+        rowcount = self.model.objects.count() - rowcount
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
         if CSVIMPORT_LOG == 'logger':
             logger.info(countmsg)            

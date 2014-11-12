@@ -58,7 +58,7 @@ class Item(models.Model):
     uom = models.ForeignKey(UnitOfMeasure,
                             help_text = 'Unit of Measure')
     organisation = models.ForeignKey(Organisation)
-    status = models.CharField(max_length = 10, null=True)
+    status = models.CharField(max_length=10, null=True)
     date = models.DateField(auto_now=True, null=True, validators=[])
     country = models.ForeignKey(Country, null=True)
 

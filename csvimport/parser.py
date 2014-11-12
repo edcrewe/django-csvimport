@@ -14,6 +14,27 @@ class CSVParser(object):
     csvfile = []
     charset = ''
     filehandle = None
+    check_cols = False
+    string_types = (type(u''), type(''))
+
+    def list_rows(self, rows):
+        """ CSV Reader returns an iterable, but as we possibly need to
+            perform list commands and since list is an acceptable iterable,
+            we'll just transform it.
+            Also do optional column count consistency check here 
+        """
+        if rows and self.check_cols:
+            rowlen = 0
+            for row in rows:
+                if not rowlen:
+                    rowlen = len(row)
+                else:
+                    if rowlen != len(row):
+                        self.error('''Sorry you have inconsistent numbers of cols in your CSV rows
+                                      But you have requested column count checking - so no data has been imported 
+                                   ''')
+                        return []
+        return list(rows)
 
     def open_csvfile(self, datafile):
         """ Detect file encoding and open appropriately """
@@ -27,42 +48,41 @@ class CSVParser(object):
         except IOError:
             self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
         else:
-            # CSV Reader returns an iterable, but as we possibly need to
-            # perform list commands and since list is an acceptable iterable,
-            # we'll just transform it.
             try:
                 csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset)
                 rows = [row for row in csvgenerator]
-                csvrows = list(rows)
-                rows = []
-                if rows:
-                    return list(rows)
+                return self.list_rows(rows)
             except:
                 rows = []
-            output = []
-            count = 0
             # Sometimes encoding is too mashed to be able to open the file as text with csv_reader
             # ... especially in Python 3 - its a lot stricter
             # so reopen as raw unencoded and just try and get lines out one by one
+            output = []
+            count = 0
             if not rows:
                 try:
                     with open(datafile, 'rb') as content_file:
                         content = content_file.readlines()
                 except:
                     self.loglist.append('Failed to open file %s' % datafile)
-                if content:
-                    content = content[0]
+                if content in self.string_types:
                     if pyversion == 3:
+                        content = content[0]
                         content = content.decode(self.charset)
                     for ending in ('\r\n', '\r', '\\r', '\n'):
                         if content.find(ending) > -1:
                             rows = content.split(ending)
                             break
+                else:
+                    rows = content
             if rows:
                 for row in rows:
-                    if type(row) == type(''):
+                    if type(row) in self.string_types:
                         #FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
+                        # breaks unless empty cols have a space added!
                         row = row.replace(',,', ', ,')
+                        row = row.replace('""', '" "')
+                        row = row.replace("''", "' '")
                         row = csvsplit.split(row)
                         row = [item for item in row if item and item not in (',', '"', "'")]
                         if pyversion == 2: 
@@ -76,7 +96,7 @@ class CSVParser(object):
                             output.append(row)
                         except:
                             self.loglist.append('Failed to parse row %s' % count)
-            return output
+            return self.list_rows(output)
 
     def charset_csv_reader(self, csv_data, dialect=csv.excel,
                            charset='utf-8', **kwargs):
