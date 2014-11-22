@@ -46,7 +46,7 @@ This Django 1.7 requirement is because django-csvimport uses the newly added App
 (NB: To fix this issue you could install django-appconf to django 1.6 or earlier 
 and tweak csvimport to use it in csvimport.app)
 
-For really old Django versions < 2.4 you may have to dial back the versions until it works!
+For really old Django versions < 1.4 you may have to dial back the versions until it works!
 
 Note that only versions > 2.2 are compatible with Python 3.4
 
