@@ -1,4 +1,5 @@
 import os
+import sys
 
 try:
     from setuptools import setup
@@ -11,7 +12,18 @@ with open("README.rst", "r") as fp:
     csvimport_description = fp.read() + "\n" 
 for fname in ("TODO.txt", "HISTORY.txt"):
     with open(os.path.join("docs", fname), "r") as fp:
-        csvimport_description += fp.read() + "\n" 
+        csvimport_description += fp.read() + "\n"
+
+################
+# test to see which version of chardet to install
+# chardet2 is ported and support python3.4
+###############
+if sys.version_info >= (3,4,):
+    print("Detected Python3.4 or greater will install chardet2")
+    chardet = 'chardet2'
+else:
+    print("Defaulting to chardet")
+    chardet = 'chardet' 
 
 setup(name='django-csvimport',
       version=version,
@@ -42,7 +54,7 @@ setup(name='django-csvimport',
       zip_safe=False,
       install_requires=[
           'django>=1.7',
-          'chardet',
+          chardet,
       ],
       entry_points="""
       # -*- Entry points: -*-
