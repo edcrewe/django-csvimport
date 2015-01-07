@@ -65,11 +65,15 @@ class CSVParser(object):
                         content = content_file.readlines()
                 except:
                     self.loglist.append('Failed to open file %s' % datafile)
-                if content in self.string_types:
-                    if pyversion == 3:
-                        content = content[0]
-                        content = content.decode(self.charset)
-                    for ending in ('\r\n', '\r', '\\r', '\n'):
+                if pyversion == 3:
+                    content = content[0]
+                content_type = type(content)
+                if content_type in self.string_types:
+                    endings = ('\r\n', '\r', '\\r', '\n')
+                elif content_type == type(b''): # string in python2 / bytes in python3
+                    endings = (b'\r\n', b'\r', b'\\r', b'\n')
+                if endings:
+                    for ending in endings:
                         if content.find(ending) > -1:
                             rows = content.split(ending)
                             break
@@ -77,6 +81,8 @@ class CSVParser(object):
                     rows = content
             if rows:
                 for row in rows:
+                    if pyversion == 3:
+                        row = row.decode(self.charset)
                     if type(row) in self.string_types:
                         #FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
                         # breaks unless empty cols have a space added!
