@@ -1,4 +1,4 @@
-""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham 
+""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham
     Django command to import CSV files
 """
 import os, csv, re
@@ -82,7 +82,7 @@ class Command(LabelCommand, CSVParser):
                                    (column1=field1(ForeignKey|field),column2=field2(ForeignKey|field), ...)
                                    for the import (use none for no names -> col_#)'''),
                make_option('--defaults', default='',
-                           help='''Provide comma separated defaults for the import 
+                           help='''Provide comma separated defaults for the import
                                    (field1=value,field3=value, ...)'''),
                make_option('--model', default='iisharing.Item',
                            help='Please provide the model to import to'),
@@ -181,7 +181,7 @@ class Command(LabelCommand, CSVParser):
         self.nameindexes = bool(nameindexes)
         self.file_name = csvfile
         self.deduplicate = deduplicate
-        return 
+        return
 
     def run(self, logid=0):
         """ Run the csvimport """
@@ -232,7 +232,7 @@ class Command(LabelCommand, CSVParser):
                 if self.debug:
                     loglist.append('%s.%s = "%s"' % (self.model.__name__,
                                                           field, row[column]))
-                try:    
+                try:
                     row[column] = self.type_clean(field, row[column], loglist, i)
                 except:
                     pass
@@ -300,7 +300,7 @@ class Command(LabelCommand, CSVParser):
         rowcount = self.model.objects.count() - rowcount
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
         if CSVIMPORT_LOG == 'logger':
-            logger.info(countmsg)            
+            logger.info(countmsg)
         if self.loglist:
             self.loglist.append(countmsg)
             self.props = {'file_name':self.file_name,
@@ -419,12 +419,12 @@ class Command(LabelCommand, CSVParser):
         #TODO fix to find related field name rather than assume second field
         if not key.endswith('_id'):
             if field.__class__ == models.ForeignKey:
-                if hasattr(field.related, 'parent_model'):
-                    key += '(%s|%s)' % (field.related.parent_model.__name__,
-                                        field.related.parent_model._meta.fields[1].name,)
-                else:
-                    key += '(%s|%s)' % (field.related_field.model.__name__,
-                                        field.related_field.model._meta.fields[1].name,)
+                try:
+                    parent = field.related.parent_model
+                except AttributeError:
+                    parent = field.related.model
+                key += '(%s|%s)' % (parent.__name__,
+                                    parent._meta.fields[1].name,)
 
         return key
 
