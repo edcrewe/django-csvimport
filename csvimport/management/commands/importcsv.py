@@ -30,7 +30,7 @@ SMALLINT_DBS = ['sqlite3', ]
 DATE = ['DateField', 'TimeField', 'DateTimeField']
 BOOLEAN = ['BooleanField', 'NullBooleanField']
 BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
-DATE_INPUT_FORMATS = settings.DATE_INPUT_FORMATS or ('%d/%m/%Y','%Y/%m/%d')
+DATE_INPUT_FORMATS = tuple(settings.DATE_INPUT_FORMATS) or ('%d/%m/%Y','%Y/%m/%d')
 CSV_DATE_INPUT_FORMATS = DATE_INPUT_FORMATS + ('%d-%m-%Y','%Y-%m-%d')
 cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
 
