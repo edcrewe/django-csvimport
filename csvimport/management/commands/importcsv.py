@@ -12,6 +12,11 @@ from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+try:
+    from django.db.models.loading import get_model
+except ImportError:
+    from django.apps import apps
+    get_model = apps.get_model
 
 from django.conf import settings
 from csvimport.parser import CSVParser
@@ -158,7 +163,7 @@ class Command(LabelCommand, CSVParser):
                 return failed
         self.charset = charset
         self.app_label = app_label
-        self.model = models.get_model(app_label, model)
+        self.model = get_model(app_label, model)
         if not self.model:
             return 'No model found for %s.%s' % (app_label, model)
         try:
@@ -402,7 +407,7 @@ class Command(LabelCommand, CSVParser):
                 new_app_label = ContentType.objects.get(model=fk_key).app_label
             except:
                 new_app_label = self.app_label
-            fk_model = models.get_model(new_app_label, fk_key)
+            fk_model = get_model(new_app_label, fk_key)
             matches = fk_model.objects.filter(**{fk_field+'__exact':
                                                  rowcol})
 
