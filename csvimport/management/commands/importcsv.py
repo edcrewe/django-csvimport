@@ -423,8 +423,8 @@ class Command(LabelCommand, CSVParser):
                     key += '(%s|%s)' % (field.related.parent_model.__name__,
                                         field.related.parent_model._meta.fields[1].name,)
                 else:
-                    key += '(%s|%s)' % (field.related_field.model.__name__,
-                                        field.related_field.model._meta.fields[1].name,)
+                    key += '(%s|%s)' % (field.related_model.__name__,
+                                        field.related_model._meta.fields[1].name,)
 
         return key
 
