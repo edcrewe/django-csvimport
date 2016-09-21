@@ -16,7 +16,7 @@ class Command(LabelCommand, CSVParser):
     Inspect a CSV resource to generate the code for a Django model.
     """
 
-    option_list = BaseCommand.option_list + (
+    option_list = getattr(BaseCommand, 'option_list',()) + (
                make_option('--defaults', default='',
                            help='''Provide comma separated defaults for the import 
                                    (field1=value,field3=value, ...)'''),
