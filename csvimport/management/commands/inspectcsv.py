@@ -2,6 +2,9 @@
     Django command to import CSV files
 """
 import re
+import django
+from distutils.version import StrictVersion
+
 from optparse import make_option
 from django.core.management.base import LabelCommand, BaseCommand
 
@@ -16,15 +19,22 @@ class Command(LabelCommand, CSVParser):
     Inspect a CSV resource to generate the code for a Django model.
     """
 
-    option_list = getattr(BaseCommand, 'option_list',()) + (
-               make_option('--defaults', default='',
-                           help='''Provide comma separated defaults for the import 
-                                   (field1=value,field3=value, ...)'''),
-               make_option('--model', default='',
-                           help='Please provide the model to import to'),
-               make_option('--charset', default='',
-                           help='Force the charset conversion used rather than detect it')
+    make_options = (
+                   make_option('--defaults', default='',
+                               help='''Provide comma separated defaults for the import 
+                                       (field1=value,field3=value, ...)'''),
+                   make_option('--model', default='',
+                               help='Please provide the model to import to'),
+                   make_option('--charset', default='',
+                               help='Force the charset conversion used rather than detect it')
                    )
+    
+    # Adding support for Django 1.10+
+    if StrictVersion(django.get_version()) >= StrictVersion('1.10.0'):
+        option_list = getattr(BaseCommand, 'option_list',()) + make_options
+    else:
+        option_list = BaseCommand.option_list + make_options
+
     help = "Analyses CSV file date to generate a Django model"
 
     def __init__(self):
