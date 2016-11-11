@@ -5,6 +5,8 @@ import os, csv, re
 from datetime import datetime
 import codecs
 import chardet
+import django
+from distutils.version import StrictVersion
 
 from django.db import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
@@ -30,7 +32,13 @@ SMALLINT_DBS = ['sqlite3', ]
 DATE = ['DateField', 'TimeField', 'DateTimeField']
 BOOLEAN = ['BooleanField', 'NullBooleanField']
 BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
-DATE_INPUT_FORMATS = settings.DATE_INPUT_FORMATS or ('%d/%m/%Y','%Y/%m/%d')
+
+#Adding Support for Django 1.9+
+if StrictVersion(django.get_version()) >= StrictVersion('1.9.0'):
+    DATE_INPUT_FORMATS = tuple(settings.DATE_INPUT_FORMATS) or ('%d/%m/%Y','%Y/%m/%d')
+else:
+    DATE_INPUT_FORMATS = settings.DATE_INPUT_FORMATS or ('%d/%m/%Y','%Y/%m/%d')
+
 CSV_DATE_INPUT_FORMATS = DATE_INPUT_FORMATS + ('%d-%m-%Y','%Y-%m-%d')
 cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
 
@@ -76,19 +84,26 @@ class Command(LabelCommand, CSVParser):
     as is.
     """
 
-    option_list = BaseCommand.option_list + (
-               make_option('--mappings', default='',
-                           help='''Provide comma separated column names or format like
-                                   (column1=field1(ForeignKey|field),column2=field2(ForeignKey|field), ...)
-                                   for the import (use none for no names -> col_#)'''),
-               make_option('--defaults', default='',
-                           help='''Provide comma separated defaults for the import 
-                                   (field1=value,field3=value, ...)'''),
-               make_option('--model', default='iisharing.Item',
-                           help='Please provide the model to import to'),
-               make_option('--charset', default='',
-                           help='Force the charset conversion used rather than detect it')
-                   )
+    make_options = (
+                       make_option('--mappings', default='',
+                                   help='''Provide comma separated column names or format like
+                                           (column1=field1(ForeignKey|field),column2=field2(ForeignKey|field), ...)
+                                           for the import (use none for no names -> col_#)'''),
+                       make_option('--defaults', default='',
+                                   help='''Provide comma separated defaults for the import 
+                                           (field1=value,field3=value, ...)'''),
+                       make_option('--model', default='iisharing.Item',
+                                   help='Please provide the model to import to'),
+                       make_option('--charset', default='',
+                                   help='Force the charset conversion used rather than detect it')
+                    )
+
+    # Adding support for Django 1.10+
+    if StrictVersion(django.get_version()) >= StrictVersion('1.10.0'):
+        option_list = getattr(BaseCommand, 'option_list',()) + make_options
+    else:
+        option_list = BaseCommand.option_list + make_options
+
     help = "Imports a CSV file to a model"
 
 
