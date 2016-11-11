@@ -440,9 +440,12 @@ class Command(LabelCommand, CSVParser):
         if not key.endswith('_id'):
             if field.__class__ == models.ForeignKey:
                 try:
-                    parent = field.related.parent_model
-                except AttributeError:
-                    parent = field.related.model
+                    parent = field.remote_field.model
+                except AttributeError:                    
+                    try:
+                        parent = field.related.parent_model
+                    except AttributeError:
+                        parent = field.related.model
                 key += '(%s|%s)' % (parent.__name__,
                                     parent._meta.fields[1].name,)
         return key
