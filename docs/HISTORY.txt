@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+2.5 - Merge in various pull requests and test with Django 1.7 to 1.10 - 11 Nov 2016
+-----------------------------------------------------------------------------------
+
 2.4 - Fix app config path so that management commands are found - 11 Nov 2014
 -----------------------------------------------------------------------------
 
