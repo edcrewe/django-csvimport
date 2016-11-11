@@ -8,7 +8,7 @@ import chardet
 import django
 from distutils.version import StrictVersion
 
-from django.db import DatabaseError
+from django.db import DatabaseError, transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import LabelCommand, BaseCommand
 from optparse import make_option
@@ -287,17 +287,21 @@ class Command(LabelCommand, CSVParser):
                     matchdict[field + '__exact'] = getattr(model_instance,
                                                            field, None)
                 try:
-                    self.model.objects.get(**matchdict)
+                    with transaction.atomic():
+                        self.model.objects.get(**matchdict)
                     continue
-                except:
+                except (ObjectDoesNotExist, OverflowError):
                     pass
+
             try:
-                importing_csv.send(sender=model_instance,
-                                   row=dict(zip(self.csvfile[:1][0], row)))
-                model_instance.save()
-                imported_csv.send(sender=model_instance,
-                                  row=dict(zip(self.csvfile[:1][0], row)))
-            except DatabaseError as err:
+                with transaction.atomic():
+                    importing_csv.send(sender=model_instance,
+                                        row=dict(zip(self.csvfile[:1][0], row)))
+                    model_instance.save()
+                    imported_csv.send(sender=model_instance,
+                                      row=dict(zip(self.csvfile[:1][0], row)))
+
+            except DatabaseError, err:
                 try:
                     error_number, error_message = err
                 except:
@@ -467,6 +471,87 @@ class Command(LabelCommand, CSVParser):
         elif self.debug == True:
             print ("%s: %s" % (types[type][0], message))
 
+    def __csvfile(self, datafile):
+        """ Detect file encoding and open appropriately """
+        filehandle = open(datafile)
+        if not self.charset:
+            diagnose = chardet.detect(filehandle.read())
+            self.charset = diagnose['encoding']
+        try:
+            csvfile = codecs.open(datafile, 'r', self.charset)
+        except IOError:
+            self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
+        else:
+            # CSV Reader returns an iterable, but as we possibly need to
+            # perform list commands and since list is an acceptable iterable,
+            # we'll just transform it.
+            return list(self.charset_csv_reader(csv_data=csvfile,
+                                                charset=self.charset))
+
+    def charset_csv_reader(self, csv_data, dialect=csv.excel,
+                           charset='utf-8', **kwargs):
+        csv_reader = csv.reader(self.charset_encoder(csv_data, charset),
+                                dialect=dialect, **kwargs)
+        for row in csv_reader:
+            # decode charset back to Unicode, cell by cell:
+            yield [unicode(cell, charset) for cell in row]
+
+    def charset_encoder(self, csv_data, charset='utf-8'):
+        for line in csv_data:
+            yield line.encode(charset)
+
+    def __mappings(self, mappings):
+        """
+        Parse the mappings, and return a list of them.
+        """
+        if not mappings:
+            return []
+
+        def parse_mapping(args):
+            """
+            Parse the custom mapping syntax (column1=field1(ForeignKey|field),
+            etc.)
+
+            >>> parse_mapping('a=b(c|d)')
+            [('a', 'b', '(c|d)')]
+            """
+
+            pattern = re.compile(r'(\w+)=(\w+)(\(\w+\|\w+\))?')
+            mappings = pattern.findall(args)
+
+            mappings = list(mappings)
+            for mapping in mappings:
+                mapp = mappings.index(mapping)
+                mappings[mapp] = list(mappings[mapp])
+                mappings[mapp][2] = parse_foreignkey(mapping[2])
+                mappings[mapp] = tuple(mappings[mapp])
+            mappings = list(mappings)
+
+            return mappings
+
+        def parse_foreignkey(key):
+            """
+            Parse the foreignkey syntax (Key|field)
+
+            >>> parse_foreignkey('(a|b)')
+            ('a', 'b')
+            """
+
+            pattern = re.compile(r'(\w+)\|(\w+)', re.U)
+            if key.startswith('(') and key.endswith(')'):
+                key = key[1:-1]
+
+            found = pattern.search(key)
+
+            if found != None:
+                return (found.group(1), found.group(2))
+            else:
+                return None
+
+        mappings = mappings.replace(',', ' ')
+        mappings = mappings.replace('column', '')
+        return parse_mapping(mappings)
+
 class FatalError(Exception):
     """
     Something really bad happened.
@@ -476,4 +561,3 @@ class FatalError(Exception):
 
     def __str__(self):
         return repr(self.value)
-
