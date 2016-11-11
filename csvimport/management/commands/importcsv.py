@@ -1,4 +1,4 @@
-""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham 
+""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham
     Django command to import CSV files
 """
 import os, csv, re
@@ -201,7 +201,7 @@ class Command(LabelCommand, CSVParser):
         self.nameindexes = bool(nameindexes)
         self.file_name = csvfile
         self.deduplicate = deduplicate
-        return 
+        return
 
     def run(self, logid=0):
         """ Run the csvimport """
@@ -252,7 +252,7 @@ class Command(LabelCommand, CSVParser):
                 if self.debug:
                     loglist.append('%s.%s = "%s"' % (self.model.__name__,
                                                           field, row[column]))
-                try:    
+                try:
                     row[column] = self.type_clean(field, row[column], loglist, i)
                 except:
                     pass
@@ -320,7 +320,7 @@ class Command(LabelCommand, CSVParser):
         rowcount = self.model.objects.count() - rowcount
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
         if CSVIMPORT_LOG == 'logger':
-            logger.info(countmsg)            
+            logger.info(countmsg)
         if self.loglist:
             self.loglist.append(countmsg)
             self.props = {'file_name':self.file_name,
@@ -439,13 +439,12 @@ class Command(LabelCommand, CSVParser):
         #TODO fix to find related field name rather than assume second field
         if not key.endswith('_id'):
             if field.__class__ == models.ForeignKey:
-                if hasattr(field.related, 'parent_model'):
-                    key += '(%s|%s)' % (field.related.parent_model.__name__,
-                                        field.related.parent_model._meta.fields[1].name,)
-                else:
-                    key += '(%s|%s)' % (field.related_model.__name__,
-                                        field.related_model._meta.fields[1].name,)
-
+                try:
+                    parent = field.related.parent_model
+                except AttributeError:
+                    parent = field.related.model
+                key += '(%s|%s)' % (parent.__name__,
+                                    parent._meta.fields[1].name,)
         return key
 
     def error(self, message, type=1):
