@@ -29,7 +29,7 @@ if CSVIMPORT_LOG == 'logger':
     import logging
     logger = logging.getLogger(__name__)
 
-INTEGER = ['BigIntegerField', 'IntegerField', 'AutoField',
+INTEGER = ['BigIntegerField', 'IntegerField', 'SmallIntegerField', 'AutoField',
            'PositiveIntegerField', 'PositiveSmallIntegerField']
 FLOAT = ['DecimalField', 'FloatField']
 NUMERIC = INTEGER + FLOAT
