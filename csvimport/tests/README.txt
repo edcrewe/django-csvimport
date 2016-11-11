@@ -7,14 +7,14 @@ Test files are imported via the __init__.py
 
 For one off run of tests use 
 
->>> manage.py test --settings='csvimport.tests.settings' csvimport
+>>> manage.py test --settings='csvimport.settings' csvimport.tests
 
 Or could use following import of settings for manage.py / django-admin.py ...
 
 >>> #!/bin/python
 >>> from django.core import management
 >>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'csvimport.tests.settings'
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'csvimport.settings'
 >>>
 >>>
 >>> if __name__ == "__main__":
@@ -22,4 +22,4 @@ Or could use following import of settings for manage.py / django-admin.py ...
 
 Then can run via 
 
->>> manage.py test csvimport
+>>> manage.py test csvimport.tests
