@@ -158,8 +158,7 @@ class Command(LabelCommand, CSVParser):
             save_csvimport(self.props, self)
         # can cause memoryerror if its too big
         try:
-            for error in errors:
-                self.loglist.append(errors)
+            self.loglist.extend(errors)
         except:
             pass
         return
