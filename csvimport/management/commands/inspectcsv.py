@@ -92,13 +92,15 @@ class Command(LabelCommand, CSVParser):
             self.errors.append('If you want to inspect CSV files to generate model code, you must install https://messytables.readthedocs.org')
             self.modelname = ''
             return
+
         try:
             table_set = any_tableset(self.filehandle)
             row_set = table_set.tables[0]
             types = type_guess(row_set.sample)
             types = [str(typeobj) for typeobj in types]
-        except:
-            self.errors.append('messytables could not guess your column types')
+        except Exception as err:
+            self.errors.append('messytables could not run due to error')
+            self.errors.append(str(err))
             self.modelname = ''
             return
 
