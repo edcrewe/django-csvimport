@@ -37,12 +37,12 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
-Version 2.3 tested with Django 1.7, Python 2.7 and Python 3.4
+Latest version 2.5 was tested with Django 1.7, 1.8, 1.9 and 1.10 on Python 2.7.10 and Python 3.5.2
 
 Please use version 2.1, eg. pip install django-csvimport==2.1 
 for Django versions prior to 1.7
 
-This Django 1.7 requirement is because django-csvimport uses the newly added AppConfig for versions > 2.1
+This Django >= 1.7 requirement is because django-csvimport uses the newly added AppConfig for versions > 2.1
 (NB: To fix this issue you could install django-appconf to django 1.6 or earlier 
 and tweak csvimport to use it in csvimport.app)
 
