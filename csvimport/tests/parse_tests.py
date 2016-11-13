@@ -19,6 +19,30 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.organisation.name, 'Save UK')
         Item.objects.all().delete()
 
+    def test_local_parser(self, filename='test_plain.csv'):
+        """ Use custom command to upload file and parse it into Items 
+            Use reader = False to use local parser not csv lib reader
+        """
+        self.command(filename, reader=False)
+        item = self.get_item('sheeting')
+        # Check a couple of the fields in Item
+        self.assertEqual(item.code_org, 'RF007')
+        self.assertEqual(item.description, 'Plastic sheeting, 4*60m, roll')
+        # Check related Organisation model is created
+        self.assertEqual(item.organisation.name, 'Save UK')
+        Item.objects.all().delete()
+        
+    def test_tab(self, filename='test_tab.csv'):
+        """ Use custom command to upload file and parse it into Items with different, tab, delimiter"""
+        self.command(csvfile=filename, delimiter="\t")
+        item = self.get_item('sheeting')
+        # Check a couple of the fields in Item
+        self.assertEqual(item.code_org, 'RF007')
+        self.assertEqual(item.description, 'Plastic sheeting, 4*60m, roll')
+        # Check related Organisation model is created
+        self.assertEqual(item.organisation.name, 'Save UK')
+        Item.objects.all().delete()
+
     def test_char(self, filename='test_char.csv'):
         """ Use custom command parse file - test with odd non-ascii character """
         self.command(filename)

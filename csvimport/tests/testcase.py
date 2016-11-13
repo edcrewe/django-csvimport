@@ -51,7 +51,9 @@ class CommandTestCase(TestCase):
                 defaults='country=KE(Country|code)',
                 uploaded=None,
                 nameindexes=False,
-                deduplicate=True
+                deduplicate=True,
+                delimiter=',',
+                reader=True
                 ):
         """ Run core csvimport command to parse file """
         cmd = ImportCommand()
@@ -63,7 +65,9 @@ class CommandTestCase(TestCase):
                   defaults=defaults,
                   uploaded=uploaded,
                   nameindexes=nameindexes,
-                  deduplicate=deduplicate
+                  deduplicate=deduplicate,
+                  delimiter=delimiter,
+                  reader=reader
                   )
 
         # Report back any unnexpected parse errors

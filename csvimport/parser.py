@@ -3,7 +3,6 @@ import os, re
 import csv, sys
 import codecs
 import re
-csvsplit = re.compile(r"""(['"]*)(.*?)\1(,|$)""") 
 pyversion = sys.version_info[0] # python 2 or 3
 
 class CSVParser(object):
@@ -16,7 +15,7 @@ class CSVParser(object):
     filehandle = None
     check_cols = False
     string_types = (type(u''), type(''))
-
+    
     def list_rows(self, rows):
         """ CSV Reader returns an iterable, but as we possibly need to
             perform list commands and since list is an acceptable iterable,
@@ -36,78 +35,83 @@ class CSVParser(object):
                         return []
         return list(rows)
 
-    def open_csvfile(self, datafile):
+    def open_csvfile(self, datafile, delimiter=',', reader=True):
         """ Detect file encoding and open appropriately """
         self.filehandle = open(datafile, 'rb')
         if not self.charset:
             import chardet
             diagnose = chardet.detect(self.filehandle.read())
             self.charset = diagnose['encoding']
-        try:
-            csvfile = codecs.open(datafile, 'r', self.charset)
-        except IOError:
-            self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
-        else:
+        rows = []
+        if reader:
             try:
-                csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset)
-                rows = [row for row in csvgenerator]
-                return self.list_rows(rows)
-            except:
-                rows = []
-            # Sometimes encoding is too mashed to be able to open the file as text with csv_reader
-            # ... especially in Python 3 - its a lot stricter
-            # so reopen as raw unencoded and just try and get lines out one by one
-            output = []
-            count = 0
-            if not rows:
+                csvfile = codecs.open(datafile, 'r', self.charset)
+            except IOError:
+                self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
+            else:
                 try:
-                    with open(datafile, 'rb') as content_file:
-                        content = content_file.readlines()
+                    csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset, delimiter=delimiter)
+                    rows = [row for row in csvgenerator]
+                    return self.list_rows(rows)
                 except:
-                    self.loglist.append('Failed to open file %s' % datafile)
+                    pass
+        # Sometimes encoding is too mashed to be able to open the file as text with csv_reader
+        # ... especially in Python 3 - its a lot stricter
+        # so reopen as raw unencoded and just try and get lines out one by one
+        output = []
+        count = 0
+        expression = r"""(['"]*)(.*?)\1(""" + delimiter + r"""|$)"""
+        csvsplit = re.compile(expression) 
+        if not rows:
+            try:
+                with open(datafile, 'rb') as content_file:
+                    content = content_file.readlines()
+            except:
+                self.loglist.append('Failed to open file %s' % datafile)
+            if type(content) not in self.string_types and len(content)==1:
+                content = content[0]
+            content_type = type(content)
+            if content_type in self.string_types:
+                endings = ('\r\n', '\r', '\\r', '\n')
+            elif content_type == type(b''): # string in python2 / bytes in python3
+                endings = (b'\r\n', b'\r', b'\\r', b'\n')
+            if endings:
+                for ending in endings:
+                    if content.find(ending) > -1:
+                        rows = content.split(ending)
+                        break
+            if not rows:
+                rows = content
+
+        if rows:
+            for row in rows:
                 if pyversion == 3:
-                    content = content[0]
-                content_type = type(content)
-                if content_type in self.string_types:
-                    endings = ('\r\n', '\r', '\\r', '\n')
-                elif content_type == type(b''): # string in python2 / bytes in python3
-                    endings = (b'\r\n', b'\r', b'\\r', b'\n')
-                if endings:
-                    for ending in endings:
-                        if content.find(ending) > -1:
-                            rows = content.split(ending)
-                            break
-                else:
-                    rows = content
-            if rows:
-                for row in rows:
-                    if pyversion == 3:
-                        row = row.decode(self.charset)
-                    if type(row) in self.string_types:
-                        #FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
-                        # breaks unless empty cols have a space added!
-                        row = row.replace(',,', ', ,')
-                        row = row.replace('""', '" "')
-                        row = row.replace("''", "' '")
-                        row = csvsplit.split(row)
-                        row = [item for item in row if item and item not in (',', '"', "'")]
-                        if pyversion == 2: 
-                            try:
-                                row = [unicode(item, self.charset) for item in row]
-                            except:
-                                row = []
-                    if row:
-                        count += 1
+                    row = row.decode(self.charset)
+                if type(row) in self.string_types:
+                    #FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
+                    # breaks unless empty cols have a space added!
+                    row = row.replace(',,', ', ,')
+                    row = row.replace('""', '" "')
+                    row = row.replace("''", "' '")
+                    row = csvsplit.split(row)
+                    row = [item for item in row if item and item not in (',', '"', "'")]
+                    if pyversion == 2: 
                         try:
-                            output.append(row)
+                            row = [unicode(item, self.charset) for item in row]
                         except:
-                            self.loglist.append('Failed to parse row %s' % count)
-            return self.list_rows(output)
+                            row = []
+                if row:
+                    count += 1
+                    try:
+                        output.append(row)
+                    except:
+                        self.loglist.append('Failed to parse row %s' % count)
+        return self.list_rows(output)
 
     def charset_csv_reader(self, csv_data, dialect=csv.excel,
-                           charset='utf-8', **kwargs):
+                           charset='utf-8', delimiter=',', **kwargs):
         csv_reader = csv.reader(self.charset_encoder(csv_data, charset),
-                                dialect=dialect, **kwargs)
+                                dialect=dialect, delimiter=delimiter, **kwargs)
         for row in csv_reader:
             # decode charset back to Unicode, cell by cell:
             yield [unicode(cell, charset) for cell in row]

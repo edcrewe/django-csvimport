@@ -100,7 +100,9 @@ class Command(LabelCommand, CSVParser):
                        make_option('--model', default='iisharing.Item',
                                    help='Please provide the model to import to'),
                        make_option('--charset', default='',
-                                   help='Force the charset conversion used rather than detect it')
+                                   help='Force the charset conversion used rather than detect it'),
+                       make_option('--delimiter', default=',',
+                                   help='Specify the CSV delimiter - default is comma, use \t for tab')
                     )
 
     # Adding support for Django 1.10+
@@ -143,8 +145,11 @@ class Command(LabelCommand, CSVParser):
         defaults = options.get('defaults', [])
         modelname = options.get('model', 'Item')
         charset = options.get('charset', '')
+        delimiter = options.get('delimiter', ',')
         # show_traceback = options.get('traceback', True)
-        warn = self.setup(mappings, modelname, charset, filename, defaults)
+        warn = self.setup(mappings=mappings, modelname=modelname,
+                          charset=charset, filename=filename,
+                          defaults=defaults, delimiter=delimiter)
         if not warn and not hasattr(self.model, '_meta'):
             warn = 'Sorry your model could not be found please check app_label.modelname = %s' % modelname
         if warn:
@@ -165,13 +170,13 @@ class Command(LabelCommand, CSVParser):
         return
 
     def setup(self, mappings, modelname, charset, csvfile='', defaults='',
-              uploaded=None, nameindexes=False, deduplicate=True):
+              uploaded=None, nameindexes=False, deduplicate=True, delimiter=',', reader=True):
         """ Setup up the attributes for running the import """
         self.defaults = self.set_mappings(defaults)
         if modelname.find('.') > -1:
             app_label, model = modelname.split('.')
         if uploaded:
-            self.csvfile = self.open_csvfile(uploaded.path)
+            self.csvfile = self.open_csvfile(uploaded.path, delimiter=delimiter, reader=reader)
         else:
             failed = self.check_filesystem(csvfile)
             if failed:
