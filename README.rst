@@ -89,7 +89,7 @@ IMPORTCSV
 
 (Please note this command used to be csvimport but that caused name clash issues with the module)
 
-manage.py importcsv --mappings='' --model='app_label.model_name' importfile.csv
+manage.py importcsv --mappings='' --model='app_label.model_name' --delimiter='\t' importfile.csv
 
 For mappings enter a list of fields in order only if you dont have a header row 
 with matching field names - or you want to override it, eg.
