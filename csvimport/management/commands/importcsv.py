@@ -148,7 +148,7 @@ class Command(LabelCommand, CSVParser):
         delimiter = options.get('delimiter', ',')
         # show_traceback = options.get('traceback', True)
         warn = self.setup(mappings=mappings, modelname=modelname,
-                          charset=charset, filename=filename,
+                          charset=charset, csvfile=filename,
                           defaults=defaults, delimiter=delimiter)
         if not warn and not hasattr(self.model, '_meta'):
             warn = 'Sorry your model could not be found please check app_label.modelname = %s' % modelname
