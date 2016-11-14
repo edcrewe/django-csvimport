@@ -41,7 +41,7 @@ class CSVImport(models.Model):
     """ Logging model for importing files """
     model_choice = []
     model_name = models.CharField(max_length=255, blank=False,
-                                  default='iisharing.Item',
+                                  default='csvimport.Item',
                                   help_text='Please specify the app_label.model_name',
                                   choices=get_models())
     field_list = models.TextField(blank=True,

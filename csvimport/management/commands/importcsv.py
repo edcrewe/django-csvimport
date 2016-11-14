@@ -10,7 +10,7 @@ from distutils.version import StrictVersion
 
 from django.db import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management.base import LabelCommand, BaseCommand
+from django.core.management.base import LabelCommand, BaseCommand, CommandError
 from optparse import make_option
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
@@ -97,7 +97,7 @@ class Command(LabelCommand, CSVParser):
                        make_option('--defaults', default='',
                                    help='''Provide comma separated defaults for the import 
                                            (field1=value,field3=value, ...)'''),
-                       make_option('--model', default='iisharing.Item',
+                       make_option('--model', default='csvimport.Item',
                                    help='Please provide the model to import to'),
                        make_option('--charset', default='',
                                    help='Force the charset conversion used rather than detect it'),
@@ -157,16 +157,11 @@ class Command(LabelCommand, CSVParser):
                 print (warn)
             except:
                 self.loglist.append(warn)
+                raise CommandError(warn)
             return
-        errors = self.run()
+        self.run()
         if self.props:
             save_csvimport(self.props, self)
-        # can cause memoryerror if its too big
-        try:
-            for error in errors:
-                self.loglist.append(errors)
-        except:
-            pass
         return
 
     def setup(self, mappings, modelname, charset, csvfile='', defaults='',
@@ -315,7 +310,6 @@ class Command(LabelCommand, CSVParser):
                                                             error_number))
             #except OverflowError:
             #    pass
-
             if CSVIMPORT_LOG == 'logger':
                 for line in loglist:
                     logger.info(line)

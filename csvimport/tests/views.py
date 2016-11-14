@@ -6,7 +6,7 @@ def index(request, template='README.txt', **kwargs):
                   application. Click on the <a href="/admin/">admin</a> 
                   to try it</p>
                   <p>NB: you must run<br /> 
-                     django-admin.py syncdb --settings=csvimport.tests.settings <br />
+                     django-admin.py migrate --settings=csvimport.settings <br />
                   first to create the test models. 
                   <p>Click on csvimport in the admin</p>
                   <p>Try importing data via the test csv files in
