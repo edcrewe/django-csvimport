@@ -3,11 +3,11 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
-2.5 - Merge in various pull requests and test with Django 1.7 to 1.10 - 13 Nov 2016
+2.5 - Merge in various pull requests and test with Django 1.7 to 1.10 - 15 Nov 2016
 -----------------------------------------------------------------------------------
 
 #. Fix for all recent versions of Django and Python
-#. Add in delimiter option
+#. Add in delimiter option eg. for tab separated values
 #. Add migrations
 #. Make importcsv parsing more tolerant of unparsable rows in CSV
 
