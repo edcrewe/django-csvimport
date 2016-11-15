@@ -9,7 +9,7 @@ from csvimport.management.commands.inspectcsv import Command as InspectCommand
 from csvimport.tests.models import Item
 
 DEFAULT_ERRS = ["Columns = CODE_SHARE, CODE_ORG, ORGANISATION, DESCRIPTION, UOM, QUANTITY, STATUS",
-                'Using mapping from first row of CSV file', 
+                'Using mapping from first row of CSV file',
                 'Imported 4 rows to Item',
                 'Imported 6 rows to Item',
                 'Imported 7 rows to Item',
@@ -17,6 +17,7 @@ DEFAULT_ERRS = ["Columns = CODE_SHARE, CODE_ORG, ORGANISATION, DESCRIPTION, UOM,
                 'Outputting setup message',
                 'Using manually entered (or default) mapping list'
                 ]
+
 
 class DummyFileObj():
     """ Use to replace html upload / or command arg
@@ -29,9 +30,9 @@ class DummyFileObj():
                                  'fixtures',
                                  filename)
 
+
 class CommandTestCase(TestCase):
     """ Run test of use of optional command line args - mappings, default and charset """
-
 
     def inspectcsv(self, csvfile, model='', charset='', defaults=''):
         """ Run inspectcsv command to parse file """
@@ -39,11 +40,11 @@ class CommandTestCase(TestCase):
         uploaded = DummyFileObj()
         uploaded.set_path(csvfile)
         cmd.csvfile = cmd.open_csvfile(uploaded.path)
-        cmd.handle_label(csvfile, **{'model':model, 'charset':charset, 'defaults':defaults})
+        cmd.handle_label(csvfile, **{'model': model, 'charset': charset, 'defaults': defaults})
         return cmd.makemodel
 
-    def command(self, 
-                csvfile=None, 
+    def command(self,
+                csvfile=None,
                 mappings='',
                 modelname='csvimport.Item',
                 charset='',

@@ -3,6 +3,7 @@
 """
 import time
 
+
 def _isdst(self, dt):
     """ Monkeypatch from https://code.djangoproject.com/ticket/3418
         since sqlite and other backends still have this issue in django 1.6
@@ -27,4 +28,3 @@ try:
 except:
     # Don't patch it if it isnt there to be patched!
     pass
-

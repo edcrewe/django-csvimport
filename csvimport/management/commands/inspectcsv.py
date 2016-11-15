@@ -1,4 +1,4 @@
-""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham 
+""" Developed for www.heliosfoundation.org by Ed Crewe and Tom Dunham
     Django command to import CSV files
 """
 import re
@@ -14,24 +14,25 @@ cleancol = re.compile('[^0-9a-zA-Z]+')  # cleancol.sub('_', s)
 
 from csvimport.parser import CSVParser
 
+
 class Command(LabelCommand, CSVParser):
     """
     Inspect a CSV resource to generate the code for a Django model.
     """
 
     make_options = (
-                   make_option('--defaults', default='',
-                               help='''Provide comma separated defaults for the import 
+        make_option('--defaults', default='',
+                    help='''Provide comma separated defaults for the import
                                        (field1=value,field3=value, ...)'''),
-                   make_option('--model', default='',
-                               help='Please provide the model to import to'),
-                   make_option('--charset', default='',
-                               help='Force the charset conversion used rather than detect it')
-                   )
-    
+        make_option('--model', default='',
+                    help='Please provide the model to import to'),
+        make_option('--charset', default='',
+                    help='Force the charset conversion used rather than detect it')
+    )
+
     # Adding support for Django 1.10+
     if StrictVersion(django.get_version()) >= StrictVersion('1.10.0'):
-        option_list = getattr(BaseCommand, 'option_list',()) + make_options
+        option_list = getattr(BaseCommand, 'option_list', ()) + make_options
     else:
         option_list = BaseCommand.option_list + make_options
 
@@ -89,7 +90,8 @@ class Command(LabelCommand, CSVParser):
         try:
             from messytables import any_tableset, type_guess
         except:
-            self.errors.append('If you want to inspect CSV files to generate model code, you must install https://messytables.readthedocs.org')
+            self.errors.append(
+                'If you want to inspect CSV files to generate model code, you must install https://messytables.readthedocs.org')
             self.modelname = ''
             return
 
@@ -108,10 +110,10 @@ class Command(LabelCommand, CSVParser):
         maximums = self.get_maxlengths(cols)
         for i, col in enumerate(cols):
             length = maximums[i]
-            if types[i] == 'String' and length>255:
+            if types[i] == 'String' and length > 255:
                 types[i] = 'Text'
             integer = length
-            decimal = int(length/2)
+            decimal = int(length / 2)
             if decimal > 10:
                 decimal = 10
             blank = True
@@ -124,10 +126,10 @@ class Command(LabelCommand, CSVParser):
         return maker.model_from_table('%s_%s' % (app_label, modelname), fieldset)
 
     def get_maxlengths(self, cols):
-        """ Get maximum column length values to avoid truncation 
+        """ Get maximum column length values to avoid truncation
             -- can always manually reduce size of fields after auto model creation
         """
-        maximums = [0]*len(cols)
+        maximums = [0] * len(cols)
         for line in self.csvfile[1:100]:
             for i, value in enumerate(line):
                 if value and len(value) > maximums[i]:
@@ -137,4 +139,3 @@ class Command(LabelCommand, CSVParser):
                 if not maximums[i]:
                     maximums[i] = 10
         return maximums
-

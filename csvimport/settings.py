@@ -50,8 +50,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'csvimport.app.CSVImportConf',
-   # Load up test fixtures models for manual testing
-   #  'csvimport.app.CSVImportTestConf',
+    # Load up test fixtures models for manual testing
+    #  'csvimport.app.CSVImportTestConf',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -109,11 +109,11 @@ LOGGING = {
     'handlers': {
         'logfile': {
             'class': 'logging.handlers.WatchedFileHandler',
-            'filename': os.path.join(os.path.dirname(__file__), 
-                                          'csvimport_test.log')
+            'filename': os.path.join(os.path.dirname(__file__),
+                                     'csvimport_test.log')
         },
     },
-   'loggers': {
+    'loggers': {
         'csvimport': {
             'handlers': ['logfile'],
             'level': 'DEBUG',
@@ -134,5 +134,5 @@ if CI:
     INSTALLED_APPS += ('django_jenkins',)
     PROJECT_APPS = ('csvimport.app.CSVImportTestConf',)
     JENKINS_TASKS = ('django_jenkins.tasks.run_pylint',)
-                     # ver. 0.18 needs --enable-coverage instead
-                     # 'django_jenkins.tasks.with_coverage')
+    # ver. 0.18 needs --enable-coverage instead
+    # 'django_jenkins.tasks.with_coverage')

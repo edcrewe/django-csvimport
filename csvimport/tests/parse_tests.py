@@ -3,7 +3,8 @@
 from csvimport.tests.testcase import CommandTestCase
 from csvimport.tests.models import Item
 import sys
-pyversion = sys.version_info[0] # python 2 or 3
+pyversion = sys.version_info[0]  # python 2 or 3
+
 
 class CommandParseTest(CommandTestCase):
     """ Run test of file parsing """
@@ -20,7 +21,7 @@ class CommandParseTest(CommandTestCase):
         Item.objects.all().delete()
 
     def test_local_parser(self, filename='test_plain.csv'):
-        """ Use custom command to upload file and parse it into Items 
+        """ Use custom command to upload file and parse it into Items
             Use reader = False to use local parser not csv lib reader
             Note that Python 3 csv reader is far less format tolerant so tends to use local parser
         """
@@ -32,7 +33,7 @@ class CommandParseTest(CommandTestCase):
         # Check related Organisation model is created
         self.assertEqual(item.organisation.name, 'Save UK')
         Item.objects.all().delete()
-        
+
     def test_tab(self, filename='test_tab.csv'):
         """ Use custom command to upload file and parse it into Items with different, tab, delimiter"""
         self.command(csvfile=filename, delimiter="\t")
@@ -53,7 +54,7 @@ class CommandParseTest(CommandTestCase):
         if pyversion == 2:
             self.assertEqual(unicode(item.uom), u'pi图e')
         else:
-            self.assertEqual(str(item.uom), u'pi图e')            
+            self.assertEqual(str(item.uom), u'pi图e')
         self.assertEqual(item.organisation.name, 'AID-France')
         Item.objects.all().delete()
 
@@ -74,14 +75,14 @@ class CommandParseTest(CommandTestCase):
     def test_duplicate(self, filename='test_duplicate.csv'):
         """ Use custom command to upload file and parse it into Items """
         self.deduplicate = True
-        self.command(filename, expected_errs = ['Imported 3 rows to Item'])
+        self.command(filename, expected_errs=['Imported 3 rows to Item'])
         items = Item.objects.all().order_by('code_share')
         self.assertEqual(len(items), 3)
         # Check a couple of the fields in Item
         codes = (u'bucket', u'tent', u'watercan')
         for i, item in enumerate(items):
             self.assertEqual(item.code_share, codes[i])
-        self.command(filename, expected_errs = ['Imported 6 rows to Item'], deduplicate=False)
+        self.command(filename, expected_errs=['Imported 6 rows to Item'], deduplicate=False)
         items = Item.objects.all().order_by('code_share')
         self.assertEqual(len(items), 3 + 6)
         Item.objects.all().delete()
@@ -90,11 +91,12 @@ class CommandParseTest(CommandTestCase):
         """ Use command to parse file with problem numeric fields
             Missing field value, negative, fractions and too big
         """
-        errs = [u'row 0: Column quantity = -23, less than zero so set to 0',
-                u'row 4: Column quantity = 1e+28 more than the max integer 9223372036854775807 sqlite may error with big integers so rounded down',
-                u'row 5: Column quantity = Not_a_Number is not a number so is set to 0',
-                u'row 6: Column quantity = nan is not an integer so is set to 0',
-                ]
+        errs = [
+            u'row 0: Column quantity = -23, less than zero so set to 0',
+            u'row 4: Column quantity = 1e+28 more than the max integer 9223372036854775807 sqlite may error with big integers so rounded down',
+            u'row 5: Column quantity = Not_a_Number is not a number so is set to 0',
+            u'row 6: Column quantity = nan is not an integer so is set to 0',
+        ]
         self.command(csvfile=filename, expected_errs=errs)
         # check fractional numbers into integers
         items = Item.objects.filter(code_org='WA017')
@@ -109,7 +111,7 @@ class CommandParseTest(CommandTestCase):
         Item.objects.all().delete()
 
     def test_quoted(self, filename='test_quoted.csv'):
-        """ Use custom command parse file - test always double quote except some numbers 
+        """ Use custom command parse file - test always double quote except some numbers
             - test empty double quotes doesnt make the import skip a column """
         errs = ['Imported 3 rows to Item']
         self.command(filename, expected_errs=errs)
@@ -121,10 +123,10 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(str(item.uom), 'pie')
         self.assertEqual(item.description, '')
         item = self.get_item('blanket')
-        self.assertEqual(item.quantity, 0) # empty double quote
+        self.assertEqual(item.quantity, 0)  # empty double quote
         self.assertEqual(item.status, 'Stock')
         item = self.get_item('shed')
-        self.assertEqual(item.quantity, 180) 
+        self.assertEqual(item.quantity, 180)
         Item.objects.all().delete()
 
     def test_row_increment(self, filename='test_broken_rows.csv'):

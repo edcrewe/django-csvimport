@@ -7,6 +7,7 @@ from csvimport.tests.testcase import CommandTestCase
 from django.conf import settings
 from django.test import TestCase
 
+
 class LogTest(CommandTestCase):
     """ Run test of file parsing """
     logpath = ''
@@ -52,7 +53,7 @@ class LogTest(CommandTestCase):
             print ('Install messytables to run the inspectcsv test')
             runtest = False
         if runtest:
-            pkey = 'wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)'        
+            pkey = 'wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)'
             makemodel = self.inspectcsv(csvfile=filename, model='create_new_model.shiny')
             self.assertIn('wordcol = models.CharField', makemodel)
             self.assertIn('class CreateNewModelShiny', makemodel)

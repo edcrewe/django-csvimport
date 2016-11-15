@@ -1,12 +1,15 @@
 """ Core CSV parser class that is used by the management commands """
-import os, re
-import csv, sys
+import os
+import re
+import csv
+import sys
 import codecs
 import re
-pyversion = sys.version_info[0] # python 2 or 3
+pyversion = sys.version_info[0]  # python 2 or 3
+
 
 class CSVParser(object):
-    """ Open a CSV file, check its encoding and parse it into memory 
+    """ Open a CSV file, check its encoding and parse it into memory
         and set up the map of the fields
     """
 
@@ -15,12 +18,12 @@ class CSVParser(object):
     filehandle = None
     check_cols = False
     string_types = (type(u''), type(''))
-    
+
     def list_rows(self, rows):
         """ CSV Reader returns an iterable, but as we possibly need to
             perform list commands and since list is an acceptable iterable,
             we'll just transform it.
-            Also do optional column count consistency check here 
+            Also do optional column count consistency check here
         """
         if rows and self.check_cols:
             rowlen = 0
@@ -30,7 +33,7 @@ class CSVParser(object):
                 else:
                     if rowlen != len(row):
                         self.error('''Sorry you have inconsistent numbers of cols in your CSV rows
-                                      But you have requested column count checking - so no data has been imported 
+                                      But you have requested column count checking - so no data has been imported
                                    ''')
                         return []
         return list(rows)
@@ -61,19 +64,19 @@ class CSVParser(object):
         output = []
         count = 0
         expression = r"""(['"]*)(.*?)\1(""" + delimiter + r"""|$)"""
-        csvsplit = re.compile(expression) 
+        csvsplit = re.compile(expression)
         if not rows:
             try:
                 with open(datafile, 'rb') as content_file:
                     content = content_file.readlines()
             except:
                 self.loglist.append('Failed to open file %s' % datafile)
-            if type(content) not in self.string_types and len(content)==1:
+            if type(content) not in self.string_types and len(content) == 1:
                 content = content[0]
             content_type = type(content)
             if content_type in self.string_types:
                 endings = ('\r\n', '\r', '\\r', '\n')
-            elif content_type == type(b''): # string in python2 / bytes in python3
+            elif isinstance(b'', content_type):  # string in python2 / bytes in python3
                 endings = (b'\r\n', b'\r', b'\\r', b'\n')
             if endings:
                 for ending in endings:
@@ -88,14 +91,14 @@ class CSVParser(object):
                 if pyversion == 3:
                     row = row.decode(self.charset)
                 if type(row) in self.string_types:
-                    #FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
+                    # FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
                     # breaks unless empty cols have a space added!
                     row = row.replace(',,', ', ,')
                     row = row.replace('""', '" "')
                     row = row.replace("''", "' '")
                     row = csvsplit.split(row)
                     row = [item for item in row if item and item not in (delimiter, '"', "'")]
-                    if pyversion == 2: 
+                    if pyversion == 2:
                         try:
                             row = [unicode(item, self.charset) for item in row]
                         except:
@@ -148,7 +151,7 @@ class CSVParser(object):
             mappings = list(mappings)
             for mapping in mappings:
                 mapp = mappings.index(mapping)
-                mappings[mapp] = list(mappings[mapp]) #[unicode(item) for item in list(mappings[mapp])]
+                mappings[mapp] = list(mappings[mapp])  # [unicode(item) for item in list(mappings[mapp])]
                 mappings[mapp][2] = parse_foreignkey(mapping[2])
                 mappings[mapp] = tuple(mappings[mapp])
             mappings = list(mappings)
@@ -168,7 +171,7 @@ class CSVParser(object):
 
             found = pattern.search(key)
 
-            if found != None:
+            if found is not None:
                 return (found.group(1), found.group(2))
             else:
                 return None
@@ -176,7 +179,6 @@ class CSVParser(object):
         mappings = mappings.replace(',', ' ')
         mappings = mappings.replace('column', '')
         return parse_mapping(mappings)
-
 
     def check_filesystem(self, csvfile):
         """ Check for files on the file system """

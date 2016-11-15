@@ -10,8 +10,9 @@ fs = FileSystemStorage(location=settings.MEDIA_ROOT)
 CHOICES = (('manual', 'manual'), ('cronjob', 'cronjob'))
 MODELS = []
 
+
 def get_models():
-    """ Cannot load at module level for later djangos - since its too early 
+    """ Cannot load at module level for later djangos - since its too early
     """
     global MODELS
     if MODELS:
@@ -28,8 +29,8 @@ def get_models():
                 allmodels = []
         if allmodels:
             MODELS = ['%s.%s' % (m._meta.app_label,
-                                            m.__name__) for m in allmodels
-                                 if m._meta.app_label != 'contenttypes']
+                                 m.__name__) for m in allmodels
+                      if m._meta.app_label != 'contenttypes']
     else:
         MODELS = deepcopy(settings.CSVIMPORT_MODELS)
 
@@ -45,7 +46,7 @@ class CSVImport(models.Model):
                                   help_text='Please specify the app_label.model_name',
                                   choices=get_models())
     field_list = models.TextField(blank=True,
-                        help_text='''Enter list of fields in order only if
+                                  help_text='''Enter list of fields in order only if
                                      you dont have a header row with matching field names, eg.
                                      "column1=shared_code,column2=org(Organisation|name)"''')
     upload_file = models.FileField(upload_to='csv', storage=fs)
