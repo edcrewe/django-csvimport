@@ -126,3 +126,21 @@ class CommandParseTest(CommandTestCase):
         item = self.get_item('shed')
         self.assertEqual(item.quantity, 180) 
         Item.objects.all().delete()
+
+    def test_row_increment(self, filename='test_broken_rows.csv'):
+        """ Test parsing a file with 2 rows that are mashed up
+            see if it does 5 of 7 also check pkey increment wrt.
+            https://github.com/edcrewe/django-csvimport/issues/30
+        """
+        errs = [u'row 1: FKey uom couldnt be set for row - because the row is not parsable - skipping it',
+                u'row 4: FKey organisation couldnt be set for row - because the row is not parsable - skipping it',
+                u'Imported 5 rows to Item']
+        self.command(filename, expected_errs=errs)
+        item = self.get_item('sheeting')
+        # Check a field in item
+        self.assertEqual(item.description, 'Plastic sheeting, 4*60m, roll')
+        # Check we have 5 of 7
+        self.assertEqual(Item.objects.count(), 5)
+        # Confirm that the maximum value used for PKey is not 7
+        self.assertEqual(Item.objects.latest('id').id, 5)
+        Item.objects.all().delete()

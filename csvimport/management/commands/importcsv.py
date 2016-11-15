@@ -203,6 +203,47 @@ class Command(LabelCommand, CSVParser):
         self.deduplicate = deduplicate
         return
 
+    def make_row(self, row, csvimportid, index, loglist):
+        """Create an instance of the model and populate it with the rows data"""
+        model_instance = self.model()
+        model_instance.csvimport_id = csvimportid
+
+        for (column, field, foreignkey) in self.mappings:
+            if self.nameindexes:
+                column = indexes.index(column)
+            else:
+                column = int(column)-1
+
+            if foreignkey:
+                if len(row) <= column:
+                    msg = 'row %s: FKey %s couldnt be set for row - because the row is not parsable - skipping it' % (index, field)
+                    loglist.append(msg)
+                    return None
+                else:
+                    row[column] = self.insert_fkey(foreignkey, row[column])
+
+            if self.debug:
+                loglist.append('%s.%s = "%s"' % (self.model.__name__,
+                                                      field, row[column]))
+            try:
+                row[column] = self.type_clean(field, row[column], loglist, index)
+            except:
+                pass
+            try:
+                model_instance.__setattr__(field, row[column])
+            except:
+                try:
+                    field = getattr(model_instance, field)
+                    if field:
+                        value = field.to_python(row[column])
+                except:
+                    if not msg:
+                        msg = 'row %s: Column %s = %s couldnt be set for row' % (index, field, row[column])
+                        loglist.append(msg)
+
+        return model_instance
+        
+    
     def run(self, logid=0):
         """ Run the csvimport """
         loglist = []
@@ -230,91 +271,65 @@ class Command(LabelCommand, CSVParser):
                 warn += ' - you must add a header field name row to the CSV file or supply a mapping list'
                 loglist.append(warn)
             return loglist
+
         # count before import
         rowcount = self.model.objects.count()
         for i, row in enumerate(self.csvfile[self.start:]):
+            msg = ''
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
 
-            model_instance = self.model()
-            model_instance.csvimport_id = csvimportid
+            model_instance = self.make_row(row, csvimportid, i, loglist)
 
-            for (column, field, foreignkey) in self.mappings:
-                if self.nameindexes:
-                    column = indexes.index(column)
-                else:
-                    column = int(column)-1
+            if model_instance:
+                if self.defaults:
+                    for (field, value, foreignkey) in self.defaults:
+                        value = self.type_clean(field, value, loglist)
+                        try:
+                            done = model_instance.getattr(field)
+                        except:
+                            done = False
+                        if not done:
+                            if foreignkey:
+                                value = self.insert_fkey(foreignkey, value)
+                        if value:
+                            model_instance.__setattr__(field, value)
 
-                if foreignkey:
-                    row[column] = self.insert_fkey(foreignkey, row[column])
-
-                if self.debug:
-                    loglist.append('%s.%s = "%s"' % (self.model.__name__,
-                                                          field, row[column]))
-                try:
-                    row[column] = self.type_clean(field, row[column], loglist, i)
-                except:
-                    pass
-                try:
-                    model_instance.__setattr__(field, row[column])
-                except:
+                if self.deduplicate:
+                    matchdict = {}
+                    for (column, field, foreignkey) in self.mappings:
+                        matchdict[field + '__exact'] = getattr(model_instance,
+                                                               field, None)
                     try:
-                        field = getattr(model_instance, field)
-                        if field:
-                            value = field.to_python(row[column])
+                        self.model.objects.get(**matchdict)
+                        continue
                     except:
-                        msg = 'row %s: Column %s = %s couldnt be set for row' % (i, field, row[column])
-                        loglist.append(msg)
-
-
-            if self.defaults:
-                for (field, value, foreignkey) in self.defaults:
-                    value = self.type_clean(field, value, loglist)
+                        pass
+                try:
+                    importing_csv.send(sender=model_instance,
+                                       row=dict(zip(self.csvfile[:1][0], row)))
+                    model_instance.save()
+                    imported_csv.send(sender=model_instance,
+                                      row=dict(zip(self.csvfile[:1][0], row)))
+                except DatabaseError as err:
                     try:
-                        done = model_instance.getattr(field)
+                        error_number, error_message = err
                     except:
-                        done = False
-                    if not done:
-                        if foreignkey:
-                            value = self.insert_fkey(foreignkey, value)
-                    if value:
-                        model_instance.__setattr__(field, value)
-
-            if self.deduplicate:
-                matchdict = {}
-                for (column, field, foreignkey) in self.mappings:
-                    matchdict[field + '__exact'] = getattr(model_instance,
-                                                           field, None)
-                try:
-                    self.model.objects.get(**matchdict)
-                    continue
-                except:
-                    pass
-            try:
-                importing_csv.send(sender=model_instance,
-                                   row=dict(zip(self.csvfile[:1][0], row)))
-                model_instance.save()
-                imported_csv.send(sender=model_instance,
-                                  row=dict(zip(self.csvfile[:1][0], row)))
-            except DatabaseError as err:
-                try:
-                    error_number, error_message = err
-                except:
-                    error_message = err
-                    error_number = 0
-                # Catch duplicate key error.
-                if error_number != 1062:
-                    loglist.append(
-                        'Database Error: %s, Number: %d' % (error_message,
-                                                            error_number))
-            #except OverflowError:
-            #    pass
-            if CSVIMPORT_LOG == 'logger':
-                for line in loglist:
-                    logger.info(line)
-            self.loglist.extend(loglist)
-            loglist = []
+                        error_message = err
+                        error_number = 0
+                    # Catch duplicate key error.
+                    if error_number != 1062:
+                        loglist.append(
+                            'Database Error: %s, Number: %d' % (error_message,
+                                                                error_number))
+                #except OverflowError:
+                #    pass
+                if CSVIMPORT_LOG == 'logger':
+                    for line in loglist:
+                        logger.info(line)
+                self.loglist.extend(loglist)
+                loglist = []
         # count after import
         rowcount = self.model.objects.count() - rowcount
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
