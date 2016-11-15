@@ -94,7 +94,7 @@ class CSVParser(object):
                     row = row.replace('""', '" "')
                     row = row.replace("''", "' '")
                     row = csvsplit.split(row)
-                    row = [item for item in row if item and item not in (',', '"', "'")]
+                    row = [item for item in row if item and item not in (delimiter, '"', "'")]
                     if pyversion == 2: 
                         try:
                             row = [unicode(item, self.charset) for item in row]

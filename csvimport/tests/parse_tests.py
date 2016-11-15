@@ -22,6 +22,7 @@ class CommandParseTest(CommandTestCase):
     def test_local_parser(self, filename='test_plain.csv'):
         """ Use custom command to upload file and parse it into Items 
             Use reader = False to use local parser not csv lib reader
+            Note that Python 3 csv reader is far less format tolerant so tends to use local parser
         """
         self.command(filename, reader=False)
         item = self.get_item('sheeting')
