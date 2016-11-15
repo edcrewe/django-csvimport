@@ -8,6 +8,8 @@ Contributors listed as [github.com username] where they are on github
 
 #. Fix for all recent versions of Django and Python
 #. Add in delimiter option
+#. Add migrations
+#. Make importcsv parsing more tolerant of unparsable rows in CSV
 
 2.4 - Fix app config path so that management commands are found - 11 Nov 2014
 -----------------------------------------------------------------------------
