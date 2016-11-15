@@ -63,8 +63,10 @@ Add the following to the INSTALLED_APPS in the settings.py of your project:
 ...  'csvimport.app.CSVImportConf',  # use AppConfig for django >=1.7 csvimport >=2.2
 ...  )
 ...
-...  python manage.py syncdb
+...  python manage.py migrate  (or syncdb if django < 1.9)
 
+Note that migrate has the core tables in 0001_initial migration and test tables in 0002 so
+rm migrations/0002_test_models.py if you do not want these cluttering your database
 
 Custom commands
 ---------------
@@ -76,7 +78,10 @@ INSPECTCSV
 manage.py inspectcsv importfile.csv > models.py
 
 This returns the code for a new models file with a guesstimated model for the CSV file.
-Add it to your project then run syncdb.
+Add it to your app then run
+
+>>> makemigrations your_app
+>>> migrate
 
 You can then run the import to that model for importfile.csv
 
@@ -130,7 +135,7 @@ then use the tests settings to have some sample models for importing data, and t
 ...     management.execute_from_command_line()
 ... EOF
 ...
-... django-admin.py syncdb
+... django-admin.py migrate
 ... django-admin.py runserver
 
 - Go to http://127.0.0.1:8000/admin/ in your browser - pay attention to the trailing / !
