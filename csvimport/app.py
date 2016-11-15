@@ -9,11 +9,3 @@ class CSVImportConf(AppConfig):
     MODELS = ['csvimport.models']
     MEDIA_ROOT = settings.MEDIA_ROOT
     path = os.path.dirname(os.path.abspath(__file__))
-
-
-class CSVImportTestConf(AppConfig):
-    name = 'csvimport.tests'
-    verbose_name = 'CSV importer test models'
-    MODELS = ['csvimport.tests.models']
-    MEDIA_ROOT = settings.MEDIA_ROOT
-    path = os.path.dirname(os.path.abspath(__file__))
