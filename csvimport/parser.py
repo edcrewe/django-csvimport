@@ -66,6 +66,7 @@ class CSVParser(object):
         expression = r"""(['"]*)(.*?)\1(""" + delimiter + r"""|$)"""
         csvsplit = re.compile(expression)
         if not rows:
+            content = None
             try:
                 with open(datafile, 'rb') as content_file:
                     content = content_file.readlines()
@@ -74,10 +75,14 @@ class CSVParser(object):
             if type(content) not in self.string_types and len(content) == 1:
                 content = content[0]
             content_type = type(content)
+
             if content_type in self.string_types:
                 endings = ('\r\n', '\r', '\\r', '\n')
             elif isinstance(b'', content_type):  # string in python2 / bytes in python3
                 endings = (b'\r\n', b'\r', b'\\r', b'\n')
+            else:
+                endings = None
+
             if endings:
                 for ending in endings:
                     if content.find(ending) > -1:
