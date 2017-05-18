@@ -20,13 +20,13 @@ def get_models():
     # Create your models here.
     if not getattr(settings, 'CSVIMPORT_MODELS', []):
         try:
-            allmodels = models.loading.get_models()
-        except:
             # django1.7 or later ...
             try:
                 allmodels = models.get_models()
             except:
                 allmodels = []
+        except:
+            allmodels = models.loading.get_models()
         if allmodels:
             MODELS = ['%s.%s' % (m._meta.app_label,
                                  m.__name__) for m in allmodels
