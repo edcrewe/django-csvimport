@@ -7,7 +7,7 @@ Overview
 --------
 
 django-csvimport is a generic importer tool to allow the upload of CSV files for
-populating data. The egg installs an admin cvsimport model that has a file upload field.
+populating data. The egg installs an admin csvimport model that has a file upload field.
 Add a new csvimport and upload a comma separated values file or MS Excel file.
 
 The upload triggers the import mechanism which matches the header line of the files 
