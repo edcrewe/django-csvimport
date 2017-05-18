@@ -92,27 +92,33 @@ class Command(LabelCommand, CSVParser):
     as is.
     """
 
-    make_options = (
-        make_option('--mappings', default='',
-                    help='''Provide comma separated column names or format like
+    options = { 'mappings': {'default':False,
+                             'help':'''Provide comma separated column names or format like
                                            (column1=field1(ForeignKey|field),column2=field2(ForeignKey|field), ...)
-                                           for the import (use none for no names -> col_#)'''),
-        make_option('--defaults', default='',
-                    help='''Provide comma separated defaults for the import
-                                           (field1=value,field3=value, ...)'''),
-        make_option('--model', default='csvimport.Item',
-                    help='Please provide the model to import to'),
-        make_option('--charset', default='',
-                    help='Force the charset conversion used rather than detect it'),
-        make_option('--delimiter', default=',',
-                    help='Specify the CSV delimiter - default is comma, use \t for tab')
-    )
+                                           for the import (use none for no names -> col_#)'''},
+                'defaults': {'default':False,
+                             'help':'''Provide comma separated defaults for the import
+                                           (field1=value,field3=value, ...)'''},
+                'model': {'default':'csvimport.Country',
+                           'help':'Please provide the model to import to'},
+                'charset': {'default':False,
+                             'help':'Force the charset conversion used rather than detect it'},
+                'delimiter': {'default':',',
+                              'help':'Specify the CSV delimiter - default is comma, use \t for tab'}
+    }
 
-    # Adding support for Django 1.10+
-    if StrictVersion(django.get_version()) >= StrictVersion('1.10.0'):
-        option_list = getattr(BaseCommand, 'option_list', ()) + make_options
-    else:
-        option_list = BaseCommand.option_list + make_options
+    # Use 1.10 or later arguments method
+    def add_arguments(self, parser):
+        parser.add_argument('csvfile', help='The file system path to the CSV file with the data to import')
+        for arg in self.options:
+            parser.add_argument('--%s' % arg, **self.options[arg])
+    
+    # Support for Django 1.9 or earlier
+    if StrictVersion(django.get_version()) < StrictVersion('1.10.0'):
+        make_options = []
+        for arg in options:
+            make_options.append(make_option('--%s' % arg, **options[arg]))
+        option_list = BaseCommand.option_list + tuple(make_options)
 
     help = "Imports a CSV file to a model"
 
@@ -138,6 +144,9 @@ class Command(LabelCommand, CSVParser):
         self.start = 1
         self.db_backend = ''
 
+    def handle(self, *args, **options):
+        self.handle_label(options.get('csvfile'), **options)
+        
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested
             save_csvimport function
