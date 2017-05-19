@@ -85,7 +85,10 @@ class CommandTestCase(TestCase):
                 pass
         if errors:
             for err in errors:
-                print (err)
+                if err.startswith("Matched Columns"):
+                    errors.remove(err)
+                else:
+                    print (err)
         self.assertEqual(errors, [])
 
     def get_item(self, code_share='sheeting'):

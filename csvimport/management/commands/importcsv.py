@@ -421,18 +421,29 @@ class Command(LabelCommand, CSVParser):
     def parse_header(self, headlist):
         """ Parse the list of headings and match with self.fieldmap """
         mapping = []
+        found = []
         headlist = [cleancol.sub('_', col) for col in headlist]
-        columnstr = ', '.join(headlist)
-        self.loglist.append('Columns = %s' % columnstr)
+        logstr = ""
         for i, heading in enumerate(headlist):
             for key in ((heading, heading.lower(),
                          ) if heading != heading.lower() else (heading,)):
                 if key in self.fieldmap:
+                    found.append(key.lower())
                     field = self.fieldmap[key]
                     key = self.check_fkey(key, field)
                     mapping.append('column%s=%s' % (i + 1, key))
+        for key in headlist:
+            if key.lower() not in found:
+                logstr += ', %s' % key
         if mapping:
-            return ','.join(mapping)
+            mappingstr = ','.join(mapping)
+            logmsg = 'Matched Columns = %s ' % mappingstr
+            if logstr:
+                logmsg += '(Unmatched ignored cols = %s)' % logstr[2:]
+            else:
+                logmsg += '(Matched all cols)'
+            self.loglist.append(logmsg)
+            return mappingstr
         return ''
 
     def insert_fkey(self, foreignkey, rowcol):
