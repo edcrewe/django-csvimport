@@ -9,6 +9,7 @@ Contributors listed as [github.com username] where they are on github
 #. Fix uninitiated variable bug if type not detected
 #. For multiple django version compatibility code try excepts make sure new syntax if first to avoid deprecation warnings
 #. Add test shell script to make it easy to run test suite and a command line test
+#. Report back matched and unmatched cols in CSV rather than just showing list of all of them
 
 2.5 - Merge in various pull requests and test with Django 1.7 to 1.10 - 15 Nov 2016
 -----------------------------------------------------------------------------------
