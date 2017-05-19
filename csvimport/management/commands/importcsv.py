@@ -145,7 +145,11 @@ class Command(LabelCommand, CSVParser):
         self.db_backend = ''
 
     def handle(self, *args, **options):
-        self.handle_label(options.get('csvfile'), **options)
+        if args:
+            label = args[0]
+        else:
+            label = options.get('csvfile')
+        self.handle_label(label, **options)
         
     def handle_label(self, label, **options):
         """ Handle the circular reference by passing the nested

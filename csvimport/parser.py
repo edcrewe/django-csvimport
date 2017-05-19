@@ -187,7 +187,7 @@ class CSVParser(object):
 
     def check_filesystem(self, csvfile):
         """ Check for files on the file system """
-        if os.path.exists(csvfile):
+        if csvfile and os.path.exists(csvfile):
             if os.path.isdir(csvfile):
                 self.csvfile = []
                 for afile in os.listdir(csvfile):
@@ -201,5 +201,5 @@ class CSVParser(object):
             else:
                 self.csvfile = self.open_csvfile(csvfile)
         if not getattr(self, 'csvfile', []):
-            return 'File %s not found' % csvfile
+            return 'File "%s" not found' % csvfile
         return ''
