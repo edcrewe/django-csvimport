@@ -363,6 +363,8 @@ class Command(LabelCommand, CSVParser):
 
     def type_clean(self, field, value, loglist, row=0):
         """ Data value clean up - type formatting"""
+        if not self.fieldmap.get(field):
+            raise Exception("Fieldmap is not populated for %s -\n%s" % (field, self.fieldmap))
         field_type = self.fieldmap.get(field).get_internal_type()
 
         try:
