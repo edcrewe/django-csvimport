@@ -9,8 +9,8 @@ class Country(models.Model):
     """
     code = models.CharField(max_length=4, primary_key=True)
     name = models.CharField(max_length=255)
-    latitude = models.FloatField(null=True)
-    longitude = models.FloatField(null=True)
+    latitude = models.FloatField(null=False)
+    longitude = models.FloatField(null=False)
     alias = models.CharField(max_length=255, null=True)
 
     class Meta:
