@@ -3,6 +3,8 @@
 from csvimport.tests.testcase import CommandTestCase
 from csvimport.tests.models import Country
 import sys
+from django.core.exceptions import ObjectDoesNotExist
+
 pyversion = sys.version_info[0]  # python 2 or 3
 
 
@@ -24,6 +26,6 @@ class ConstraintTest(CommandTestCase):
                      expected_errs=errs)
         #TODO - this should only have 2 rows - fix constraints to fail inserts?
         self.assertEqual(Country.objects.count(), 5)
-        country = self.get_country('MS')
+        country = self.get_country('K1')
         self.assertTrue(country.name, "Montserrat")
         Country.objects.all().delete()
