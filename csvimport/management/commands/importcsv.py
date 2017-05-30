@@ -296,65 +296,17 @@ class Command(LabelCommand, CSVParser):
         # count before import
         rowcount = self.model.objects.count()
         for i, row in enumerate(self.csvfile[self.start:]):
+            if CSVIMPORT_LOG == 'logger':
+                logger.info("Import %s %i", self.model.__name__, counter)
+            counter += 1
+            model_instance = self.make_row(row, csvimportid, i, loglist, clean)
             with transaction.atomic():
-                msg = ''
-                if CSVIMPORT_LOG == 'logger':
-                    logger.info("Import %s %i", self.model.__name__, counter)
-                counter += 1
-
-                model_instance = self.make_row(row, csvimportid, i, loglist, clean)
-
-                if model_instance:
-                    if self.defaults:
-                        for (field, value, foreignkey) in self.defaults:
-                            value = self.type_clean(field, value, loglist)
-                            try:
-                                done = model_instance.getattr(field)
-                            except:
-                                done = False
-                            if not done:
-                                if foreignkey:
-                                    value = self.insert_fkey(foreignkey, value)
-                            if value:
-                                model_instance.__setattr__(field, value)
-
-                    if self.deduplicate:
-                        matchdict = {}
-                        for (column, field, foreignkey) in self.mappings:
-                            matchdict[field + '__exact'] = getattr(model_instance,
-                                                                   field, None)
-                        try:
-                            self.model.objects.get(**matchdict)
-                            continue
-                        except:
-                            pass
-                    try:
-                        importing_csv.send(sender=model_instance,
-                                           row=dict(zip(self.csvfile[:1][0], row)))
-                        model_instance.save()
-                        imported_csv.send(sender=model_instance,
-                                          row=dict(zip(self.csvfile[:1][0], row)))
-                    except DatabaseError as err:
-                        try:
-                            error_number, error_message = err
-                        except:
-                            error_message = err
-                            error_number = 0
-                        # Catch duplicate key error.
-                        if error_number != 1062:
-                            loglist.append(
-                                'Database Error: %s, Number: %d' % (error_message,
-                                                                    error_number))
-                    except ValueError as err:
-                        # Usually only occurs if clean=False
-                        loglist.append(str(err))
-                    # except OverflowError:
-                    #    pass
-                    if CSVIMPORT_LOG == 'logger':
-                        for line in loglist:
-                            logger.info(line)
-                    self.loglist.extend(loglist)
-                    loglist = []
+                try:
+                    self.row_insert(row, model_instance, loglist)
+                except:
+                    pass
+            loglist = []
+                
         # count after import
         rowcount = self.model.objects.count() - rowcount
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
@@ -370,6 +322,61 @@ class Command(LabelCommand, CSVParser):
             return self.loglist
         else:
             return ['No logging', ]
+
+    def row_insert(self, row, model_instance, loglist):
+        """ Insert a row - separate function for transaction wrapping """
+        msg = ''
+        if model_instance:
+            if self.defaults:
+                for (field, value, foreignkey) in self.defaults:
+                    value = self.type_clean(field, value, loglist)
+                    try:
+                        done = model_instance.getattr(field)
+                    except:
+                        done = False
+                    if not done:
+                        if foreignkey:
+                            value = self.insert_fkey(foreignkey, value)
+                    if value:
+                        model_instance.__setattr__(field, value)
+
+            if self.deduplicate:
+                matchdict = {}
+                for (column, field, foreignkey) in self.mappings:
+                    matchdict[field + '__exact'] = getattr(model_instance,
+                                                           field, None)
+                try:
+                    self.model.objects.get(**matchdict)
+                    return
+                except:
+                    pass
+            try:
+                importing_csv.send(sender=model_instance,
+                                   row=dict(zip(self.csvfile[:1][0], row)))
+                model_instance.save()
+                imported_csv.send(sender=model_instance,
+                                  row=dict(zip(self.csvfile[:1][0], row)))
+            except DatabaseError as err:
+                try:
+                    error_number, error_message = err
+                except:
+                    error_message = err
+                    error_number = 0
+                # Catch duplicate key error.
+                if error_number != 1062:
+                    loglist.append(
+                        'Database Error: %s, Number: %d' % (error_message,
+                                                            error_number))
+            except ValueError as err:
+                # Usually only occurs if clean=False
+                loglist.append(str(err))
+            # except OverflowError:
+            #    pass
+            if CSVIMPORT_LOG == 'logger':
+                for line in loglist:
+                    logger.info(line)
+            self.loglist.extend(loglist)
+            loglist = []
 
     def type_clean(self, field, value, loglist, row=0):
         """ Data value clean up - type formatting"""
