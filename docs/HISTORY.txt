@@ -3,7 +3,7 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
-2.6 - Merge in pull requests for minor fixes and test with Django 1.11 - 30 May 2017
+2.7 - Merge in pull requests for minor fixes and test with Django 1.11 - 30 May 2017
 ------------------------------------------------------------------------------------
 
 #. Fix uninitiated variable bug if type not detected
