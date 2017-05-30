@@ -54,7 +54,8 @@ class CommandTestCase(TestCase):
                 nameindexes=False,
                 deduplicate=True,
                 delimiter=',',
-                reader=True
+                reader=True,
+                clean=True
                 ):
         """ Run core csvimport command to parse file """
         cmd = ImportCommand()
@@ -74,7 +75,7 @@ class CommandTestCase(TestCase):
         # Report back any unnexpected parse errors
         # and confirm those that are expected.
         # Fail test if they are not matching
-        errors = cmd.run(logid='commandtest')
+        errors = cmd.run(logid='commandtest', clean=clean)
         expected = [err for err in DEFAULT_ERRS]
         if expected_errs:
             expected.extend(expected_errs)
