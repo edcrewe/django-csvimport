@@ -50,8 +50,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'csvimport.app.CSVImportConf',
-    # For django before 1.9
-    'csvimport.tests'
+    # For django before 1.9 - breaks more recent djangos
+    # 'csvimport.tests'
 )
 
 MIDDLEWARE_CLASSES = (
