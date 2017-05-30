@@ -3,13 +3,16 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
-2.6 - Merge in pull requests for minor fixes and test with Django 1.11 - 19 May
--------------------------------------------------------------------------------
+2.6 - Merge in pull requests for minor fixes and test with Django 1.11 - 30 May 2017
+------------------------------------------------------------------------------------
 
 #. Fix uninitiated variable bug if type not detected
-#. For multiple django version compatibility code try excepts make sure new syntax if first to avoid deprecation warnings
+#. Fix command line arg usage for Django 1.10 or 1.11 and make it backwards compatible down to 1.7
+#. For multiple django version compatibility code try excepts make sure new syntax is first to avoid deprecation warnings
 #. Add test shell script to make it easy to run test suite and a command line test
 #. Report back matched and unmatched cols in CSV rather than just showing list of all of them
+#. Allow clean=false option to not fix numeric values to match allowed range
+#. Use atomic to wrap row inserts so we can still report count of inserts Ok after a transactional exception
 
 2.5 - Merge in various pull requests and test with Django 1.7 to 1.10 - 15 Nov 2016
 -----------------------------------------------------------------------------------
