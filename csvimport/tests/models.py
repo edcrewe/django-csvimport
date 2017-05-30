@@ -15,7 +15,7 @@ class Country(models.Model):
 
     class Meta:
         app_label = u'csvimport'
-        db_table = u'csvtests_country'
+        db_table = u'"csvtests_country"'
         managed = True
 
     def __str__(self):

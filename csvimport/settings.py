@@ -50,8 +50,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'csvimport.app.CSVImportConf',
-    # Load up test fixtures models for manual testing
-    #  'csvimport.app.CSVImportTestConf',
+    # For django before 1.9
+    'csvimport.tests'
 )
 
 MIDDLEWARE_CLASSES = (
