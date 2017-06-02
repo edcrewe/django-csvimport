@@ -130,7 +130,7 @@ then use the tests settings to have some sample models for importing data, and t
 ... #!/usr/bin/env python
 ... from django.core import management
 ... import os
-... os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.tests.settings"
+... os.environ["DJANGO_SETTINGS_MODULE"] = "csvimport.settings"
 ... if __name__ == "__main__":
 ...     management.execute_from_command_line()
 ... EOF
@@ -148,6 +148,34 @@ then use the tests settings to have some sample models for importing data, and t
 Alternatively you can use the command line to upload
 
 django-admin.py importcsv --model='csvimport.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings='csvimport.settings' 
+
+Foreign Keys
+------------
+
+It is not viable for csvimport to determine complex table relations.
+However if it finds something marked as an ForeignKey with a lookup field in its model mappings, then it checks if the data exists already for the related model and pulls back an id for the field or creates a new entry if possible in the fkey model and pulls back a new id.
+
+For this to be useful then you need a related table that has a unique and more meaningful field that is being used in your data than a numeric primary key.
+
+eg. for an organisation column, org, that holds the unique name of the organisation from a separate table, you can add
+
+column2=org(Organisation|name)
+
+to the mappings, so it knows that the org field relates to a separate Organisation table with a unique name field to be used for it to lookup and replace with org_id FKey
+
+More complex relations
+----------------------
+
+For any more sophisticated relations, eg. multiple keys, many to many fields etc.
+The recommended approach is to create a temporary or intermediate import table that holds the data from your CSV file
+with the lookup data in as columns, you can use
+
+inspectcsv importfile.csv > models.py
+
+to automatically generate the import model from your CSV file.
+
+Whenever you do an import to that table you would use a bulk insert database query to take the data in it and populate complex relations of the final model tables appropriately.
+If imports are happening repeatedly, eg. once a day, you retain your import CSV format table, and can add a database trigger for the table to automatically run your stored data conversion synchronisation query into the target tables.
 
 tzinfo monkeypatch
 ------------------
