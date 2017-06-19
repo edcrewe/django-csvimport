@@ -1,6 +1,6 @@
 """ Base test case for command line manage.py csvimport """
 import os
-
+import timeit
 from django.test import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -55,7 +55,8 @@ class CommandTestCase(TestCase):
                 deduplicate=True,
                 delimiter=',',
                 reader=True,
-                clean=True
+                clean=True,
+                time=False
                 ):
         """ Run core csvimport command to parse file """
         cmd = ImportCommand()
@@ -75,6 +76,8 @@ class CommandTestCase(TestCase):
         # Report back any unnexpected parse errors
         # and confirm those that are expected.
         # Fail test if they are not matching
+        if time:
+            return timeit.Timer(cmd.run).timeit(number=1)
         errors = cmd.run(logid='commandtest', clean=clean)
         expected = [err for err in DEFAULT_ERRS]
         if expected_errs:
