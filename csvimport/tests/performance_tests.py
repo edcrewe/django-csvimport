@@ -15,11 +15,18 @@ class PerformanceTest(CommandTestCase):
     def test_time_load(self, filename='countries.csv'):
         """Time the upload of a country file"""
         errs = ['Imported 246 rows to Country']
-        time = self.command(csvfile=filename, modelname='csvimport.Country', defaults='',
+        bulk_time = self.command(csvfile=filename, modelname='csvimport.Country', defaults='',
                      expected_errs=errs,
                      clean=False,
+                     bulk=True,
                      time=True)
-        self.assertTrue(time < 0.4)
-        print "Time to run coutnries import was %s" % time
+        self.assertTrue(bulk_time < 0.4)
         self.assertTrue(Country.objects.count()>240)
         Country.objects.all().delete()
+        single_time = self.command(csvfile=filename, modelname='csvimport.Country', defaults='',
+                     expected_errs=errs,
+                     clean=False,
+                     bulk=False,
+                     time=True)
+        self.assertTrue(single_time>bulk_time)
+        print "Time to run bulk countries import was %s faster than %s" % (bulk_time, single_time)

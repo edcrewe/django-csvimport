@@ -56,6 +56,7 @@ class CommandTestCase(TestCase):
                 delimiter=',',
                 reader=True,
                 clean=True,
+                bulk=False,
                 time=False
                 ):
         """ Run core csvimport command to parse file """
@@ -70,7 +71,9 @@ class CommandTestCase(TestCase):
                   nameindexes=nameindexes,
                   deduplicate=deduplicate,
                   delimiter=delimiter,
-                  reader=reader
+                  reader=reader,
+                  clean=clean,
+                  bulk=bulk
                   )
 
         # Report back any unnexpected parse errors
@@ -78,7 +81,7 @@ class CommandTestCase(TestCase):
         # Fail test if they are not matching
         if time:
             return timeit.Timer(cmd.run).timeit(number=1)
-        errors = cmd.run(logid='commandtest', clean=clean)
+        errors = cmd.run('commandtest')
         expected = [err for err in DEFAULT_ERRS]
         if expected_errs:
             expected.extend(expected_errs)

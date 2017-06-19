@@ -110,7 +110,9 @@ class Command(LabelCommand, CSVParser):
                 'delimiter': {'default':',',
                               'help':'Specify the CSV delimiter - default is comma, use \t for tab'},
                 'clean': {'default':True,
-                          'help':'If its invalid, change numeric and date data to valid min/max values'}
+                          'help':'If its invalid, change numeric and date data to valid min/max values'},
+                'bulk': {'default':False,
+                          'help':'If True, all csv rows are created at once by a bulk create, so can fail if any have data issues, but its faster'}
     }
 
     # Use 1.10 or later arguments method
@@ -167,12 +169,13 @@ class Command(LabelCommand, CSVParser):
         modelname = options.get('model', 'Item')
         charset = options.get('charset', '')
         delimiter = options.get('delimiter', ',')
-        clean = options.get('clean', True)        
+        clean = options.get('clean', True)
+        bulk = options.get('bulk', False)
         # show_traceback = options.get('traceback', True)
         warn = self.setup(mappings=mappings, modelname=modelname,
                           charset=charset, csvfile=filename,
                           defaults=defaults, delimiter=delimiter,
-                          clean=clean)
+                          clean=clean, bulk=bulk)
         if not warn and not hasattr(self.model, '_meta'):
             warn = 'Sorry your model could not be found please check app_label.modelname = %s' % modelname
         if warn:
@@ -188,8 +191,11 @@ class Command(LabelCommand, CSVParser):
         return
 
     def setup(self, mappings, modelname, charset, csvfile='', defaults='',
-              uploaded=None, nameindexes=False, deduplicate=True, delimiter=',', reader=True, clean=True):
+              uploaded=None, nameindexes=False, deduplicate=True, delimiter=',', reader=True,
+              clean=True, bulk=False):
         """ Setup up the attributes for running the import """
+        self.clean = clean
+        self.bulk = bulk
         self.defaults = self.set_mappings(defaults)
         if modelname.find('.') > -1:
             app_label, model = modelname.split('.')
@@ -268,7 +274,7 @@ class Command(LabelCommand, CSVParser):
 
         return model_instance
 
-    def run(self, logid=0, clean=True):
+    def run(self, logid=0):
         """ Run the csvimport """
         loglist = []
         if self.nameindexes:
@@ -298,18 +304,24 @@ class Command(LabelCommand, CSVParser):
 
         # count before import
         rowcount = self.model.objects.count()
+        if self.bulk:
+            models = []
         for i, row in enumerate(self.csvfile[self.start:]):
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
-            model_instance = self.make_row(row, csvimportid, i, loglist, clean)
-            with transaction.atomic():
-                try:
-                    self.row_insert(row, model_instance, loglist)
-                except:
-                    pass
+            model_instance = self.make_row(row, csvimportid, i, loglist, self.clean)
+            if self.bulk:
+                models.append(model_instance)
+            else:
+                with transaction.atomic():
+                    try:
+                        self.row_insert(row, model_instance, loglist)
+                    except:
+                        pass
             loglist = []
-                
+        if self.bulk:
+            model_instance.__class__.objects.bulk_create(models)
         # count after import
         rowcount = self.model.objects.count() - rowcount
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
