@@ -5,6 +5,7 @@ import os
 import csv
 import re
 from datetime import datetime
+
 import codecs
 import chardet
 import django
@@ -17,6 +18,8 @@ from django.core.management.base import LabelCommand, BaseCommand, CommandError
 from optparse import make_option
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.utils import timezone
+CURRENT_TIMEZONE = timezone.get_current_timezone()
 try:
     from django.db.models.loading import get_model
 except ImportError:
@@ -435,7 +438,7 @@ class Command(LabelCommand, CSVParser):
                         pass
 
             if datevalue:
-                value = datevalue
+                value = timezone.make_aware(datevalue, CURRENT_TIMEZONE)
             else:
                 # loglist.append('row %s: Column %s = %s not date format' % (i, field, value))
                 value = None

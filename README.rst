@@ -177,11 +177,17 @@ to automatically generate the import model from your CSV file.
 Whenever you do an import to that table you would use a bulk insert database query to take the data in it and populate complex relations of the final model tables appropriately.
 If imports are happening repeatedly, eg. once a day, you retain your import CSV format table, and can add a database trigger for the table to automatically run your stored data conversion synchronisation query into the target tables.
 
-tzinfo monkeypatch
-------------------
+DateTime  data
+--------------
+
+Note that the importer uses the standard date input format list in settings to try to convert any datetime types you have in your CSV file.
+So add this to your settings with a list of any formats that you want to be handled.
+
+DATE_INPUT_FORMATS = ['%Y-%m-%d %H:%M:%S']
 
 In order for dates to be imported outside of the timezone range of 1970-2037 
 for certain database backends such as sqlite there is a patch of django.utils.timezone 
+using tzinfo monkeypatch
 
 Acknowledgements
 ----------------
