@@ -3,11 +3,11 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
-2.8 - Minor fixes
------------------
+2.8 - Minor fixes - 19 June 2017
+--------------------------------
 
 #. Force datetimes to local timezone to prevent warning on insert
-#. TODO fix issue with test tables migration if not installed as src
+#. Rebuild initial migrations file
 #. Add option to do bulk create with --bulk to speed up import
 
 2.7 - Merge in pull requests for minor fixes and test with Django 1.11 - 30 May 2017
