@@ -39,7 +39,7 @@ INTEGER = ['BigIntegerField', 'IntegerField', 'SmallIntegerField', 'AutoField',
            'PositiveIntegerField', 'PositiveSmallIntegerField']
 FLOAT = ['DecimalField', 'FloatField']
 NUMERIC = INTEGER + FLOAT
-SMALLINT_DBS = ['sqlite3', ]
+SMALLINT_DBS = ['sqlite', 'sqlite3', 'sqlite4']
 DATE = ['DateField', 'TimeField', 'DateTimeField']
 BOOLEAN = ['BooleanField', 'NullBooleanField']
 BOOLEAN_TRUE = [1, '1', 'Y', 'Yes', 'yes', 'True', 'true', 'T', 't']
@@ -320,8 +320,8 @@ class Command(LabelCommand, CSVParser):
                     except:
                         pass
             loglist = []
-        if self.bulk:
-            model_instance.__class__.objects.bulk_create(models)
+        if models and self.bulk:
+            models[0].__class__.objects.bulk_create(models)
         # count after import
         rowcount = self.model.objects.count() - rowcount
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
@@ -407,6 +407,12 @@ class Command(LabelCommand, CSVParser):
         # Tidy up boolean data
         if field_type in BOOLEAN:
             value = value in BOOLEAN_TRUE
+            # sqlite fix since it just uses int under the hood
+            if self.db_backend in SMALLINT_DBS:
+                if value:
+                    value = 1
+                else:
+                    value = 0
 
         # Tidy up numeric data
         if field_type in NUMERIC:
