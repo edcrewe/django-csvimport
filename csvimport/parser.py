@@ -150,7 +150,7 @@ class CSVParser(object):
             [('a', 'b', '(c|d)')]
             """
             # value = word or date format match
-            pattern = re.compile(r'(\w+)=(\d+/\d+/\d+|\d+-\d+-\d+|\w+)(\(\w+\|\w+\))?')
+            pattern = re.compile(r'(\w.+)=(\d+/\d+/\d+|\d+-\d+-\d+|\w+)(\(\w+\|\w+\))?')
             mappings = pattern.findall(args)
 
             mappings = list(mappings)
@@ -170,7 +170,7 @@ class CSVParser(object):
             ('a', 'b')
             """
 
-            pattern = re.compile(r'(\w+)\|(\w+)', re.U)
+            pattern = re.compile(r'(\w.+)\|(\w+)', re.U)
             if key.startswith('(') and key.endswith(')'):
                 key = key[1:-1]
 

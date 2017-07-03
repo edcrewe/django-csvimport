@@ -492,10 +492,14 @@ class Command(LabelCommand, CSVParser):
         """
         fk_key, fk_field = foreignkey
         if fk_key and fk_field:
-            try:
-                new_app_label = ContentType.objects.get(model=fk_key).app_label
-            except:
-                new_app_label = self.app_label
+            # Allow users to specify app label for fk model if they want
+            if fk_key.find('.') > -1:
+                new_app_label, fk_key = fk_key.split('.')
+            else:
+                try:
+                    new_app_label = ContentType.objects.get(model=fk_key).app_label
+                except:
+                    new_app_label = self.app_label
             fk_model = get_model(new_app_label, fk_key)
             matches = fk_model.objects.filter(**{fk_field + '__exact':
                                                  rowcol})
