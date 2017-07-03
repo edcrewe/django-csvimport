@@ -7,6 +7,7 @@ Contributors listed as [github.com username] where they are on github
 ----------------
 
 #. Handle boolean types actually being ints for sqlite
+#. Allow dots in column specifiers so app labels of foreign keys can be set by the user
 
 2.8 - Minor fixes - 19 June 2017
 --------------------------------
