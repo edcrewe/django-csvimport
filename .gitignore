@@ -6,3 +6,6 @@ dist
 .project
 reports
 *-old
+MANIFEST
+csvimport/csvimport_test.log
+db.sqlite3

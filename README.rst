@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - May 2017
+Ed Crewe - July 2017
 
 Overview
 --------
@@ -99,13 +99,15 @@ manage.py importcsv --mappings='' --model='app_label.model_name' --delimiter='\t
 For mappings enter a list of fields in order only if you dont have a header row 
 with matching field names - or you want to override it, eg.
 
---mappings = 'column1=shared_code,column2=org(Organisation|name)'
+--mappings = '1=shared_code,2=org(otherapp.Organisation|name),3=date'
 
 where (model|foreign key field) is used to specify relations if again, you want to
 override what would be looked up from your models.
 
 If you have no real field names in your csv file, then you can use 
 --mappings='none' and it will assume the fields are named col_1, col_2 ... etc.
+
+Note that if you have a header row and specify mappings then it will treat the header as a data row, so delete it first.
 
 Admin interface import
 ----------------------
