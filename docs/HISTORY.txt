@@ -3,11 +3,11 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
-2.9 - More fixes - 4 July 2017
-------------------------------
+2.9 - Fix for using foreign keys from other apps - 4 July 2017
+--------------------------------------------------------------
 
 #. Handle boolean types actually being ints for sqlite
-#. Allow dots in column specifiers so app labels of foreign keys can be set by the user, since model lookup may assume wrong label.
+#. Allow dots in --mappings so app labels of foreign keys can be set by the user, since model lookup may assume wrong label.
 
 2.8 - Minor fixes - 19 June 2017
 --------------------------------
