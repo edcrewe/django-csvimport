@@ -153,7 +153,6 @@ class CSVParser(object):
             pattern = re.compile(r'(\w+)=(\d+/\d+/\d+|\d+-\d+-\d+|\w+)(\(\w+\.*\w*\|\w+\))?')
             self.loglist.append("Using column mappings: %s" % args)
             mappings = pattern.findall(args)
-            raise Exception(mappings)
             mappings = list(mappings)
             for mapping in mappings:
                 mapp = mappings.index(mapping)
