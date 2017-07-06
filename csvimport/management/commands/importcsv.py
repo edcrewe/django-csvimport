@@ -304,8 +304,7 @@ class Command(LabelCommand, CSVParser):
 
         # count before import
         rowcount = self.model.objects.count()
-        if self.bulk:
-            models = []
+        models = []
         for i, row in enumerate(self.csvfile[self.start:]):
             if CSVIMPORT_LOG == 'logger':
                 logger.info("Import %s %i", self.model.__name__, counter)
