@@ -76,8 +76,9 @@ def save_csvimport(props=None, instance=None):
         return csvimp.id
     except:
         # Running as command line
-        print ('Assumed charset = %s\n' % instance.charset)
-        print ('###############################\n')
+        if instance.charset:
+            print ('Assumed charset = %s\n' % instance.charset)
+        print ('\n############## %s  #################' % instance.model.__name__)
         string_types = (type(u''), type(''))
         for line in instance.loglist:
             if type(line) not in string_types:
@@ -185,7 +186,7 @@ class Command(LabelCommand, CSVParser):
                 self.loglist.append(warn)
                 raise CommandError(warn)
             return
-        self.run()
+        self.loglist.extend(self.run())
         if self.props:
             save_csvimport(self.props, self)
         return
@@ -318,7 +319,7 @@ class Command(LabelCommand, CSVParser):
                         self.row_insert(row, model_instance, loglist)
                     except:
                         pass
-            loglist = []
+            # loglist = []
         if models and self.bulk:
             models[0].__class__.objects.bulk_create(models)
         # count after import
@@ -326,14 +327,14 @@ class Command(LabelCommand, CSVParser):
         countmsg = 'Imported %s rows to %s' % (rowcount, self.model.__name__)
         if CSVIMPORT_LOG == 'logger':
             logger.info(countmsg)
-        if self.loglist:
-            self.loglist.append(countmsg)
+        if loglist:
+            loglist.append(countmsg)
             self.props = {'file_name': self.file_name,
                           'import_user': 'cron',
                           'upload_method': 'cronjob',
                           'error_log': '\n'.join(loglist),
                           'import_date': datetime.now()}
-            return self.loglist
+            return loglist
         else:
             return ['No logging', ]
 

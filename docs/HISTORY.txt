@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github 
 
+2.11 - Fix command line summary messages
+----------------------------------------
+
 2.10 - Bug with models var not set if not bulk import - 6 July 2017
 --------------------------------------------------------------------
 
