@@ -151,7 +151,7 @@ class CSVParser(object):
             """
             # value = word or date format match
             pattern = re.compile(r'(\w+)=(\d+/\d+/\d+|\d+-\d+-\d+|\w+)(\(\w+\.*\w*\|\w+\))?')
-            # self.loglist.append("Using column mappings: %s" % args)
+            self.loglist.append("Using column mappings: %s" % args)
             mappings = pattern.findall(args)
             mappings = list(mappings)
             for mapping in mappings:

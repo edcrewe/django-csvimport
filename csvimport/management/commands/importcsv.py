@@ -78,7 +78,7 @@ def save_csvimport(props=None, instance=None):
         # Running as command line
         if instance.charset:
             print ('Assumed charset = %s\n' % instance.charset)
-        print ('\n############## %s  #################' % instance.model.__name__)
+        print ('\n------------ %s ------------' % instance.model.__name__)
         string_types = (type(u''), type(''))
         for line in instance.loglist:
             if type(line) not in string_types:
@@ -288,11 +288,11 @@ class Command(LabelCommand, CSVParser):
 
         if self.mappings:
             self.start = 0
-            loglist.append('Using manually entered (or default) mapping list')
+            loglist.append('Manually entered mapping list')
         else:
             mappingstr = self.parse_header(self.csvfile[0])
             if mappingstr:
-                loglist.append('Using mapping from first row of CSV file')
+                loglist.append('Mapping from first, header, row of CSV file')
                 self.mappings = self.set_mappings(mappingstr)
         if not self.mappings:
             if not self.model:
@@ -481,11 +481,10 @@ class Command(LabelCommand, CSVParser):
                 logstr += ', %s' % key
         if mapping:
             mappingstr = ','.join(mapping)
-            logmsg = 'Matched Columns = %s ' % mappingstr
             if logstr:
-                logmsg += '(Unmatched ignored cols = %s)' % logstr[2:]
+                logmsg = 'CSV header unmatched ignored cols = %s' % logstr[2:]
             else:
-                logmsg += '(Matched all cols)'
+                logmsg = 'CSV header matched all cols'
             self.loglist.append(logmsg)
             return mappingstr
         return ''
