@@ -9,13 +9,13 @@ from csvimport.management.commands.inspectcsv import Command as InspectCommand
 from csvimport.tests.models import Item
 
 DEFAULT_ERRS = ["Columns = CODE_SHARE, CODE_ORG, ORGANISATION, DESCRIPTION, UOM, QUANTITY, STATUS",
-                'Using mapping from first row of CSV file',
+                'Mapping from first, header, row of CSV file',
                 'Imported 4 rows to Item',
                 'Imported 6 rows to Item',
                 'Imported 7 rows to Item',
                 'Imported 8 rows to Item',
                 'Outputting setup message',
-                'Using manually entered (or default) mapping list'
+                'Manually entered mapping list'
                 ]
 
 
