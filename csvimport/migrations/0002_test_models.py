@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'managed': True,
-                'db_table': '"csvtests_country"',
+                'db_table': 'csvtests_country',
             },
         ),
         migrations.CreateModel(
