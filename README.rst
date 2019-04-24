@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - July 2017
+Ed Crewe - April 2019
 
 Overview
 --------
@@ -10,7 +10,7 @@ django-csvimport is a generic importer tool to allow the upload of CSV files for
 populating data. The egg installs an admin csvimport model that has a file upload field.
 Add a new csvimport and upload a comma separated values file or MS Excel file.
 
-The upload triggers the import mechanism which matches the header line of the files 
+The upload triggers the import mechanism which matches the header line of the files
 field names to the fields in the selected model. Importing any rows that include all required fields.
 Optionally required fields can be specified as part of the upload.
 By default duplicate value rows are not inserted.
@@ -30,7 +30,7 @@ Version 2 - Sept 2014
 ---------------------
 
 #. New management command csvinspect to generate models from CSV files
-#. General code refactor 
+#. General code refactor
 #. Management command renamed from csvimport to importcsv
 #. More features to cope with bad encoding and date types
 
@@ -39,11 +39,11 @@ Version Compatibility
 
 Latest version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13 and Python 3.5.6
 
-Please use version 2.1, eg. pip install django-csvimport==2.1 
+Please use version 2.1, eg. pip install django-csvimport==2.1
 for Django versions prior to 1.7
 
 This Django >= 1.7 requirement is because django-csvimport uses the newly added AppConfig for versions > 2.1
-(NB: To fix this issue you could install django-appconf to django 1.6 or earlier 
+(NB: To fix this issue you could install django-appconf to django 1.6 or earlier
 and tweak csvimport to use it in csvimport.app)
 
 For really old Django versions < 1.4 you may have to dial back the versions until it works!
@@ -85,7 +85,7 @@ Add it to your app then run
 
 You can then run the import to that model for importfile.csv
 
-NB: As it says its a guesstimate, you may have to manually tweak the generated models.py to get 
+NB: As it says its a guesstimate, you may have to manually tweak the generated models.py to get
 the import to work better.
 
 If there are no headings in the CSV file, then it just uses automated ones col_1, col_2 ... etc.
@@ -96,7 +96,7 @@ IMPORTCSV
 
 manage.py importcsv --mappings='' --model='app_label.model_name' --delimiter='\t' importfile.csv
 
-For mappings enter a list of fields in order only if you dont have a header row 
+For mappings enter a list of fields in order only if you dont have a header row
 with matching field names - or you want to override it, eg.
 
 --mappings = '1=shared_code,2=org(otherapp.Organisation|name),3=date'
@@ -104,7 +104,7 @@ with matching field names - or you want to override it, eg.
 where (model|foreign key field) is used to specify relations if again, you want to
 override what would be looked up from your models.
 
-If you have no real field names in your csv file, then you can use 
+If you have no real field names in your csv file, then you can use
 --mappings='none' and it will assume the fields are named col_1, col_2 ... etc.
 
 Note that if you have a header row and specify mappings then it will treat the header as a data row, so delete it first.
@@ -112,13 +112,13 @@ Note that if you have a header row and specify mappings then it will treat the h
 Admin interface import
 ----------------------
 
-Just add a csvimport item, fill in the form and submit. 
+Just add a csvimport item, fill in the form and submit.
 Failed import rows are added to the log field.
 
 Demonstration installation instructions
 ---------------------------------------
 
-To see how it works, you can install a demo easily enough eg. via virtual environment, 
+To see how it works, you can install a demo easily enough eg. via virtual environment,
 then use the tests settings to have some sample models for importing data, and the fixtures are sample csv files.
 
 - Run the following in your shell:
@@ -149,7 +149,7 @@ then use the tests settings to have some sample models for importing data, and t
 
 Alternatively you can use the command line to upload
 
-django-admin.py importcsv --model='csvimport.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings='csvimport.settings' 
+django-admin.py importcsv --model='csvimport.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings='csvimport.settings'
 
 Foreign Keys
 ------------
@@ -187,8 +187,8 @@ So add this to your settings with a list of any formats that you want to be hand
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d %H:%M:%S']
 
-In order for dates to be imported outside of the timezone range of 1970-2037 
-for certain database backends such as sqlite there is a patch of django.utils.timezone 
+In order for dates to be imported outside of the timezone range of 1970-2037
+for certain database backends such as sqlite there is a patch of django.utils.timezone
 using tzinfo monkeypatch
 
 Acknowledgements
@@ -198,6 +198,3 @@ This egg was created as part of a django dash at the House of Omni, Bristol UK, 
 by Dan Fairs and my local django users group, #DBBUG. It was a core component for an application
 for aid agency supply chain sharing, prompted by Fraser Stephens of the HELIOS foundation
 and developed by Ed Crewe and Tom Dunham.
-
- 
-
