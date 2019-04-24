@@ -256,7 +256,7 @@ class Command(LabelCommand, CSVParser):
                 uploaded.path, delimiter=delimiter, reader=reader
             )
         else:
-            failed = self.check_filesystem(csvfile)
+            failed = self.check_filesystem(csvfile, delimiter=delimiter, reader=reader)
             if failed:
                 return failed
         self.charset = charset
