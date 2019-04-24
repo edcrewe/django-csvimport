@@ -185,7 +185,7 @@ class CSVParser(object):
         mappings = mappings.replace('column', '')
         return parse_mapping(mappings)
 
-    def check_filesystem(self, csvfile):
+    def check_filesystem(self, csvfile, delimiter=',', reader=True):
         """ Check for files on the file system """
         if csvfile and os.path.exists(csvfile):
             if os.path.isdir(csvfile):
@@ -194,12 +194,12 @@ class CSVParser(object):
                     if afile.endswith('.csv'):
                         filepath = os.path.join(csvfile, afile)
                         try:
-                            lines = self.open_csvfile(filepath)
+                            lines = self.open_csvfile(filepath, delimiter=delimiter, reader=reader)
                             self.csvfile.extend(lines)
                         except:
                             pass
             else:
-                self.csvfile = self.open_csvfile(csvfile)
+                self.csvfile = self.open_csvfile(csvfile, delimiter=delimiter, reader=reader)
         if not getattr(self, 'csvfile', []):
             return 'File "%s" not found' % csvfile
         return ''
