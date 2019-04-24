@@ -16,20 +16,27 @@ class ConstraintTest(CommandTestCase):
             country = Country.objects.get(code__exact=country_code)
         except ObjectDoesNotExist:
             country = None
-            self.assertTrue(country, 'Failed to get row from imported test csv for countries')
+            self.assertTrue(
+                country, "Failed to get row from imported test csv for countries"
+            )
         return country
 
-    def test_empty_notnull(self, filename='bad_country.csv'):
+    def test_empty_notnull(self, filename="bad_country.csv"):
         """ Use custom command to upload a country file with missing long lat data"""
-        errs = ['could not convert string to float: null',
-                'could not convert string to float: null',
-                'Imported 3 rows to Country']
+        errs = [
+            "could not convert string to float: 'null'",
+            "could not convert string to float: 'null'",
+            "Imported 3 rows to Country",
+        ]
 
-        self.command(csvfile=filename, modelname='csvimport.Country', defaults='',
-                     expected_errs=errs,
-                     clean=False)
-        #TODO - this should only have 3 rows
+        self.command(
+            csvfile=filename,
+            modelname="csvimport.Country",
+            defaults="",
+            expected_errs=errs,
+            clean=False,
+        )
         self.assertEqual(Country.objects.count(), 3)
-        country = self.get_country('K1')
+        country = self.get_country("K1")
         self.assertTrue(country.name, "Montserrat")
         Country.objects.all().delete()
