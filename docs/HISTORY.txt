@@ -1,7 +1,10 @@
 Changelog
 =========
 
-Contributors listed as [github.com username] where they are on github 
+Contributors listed as [github.com username] where they are on github
+
+2.12 - Fix for latest django required on_delete and duplicated log msgs - 24 April 2019
+---------------------------------------------------------------------------------------
 
 2.11 - Fix command line summary messages - 14 July 2017
 -------------------------------------------------------
@@ -84,7 +87,7 @@ Contributors listed as [github.com username] where they are on github
 --------------------------------------------------------
 
 #. Fixed number overflow test and tested with django 1.5.1 [edcrewe]
-#. Added signals to the app, to allow the model to custom format a row. 
+#. Added signals to the app, to allow the model to custom format a row.
 #. added appconf to allow the app to be more customizable - eg. select models for import.
 #. Removed except all and return database errors.
 
@@ -102,7 +105,7 @@ Contributors listed as [github.com username] where they are on github
 #. Log processed rows to the csvimport.management.commands.csvimport logger [smeyfroi]
 #. Fix for boolean data [smeyfroi]
 #. Add setting for using standard logging machinery for Admin UI log lines [edcrewe]
-#. Add test to check creation and content of csvimport log file [edcrewe] 
+#. Add test to check creation and content of csvimport log file [edcrewe]
 
 0.7 - Fixes and merge in changes for running up the test app - 24th Nov 2012
 ----------------------------------------------------------------------------
@@ -123,7 +126,7 @@ Contributors listed as [github.com username] where they are on github
 ------------------------------------------------------------------------
 
 #. Make sure command line usage returns errors and warnings
-#. Add the option to force --charset=utf-8 for example rather than chardet 
+#. Add the option to force --charset=utf-8 for example rather than chardet
 #. Add numeric type handling for empty fields or other issues plus tests
 
 [Tessa Alexander, edcrewe]
@@ -157,7 +160,7 @@ Contributors listed as [github.com username] where they are on github
 #. Use file upload save to trigger csvimport command
 #. Autodetect column mappings by matching model fields and CSV header text
 #. Add a deduplicate feature
-#. Start to add test suite with data / app for HELIOS cross agency supply chain 
+#. Start to add test suite with data / app for HELIOS cross agency supply chain
    data sharing http://www.helios-foundation.org/cbha-project/index_html
 
 [edcrewe]
@@ -169,7 +172,3 @@ Contributors listed as [github.com username] where they are on github
    http://djangosnippets.org/snippets/633/
 
 [Jonathan Holst]
-  
-
-
-
