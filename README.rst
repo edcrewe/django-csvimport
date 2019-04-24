@@ -37,7 +37,9 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
-Latest version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13 and Python 3.5.6
+Latest version 2.12 was tested with Django 2.2 and Python 3.7.1
+
+version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13 and Python 3.5.6
 
 Please use version 2.1, eg. pip install django-csvimport==2.1
 for Django versions prior to 1.7
@@ -194,7 +196,14 @@ using tzinfo monkeypatch
 Acknowledgements
 ----------------
 
-This egg was created as part of a django dash at the House of Omni, Bristol UK, organised
+This package was created as part of a django dash at the House of Omni, Bristol UK, organised
 by Dan Fairs and my local django users group, #DBBUG. It was a core component for an application
 for aid agency supply chain sharing, prompted by Fraser Stephens of the HELIOS foundation
 and developed by Ed Crewe and Tom Dunham.
+
+Other Django CSV importers
+--------------------------
+
+- https://github.com/uptick/django-model-import
+- https://pypi.org/project/csvImporter/
+- https://pypi.org/project/django-csv-import/
