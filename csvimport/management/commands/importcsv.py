@@ -250,7 +250,7 @@ class Command(LabelCommand, CSVParser):
         self.bulk = bulk
         self.defaults = self.set_mappings(defaults)
         if modelname.find(".") > -1:
-            app_label, model = modelname.split(".")
+            app_label, model = modelname.rsplit(".", 1)
         if uploaded:
             self.csvfile = self.open_csvfile(
                 uploaded.path, delimiter=delimiter, reader=reader
