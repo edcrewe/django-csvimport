@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
+2.13 - Fix issue with inspectcsv for different header and data line number of cols - 26th Sept 2019
+---------------------------------------------------------------------------------------------------
+
 2.12 - Fix for latest django required on_delete and duplicated log msgs - 24 April 2019
 ---------------------------------------------------------------------------------------
 
