@@ -2,6 +2,7 @@
     Django command to import CSV files
 """
 import re
+import os
 import django
 from distutils.version import StrictVersion
 
@@ -54,11 +55,15 @@ class Command(LabelCommand, CSVParser):
         csvfile = label
         defaults = options.get('defaults', [])
         model = options.get('model', '')
+        if not model:
+            model = os.path.basename(csvfile)
+            model = model.rsplit('.', 1)[0]
+            model = model.replace(' ', '_')
         charset = options.get('charset', '')
         self.defaults = self.set_mappings(defaults)
         self.check_filesystem(csvfile)
         if model.find('.') > -1:
-            app_label, model = model.split('.')
+            app_label, model = model.split('.', 1)
         else:
             app_label = 'csvimport'
 
@@ -86,6 +91,10 @@ class Command(LabelCommand, CSVParser):
             cols = ['col_%s' % num for num in range(1, len(cols))]
             print ('No column names for %s columns' % len(cols))
         else:
+            # strip quotes at ends and replace internal spaces with underscores
+            cols = [col.strip("\r") for col in cols]            
+            cols = [col.strip('\"') for col in cols]
+            cols = [col.strip("'") for col in cols]
             cols = [cleancol.sub('_', col).lower() for col in cols]
         try:
             from messytables import any_tableset, type_guess
@@ -94,12 +103,14 @@ class Command(LabelCommand, CSVParser):
                 'If you want to inspect CSV files to generate model code, you must install https://messytables.readthedocs.org')
             self.modelname = ''
             return
-
         try:
             table_set = any_tableset(self.filehandle)
             row_set = table_set.tables[0]
             types = type_guess(row_set.sample)
             types = [str(typeobj) for typeobj in types]
+            # If the header has more cols than the data has cols - ignore the end ones
+            if len(cols) > len(types):
+                cols = cols[:len(types)]
         except Exception as err:
             self.errors.append('messytables could not run due to error')
             self.errors.append(str(err))
@@ -129,11 +140,14 @@ class Command(LabelCommand, CSVParser):
         """ Get maximum column length values to avoid truncation
             -- can always manually reduce size of fields after auto model creation
         """
-        maximums = [0] * len(cols)
+        len_cols = len(cols)
+        maximums = [0] * len_cols
         for line in self.csvfile[1:100]:
-            for i, value in enumerate(line):
-                if value and len(value) > maximums[i]:
-                    maximums[i] = len(value)
+            for i in range(0, len_cols):
+                if i < len(line):
+                    value = line[i]
+                    if value and len(value) > maximums[i]:
+                        maximums[i] = len(value)
                 if maximums[i] > 10:
                     maximums[i] += 10
                 if not maximums[i]:
