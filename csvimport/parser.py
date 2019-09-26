@@ -101,6 +101,8 @@ class CSVParser(object):
                     row = row.replace(',,', ', ,')
                     row = row.replace('""', '" "')
                     row = row.replace("''", "' '")
+                    if not row:
+                        continue
                     row = csvsplit.split(row)
                     row = [item for item in row if item and item not in (delimiter, '"', "'")]
                     if pyversion == 2:
