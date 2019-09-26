@@ -37,7 +37,7 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
-Latest version 2.12 was tested with Django 2.2 and Python 3.7.1
+Latest version 2.13 was tested with Django 2.2.5 and Python 3.7.3
 
 version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13 and Python 3.5.6
 
