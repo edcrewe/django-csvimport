@@ -5,8 +5,6 @@ from csvimport.tests.models import Country
 import sys
 from django.core.exceptions import ObjectDoesNotExist
 
-pyversion = sys.version_info[0]  # python 2 or 3
-
 
 class ConstraintTest(CommandTestCase):
     """ Run test of file parsing """
@@ -24,8 +22,8 @@ class ConstraintTest(CommandTestCase):
     def test_empty_notnull(self, filename="bad_country.csv"):
         """ Use custom command to upload a country file with missing long lat data"""
         errs = [
-            "could not convert string to float: 'null'",
-            "could not convert string to float: 'null'",
+            "Field 'latitude' expected a number but got 'null'.",
+            "Field 'latitude' expected a number but got 'null'.",
             "Imported 3 rows to Country",
         ]
 
