@@ -57,7 +57,9 @@ class Item(models.Model):
     )
     description = models.TextField(null=True)
     quantity = models.PositiveIntegerField(default=1)
-    uom = models.ForeignKey(UnitOfMeasure, on_delete=models.CASCADE, help_text="Unit of Measure")
+    uom = models.ForeignKey(
+        UnitOfMeasure, on_delete=models.CASCADE, help_text="Unit of Measure"
+    )
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, null=True)
     date = models.DateField(auto_now=True, null=True, validators=[])

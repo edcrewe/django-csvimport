@@ -20,10 +20,12 @@ def _isdst(self, dt):
         return tt.tm_isdst > 0
     except OverflowError:
         pass
-    raise Exception('Cannot process dates from %s' % year)
+    raise Exception("Cannot process dates from %s" % year)
+
 
 try:
     from django.utils.timezone import ReferenceLocalTimezone
+
     ReferenceLocalTimezone._isdst = _isdst
 except:
     # Don't patch it if it isnt there to be patched!

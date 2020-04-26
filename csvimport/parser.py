@@ -5,6 +5,7 @@ import csv
 import sys
 import codecs
 import re
+
 pyversion = sys.version_info[0]  # python 2 or 3
 
 
@@ -14,10 +15,10 @@ class CSVParser(object):
     """
 
     csvfile = []
-    charset = ''
+    charset = ""
     filehandle = None
     check_cols = False
-    string_types = (type(u''), type(''))
+    string_types = (type(u""), type(""))
 
     def list_rows(self, rows):
         """ CSV Reader returns an iterable, but as we possibly need to
@@ -32,28 +33,37 @@ class CSVParser(object):
                     rowlen = len(row)
                 else:
                     if rowlen != len(row):
-                        self.error('''Sorry you have inconsistent numbers of cols in your CSV rows
+                        self.error(
+                            """Sorry you have inconsistent numbers of cols in your CSV rows
                                       But you have requested column count checking - so no data has been imported
-                                   ''')
+                                   """
+                        )
                         return []
         return list(rows)
 
-    def open_csvfile(self, datafile, delimiter=',', reader=True):
+    def open_csvfile(self, datafile, delimiter=",", reader=True):
         """ Detect file encoding and open appropriately """
-        self.filehandle = open(datafile, 'rb')
+        self.filehandle = open(datafile, "rb")
         if not self.charset:
             import chardet
+
             diagnose = chardet.detect(self.filehandle.read())
-            self.charset = diagnose['encoding']
+            self.charset = diagnose["encoding"]
         rows = []
         if reader:
             try:
-                csvfile = codecs.open(datafile, 'r', self.charset)
+                csvfile = codecs.open(datafile, "r", self.charset)
             except IOError:
-                self.error('Could not open specified csv file, %s, or it does not exist' % datafile, 0)
+                self.error(
+                    "Could not open specified csv file, %s, or it does not exist"
+                    % datafile,
+                    0,
+                )
             else:
                 try:
-                    csvgenerator = self.charset_csv_reader(csv_data=csvfile, charset=self.charset, delimiter=delimiter)
+                    csvgenerator = self.charset_csv_reader(
+                        csv_data=csvfile, charset=self.charset, delimiter=delimiter
+                    )
                     rows = [row for row in csvgenerator]
                     return self.list_rows(rows)
                 except:
@@ -68,18 +78,18 @@ class CSVParser(object):
         if not rows:
             content = None
             try:
-                with open(datafile, 'rb') as content_file:
+                with open(datafile, "rb") as content_file:
                     content = content_file.readlines()
             except:
-                self.loglist.append('Failed to open file %s' % datafile)
+                self.loglist.append("Failed to open file %s" % datafile)
             if type(content) not in self.string_types and len(content) == 1:
                 content = content[0]
             content_type = type(content)
 
             if content_type in self.string_types:
-                endings = ('\r\n', '\r', '\\r', '\n')
-            elif isinstance(b'', content_type):  # string in python2 / bytes in python3
-                endings = (b'\r\n', b'\r', b'\\r', b'\n')
+                endings = ("\r\n", "\r", "\\r", "\n")
+            elif isinstance(b"", content_type):  # string in python2 / bytes in python3
+                endings = (b"\r\n", b"\r", b"\\r", b"\n")
             else:
                 endings = None
 
@@ -98,13 +108,17 @@ class CSVParser(object):
                 if type(row) in self.string_types:
                     # FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
                     # breaks unless empty cols have a space added!
-                    row = row.replace(',,', ', ,')
+                    row = row.replace(",,", ", ,")
                     row = row.replace('""', '" "')
                     row = row.replace("''", "' '")
                     if not row:
                         continue
                     row = csvsplit.split(row)
-                    row = [item for item in row if item and item not in (delimiter, '"', "'")]
+                    row = [
+                        item
+                        for item in row
+                        if item and item not in (delimiter, '"', "'")
+                    ]
                     if pyversion == 2:
                         try:
                             row = [unicode(item, self.charset) for item in row]
@@ -115,24 +129,29 @@ class CSVParser(object):
                     try:
                         output.append(row)
                     except:
-                        self.loglist.append('Failed to parse row %s' % count)
+                        self.loglist.append("Failed to parse row %s" % count)
         return self.list_rows(output)
 
-    def charset_csv_reader(self, csv_data, dialect=csv.excel,
-                           charset='utf-8', delimiter=',', **kwargs):
-        csv_reader = csv.reader(self.charset_encoder(csv_data, charset),
-                                dialect=dialect, delimiter=delimiter, **kwargs)
+    def charset_csv_reader(
+        self, csv_data, dialect=csv.excel, charset="utf-8", delimiter=",", **kwargs
+    ):
+        csv_reader = csv.reader(
+            self.charset_encoder(csv_data, charset),
+            dialect=dialect,
+            delimiter=delimiter,
+            **kwargs
+        )
         for row in csv_reader:
             # decode charset back to Unicode, cell by cell:
             yield [unicode(cell, charset) for cell in row]
 
-    def charset_encoder(self, csv_data, charset='utf-8'):
+    def charset_encoder(self, csv_data, charset="utf-8"):
         """ Check passed a valid charset then encode """
-        test_string = 'test_real_charset'
+        test_string = "test_real_charset"
         try:
             test_string.encode(charset)
         except:
-            charset = 'utf-8'
+            charset = "utf-8"
         for line in csv_data:
             yield line.encode(charset)
 
@@ -152,13 +171,17 @@ class CSVParser(object):
             [('a', 'b', '(c|d)')]
             """
             # value = word or date format match
-            pattern = re.compile(r'(\w+)=(\d+/\d+/\d+|\d+-\d+-\d+|\w+)(\(\w+\.*\w*\|\w+\))?')
+            pattern = re.compile(
+                r"(\w+)=(\d+/\d+/\d+|\d+-\d+-\d+|\w+)(\(\w+\.*\w*\|\w+\))?"
+            )
             self.loglist.append("Using column mappings: %s" % args)
             mappings = pattern.findall(args)
             mappings = list(mappings)
             for mapping in mappings:
                 mapp = mappings.index(mapping)
-                mappings[mapp] = list(mappings[mapp])  # [unicode(item) for item in list(mappings[mapp])]
+                mappings[mapp] = list(
+                    mappings[mapp]
+                )  # [unicode(item) for item in list(mappings[mapp])]
                 mappings[mapp][2] = parse_foreignkey(mapping[2])
                 mappings[mapp] = tuple(mappings[mapp])
             mappings = list(mappings)
@@ -172,8 +195,8 @@ class CSVParser(object):
             ('a', 'b')
             """
 
-            pattern = re.compile(r'(\w.+)\|(\w+)', re.U)
-            if key.startswith('(') and key.endswith(')'):
+            pattern = re.compile(r"(\w.+)\|(\w+)", re.U)
+            if key.startswith("(") and key.endswith(")"):
                 key = key[1:-1]
 
             found = pattern.search(key)
@@ -183,25 +206,29 @@ class CSVParser(object):
             else:
                 return None
 
-        mappings = mappings.replace(',', ' ')
-        mappings = mappings.replace('column', '')
+        mappings = mappings.replace(",", " ")
+        mappings = mappings.replace("column", "")
         return parse_mapping(mappings)
 
-    def check_filesystem(self, csvfile, delimiter=',', reader=True):
+    def check_filesystem(self, csvfile, delimiter=",", reader=True):
         """ Check for files on the file system """
         if csvfile and os.path.exists(csvfile):
             if os.path.isdir(csvfile):
                 self.csvfile = []
                 for afile in os.listdir(csvfile):
-                    if afile.endswith('.csv'):
+                    if afile.endswith(".csv"):
                         filepath = os.path.join(csvfile, afile)
                         try:
-                            lines = self.open_csvfile(filepath, delimiter=delimiter, reader=reader)
+                            lines = self.open_csvfile(
+                                filepath, delimiter=delimiter, reader=reader
+                            )
                             self.csvfile.extend(lines)
                         except:
                             pass
             else:
-                self.csvfile = self.open_csvfile(csvfile, delimiter=delimiter, reader=reader)
-        if not getattr(self, 'csvfile', []):
+                self.csvfile = self.open_csvfile(
+                    csvfile, delimiter=delimiter, reader=reader
+                )
+        if not getattr(self, "csvfile", []):
             return 'File "%s" not found' % csvfile
-        return ''
+        return ""
