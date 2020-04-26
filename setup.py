@@ -5,11 +5,11 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = "2.13"
+version = "2.14"
 
 with open("README.rst", "r") as fp:
     csvimport_description = fp.read() + "\n"
-for fname in ("TODO.txt", "HISTORY.txt"):
+for fname in ("HISTORY.txt",):
     with open(os.path.join("docs", fname), "r") as fp:
         csvimport_description += fp.read() + "\n"
 
@@ -28,6 +28,9 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",                
         "License :: OSI Approved :: Apache Software License",
     ],
     keywords="CVS import django fixture",
