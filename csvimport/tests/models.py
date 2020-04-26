@@ -57,11 +57,11 @@ class Item(models.Model):
     )
     description = models.TextField(null=True)
     quantity = models.PositiveIntegerField(default=1)
-    uom = models.ForeignKey(UnitOfMeasure, on_delete=True, help_text="Unit of Measure")
-    organisation = models.ForeignKey(Organisation, on_delete=True)
+    uom = models.ForeignKey(UnitOfMeasure, on_delete=models.CASCADE, help_text="Unit of Measure")
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
     status = models.CharField(max_length=10, null=True)
     date = models.DateField(auto_now=True, null=True, validators=[])
-    country = models.ForeignKey(Country, on_delete=True, null=True)
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True)
 
     class Meta:
         app_label = u"csvimport"

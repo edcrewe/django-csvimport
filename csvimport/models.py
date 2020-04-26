@@ -69,6 +69,6 @@ class CSVImport(models.Model):
 
 class ImportModel(models.Model):
     """ Optional one to one mapper of import file to Model """
-    csvimport = models.ForeignKey(CSVImport, on_delete=True)
+    csvimport = models.ForeignKey(CSVImport, on_delete=models.CASCADE)
     numeric_id = models.PositiveIntegerField()
     natural_key = models.CharField(max_length=100)
