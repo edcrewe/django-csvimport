@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
+2.14 - Fix compatiblity issue for Django 3 - 26th April 2020
+------------------------------------------------------------
+
 2.13 - Fix issue with inspectcsv for different header and data line number of cols - 26th Sept 2019
 ---------------------------------------------------------------------------------------------------
 
