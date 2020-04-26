@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - April 2019
+Ed Crewe - April 2020
 
 Overview
 --------
@@ -37,8 +37,8 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
-Latest version 2.13 was tested with Django 2.2.5 and Python 3.7.3
-
+version 2.14 was tested with Django 3.0.5 on Python 3.7.6 and Python 3.8.2 (messytables doesnt work for 3.8.2) 
+version 2.13 was tested with Django 2.2.5 on Python 3.7.3
 version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13 and Python 3.5.6
 
 Please use version 2.1, eg. pip install django-csvimport==2.1
