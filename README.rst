@@ -38,10 +38,9 @@ Version Compatibility
 ---------------------
 
 version 2.14 was tested with Django 3.0.5 on Python 3.7.6 and Python 3.8.2
-NOTE To use the inspectcsv model generation command, requires messytables.
-Latest messytables needs older python magic:: 
-    pip install python-magic-bin==0.4.14
-    pip install messytables
+NOTE To use the inspectcsv model generation command, requires messytables. Latest messytables needs older python magic::
+pip install python-magic-bin==0.4.14
+pip install messytables
     
 version 2.13 was tested with Django 2.2.5 on Python 3.7.3
 version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13 and Python 3.5.6
