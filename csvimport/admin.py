@@ -35,7 +35,6 @@ class CSVImportAdmin(ModelAdmin):
         cmd = Command()
         if obj.upload_file:
             obj.file_name = obj.upload_file.name
-            obj.encoding = ""
             defaults = self.filename_defaults(obj.file_name)
             cmd.setup(
                 mappings=obj.field_list,
