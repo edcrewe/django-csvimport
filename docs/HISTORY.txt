@@ -3,6 +3,9 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
+2.16 - Fix all tests
+--------------------
+
 2.15 - Fix compatiblity issue for Django 3 - 27 April 2020
 ----------------------------------------------------------
 
