@@ -14,12 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Issue98",
             fields=[
-                (
-                    "co_id",
-                    models.CharField(
-                        default="", max_length=7, primary_key=True, serialize=False
-                    ),
-                ),
+                ("co_id", models.CharField(default="", max_length=7, serialize=False),),
                 ("co_role", models.CharField(blank=True, max_length=16, null=True)),
                 ("co_level", models.IntegerField(blank=True, default=0, null=True)),
                 ("co_region", models.CharField(blank=True, max_length=16, null=True)),

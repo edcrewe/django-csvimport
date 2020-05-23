@@ -1,0 +1,6 @@
+co_id,co_role,co_level,co_region,tm_role,tm_level,tm_region,co_salary_low,co_salary_mid,co_salary_high,co_equity_low,co_equity_mid,co_equity_high,co_bonus_low,co_bonus_mid,co_bonus_high,co_total_comp_low,co_total_comp_mid,co_total_comp_high
+abcd190,Software Engineer,4,San Francisco,Software Engineer,4.5,San Francisco,"$152,500","$175,500","$202,000","$44,000","$50,000","$60,000",15%,15%,15%,"$219,375","$251,825","$292,300"
+abcd190,Software Engineer,5,San Francisco,Software Engineer,5,San Francisco,"$175,500","$202,000","$232,500","$57,000","$70,000","$80,000",20%,20%,20%,"$267,600","$312,400","$359,000"
+abcd190,Researcher,8,San Francisco,Data Science,6,San Francisco,"$239,000","$275,000","$316,500","$96,000","$115,200","$138,240",25%,25%,25%,"$394,750","$458,950","$533,865"
+abcd190,Data Science,1,San Francisco,Data Analyst,1,San Francisco,"$80,000","$92,000","$105,800","$10,000","$12,000","$14,400",15%,15%,15%,"$102,000","$117,800","$136,070"
+abcd190,Data Science,2,San Francisco,Data Analyst,2,San Francisco,"$92,000","$106,000","$121,500","$13,000","$15,600","$18,720",15%,15%,15%,"$118,800","$137,500","$158,445"
