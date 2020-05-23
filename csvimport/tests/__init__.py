@@ -1,6 +1,6 @@
 # import the test suites
 
-from csvimport.tests.issue_tests import RegressionTests
+from csvimport.tests.issue_tests import RegressionTest
 #from csvimport.tests.optional_tests import CommandArgsTest
 from csvimport.tests.parse_tests import CommandParseTest
 from csvimport.tests.constraint_tests import ConstraintTest

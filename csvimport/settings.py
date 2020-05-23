@@ -51,8 +51,6 @@ INSTALLED_APPS = (
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "csvimport.app.CSVImportConf",
-    # For django before 1.9 - breaks more recent djangos
-    # 'csvimport.tests'
 )
 
 MIDDLEWARE = (
@@ -118,18 +116,4 @@ LOGGING = {
     },
 }
 
-
-# For CI testing of releases
-try:
-    import django_jenkins
-
-    CI = True
-except:
-    CI = False
-
-if CI:
-    INSTALLED_APPS += ("django_jenkins",)
-    PROJECT_APPS = ("csvimport.app.CSVImportTestConf",)
-    JENKINS_TASKS = ("django_jenkins.tasks.run_pylint",)
-    # ver. 0.18 needs --enable-coverage instead
-    # 'django_jenkins.tasks.with_coverage')
+TEST_RUNNER = 'csvimport.tests.testrunner.CSVImportRunner'

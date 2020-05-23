@@ -25,8 +25,9 @@ class Issue98(models.Model):
     co_total_comp_high = models.CharField(max_length=8, blank=True, default='')
 
     class Meta:
-        managed = False
-        db_table = u'"issue98"'
+        app_label = u"csvimport"        
+        db_table = u'"csvtests_issue98"'
+        managed = True
 
 class Country(models.Model):
     """
