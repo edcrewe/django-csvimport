@@ -4,6 +4,7 @@ from csvimport.tests.testcase import CommandTestCase
 from csvimport.tests.models import Country
 import sys
 from django.core.exceptions import ObjectDoesNotExist
+import django
 
 
 class ConstraintTest(CommandTestCase):
@@ -26,7 +27,9 @@ class ConstraintTest(CommandTestCase):
             "Field 'latitude' expected a number but got 'null'.",
             "Imported 3 rows to Country",
         ]
-
+        if django.VERSION[0] == 2:
+            errs.append("could not convert string to float: 'null'")
+            errs.append("could not convert string to float: 'null'")
         self.command(
             csvfile=filename,
             modelname="csvimport.Country",

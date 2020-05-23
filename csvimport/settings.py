@@ -116,4 +116,4 @@ LOGGING = {
     },
 }
 
-TEST_RUNNER = 'csvimport.tests.testrunner.CSVImportRunner'
+TEST_RUNNER = "csvimport.tests.testrunner.CSVImportRunner"
