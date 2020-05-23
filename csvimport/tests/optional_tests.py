@@ -14,7 +14,9 @@ class CommandArgsTest(CommandTestCase):
         # header equivalent only mapping
         mappings = "CODE_SHARE,CODE_ORG,ORGANISATION,DESCRIPTION,UOM,QUANTITY,STATUS"
         # errs = ['Using manually entered mapping list']
-        self.command(filename, mappings=mappings)  # , expected_errs=errs)
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", mappings=mappings
+        )
         item = self.get_item("sheeting")
         # Check a couple of the fields in Item
         self.assertEqual(item.code_org, "RF007")
@@ -29,7 +31,13 @@ class CommandArgsTest(CommandTestCase):
                     column5=uom(UnitOfMeasure|name),column7=status"""
         defaults = "country=KE(Country|code),quantity=5,description=stuff"
         errs = ["Using manually entered mapping list"]
-        self.command(filename, mappings=mappings, defaults=defaults, expected_errs=errs)
+        self.command(
+            filename,
+            "csvimport.Item",
+            mappings=mappings,
+            defaults=defaults,
+            expected_errs=errs,
+        )
         item = self.get_item("sheeting")
         # Check a couple of the fields in Item
         self.assertEqual(item.quantity, 5)
@@ -46,7 +54,9 @@ class CommandArgsTest(CommandTestCase):
             this is more normally used to allow setting values for missing columns
         """
         defaults = "code_org=ALLTHESAME,quantity=58"
-        self.command(filename, defaults=defaults)
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", defaults=defaults
+        )
         item = self.get_item("watercan")
         self.assertNotEqual(item.code_org, "CWATCONT20F")
         self.assertEqual(item.code_org, "ALLTHESAME")

@@ -12,7 +12,7 @@ class CommandParseTest(CommandTestCase):
 
     def test_plain(self, filename="test_plain.csv"):
         """ Use custom command to upload file and parse it into Items """
-        self.command(filename)
+        self.command(filename, "csvimport.Item", "country=KE(Country|code)")
         item = self.get_item("sheeting")
         # Check a couple of the fields in Item
         self.assertEqual(item.code_org, "RF007")
@@ -26,7 +26,9 @@ class CommandParseTest(CommandTestCase):
             Use reader = False to use local parser not csv lib reader
             Note that Python 3 csv reader is far less format tolerant so tends to use local parser
         """
-        self.command(filename, reader=False)
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", reader=False
+        )
         item = self.get_item("sheeting")
         # Check a couple of the fields in Item
         self.assertEqual(item.code_org, "RF007")
@@ -37,7 +39,9 @@ class CommandParseTest(CommandTestCase):
 
     def test_tab(self, filename="test_tab.csv"):
         """ Use custom command to upload file and parse it into Items with different, tab, delimiter"""
-        self.command(csvfile=filename, delimiter="\t")
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", delimiter="\t"
+        )
         item = self.get_item("sheeting")
         # Check a couple of the fields in Item
         self.assertEqual(item.code_org, "RF007")
@@ -48,7 +52,7 @@ class CommandParseTest(CommandTestCase):
 
     def test_char(self, filename="test_char.csv"):
         """ Use custom command parse file - test with odd non-ascii character """
-        self.command(filename)
+        self.command(filename, "csvimport.Item", "country=KE(Country|code)")
         item = self.get_item("watercan")
         self.assertEqual(item.code_org, "CWATCONT20F")
         self.assertEqual(item.quantity, 1000)
@@ -61,7 +65,7 @@ class CommandParseTest(CommandTestCase):
 
     def test_char2(self, filename="test_char2.csv"):
         """ Use custom command to parse file with range of unicode characters """
-        self.command(filename)
+        self.command(filename, "csvimport.Item", "country=KE(Country|code)")
         item = self.get_item(
             u"Cet élément est utilisé par quelqu'un d'autre et ne peux être modifié"
         )
@@ -80,7 +84,12 @@ class CommandParseTest(CommandTestCase):
     def test_duplicate(self, filename="test_duplicate.csv"):
         """ Use custom command to upload file and parse it into Items """
         self.deduplicate = True
-        self.command(filename, expected_errs=["Imported 3 rows to Item"])
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=["Imported 3 rows to Item"],
+        )
         items = Item.objects.all().order_by("code_share")
         self.assertEqual(len(items), 3)
         # Check a couple of the fields in Item
@@ -88,7 +97,11 @@ class CommandParseTest(CommandTestCase):
         for i, item in enumerate(items):
             self.assertEqual(item.code_share, codes[i])
         self.command(
-            filename, expected_errs=["Imported 6 rows to Item"], deduplicate=False
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=["Imported 6 rows to Item"],
+            deduplicate=False,
         )
         items = Item.objects.all().order_by("code_share")
         self.assertEqual(len(items), 3 + 6)
@@ -104,7 +117,9 @@ class CommandParseTest(CommandTestCase):
             u"row 5: Column quantity = Not_a_Number is not a number so is set to 0",
             u"row 6: Column quantity = nan is not an integer so is set to 0",
         ]
-        self.command(csvfile=filename, expected_errs=errs)
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", expected_errs=errs
+        )
         # check fractional numbers into integers
         items = Item.objects.filter(code_org="WA017")
         self.assertEqual(items[0].quantity, 33)
@@ -121,7 +136,9 @@ class CommandParseTest(CommandTestCase):
         """ Use custom command parse file - test always double quote except some numbers
             - test empty double quotes doesnt make the import skip a column """
         errs = ["Imported 3 rows to Item"]
-        self.command(filename, expected_errs=errs)
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", expected_errs=errs
+        )
         item = self.get_item("heater")
         self.assertEqual(item.code_org, "CWATCONT20F")
         self.assertEqual(item.status, "Goods")
@@ -146,7 +163,9 @@ class CommandParseTest(CommandTestCase):
             u"row 4: FKey organisation couldnt be set for row - because the row is not parsable - skipping it",
             u"Imported 5 rows to Item",
         ]
-        self.command(filename, expected_errs=errs)
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", expected_errs=errs
+        )
         item = self.get_item("sheeting")
         # Check a field in item
         self.assertEqual(item.description, "Plastic sheeting, 4*60m, roll")

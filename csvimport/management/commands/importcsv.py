@@ -384,8 +384,8 @@ class Command(LabelCommand, CSVParser):
                 with transaction.atomic():
                     try:
                         self.row_insert(row, model_instance, loglist)
-                    except:
-                        pass
+                    except Exception as err:
+                        loglist.append(str(err))
             # loglist = []
         if models and self.bulk:
             models[0].__class__.objects.bulk_create(models)

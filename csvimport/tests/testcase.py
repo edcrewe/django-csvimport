@@ -48,11 +48,11 @@ class CommandTestCase(TestCase):
     def command(
         self,
         csvfile=None,
+        modelname="",
+        defaults="",
         mappings="",
-        modelname="csvimport.Item",
         charset="",
         expected_errs=[],
-        defaults="country=KE(Country|code)",
         uploaded=None,
         nameindexes=False,
         deduplicate=True,

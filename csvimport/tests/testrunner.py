@@ -3,6 +3,7 @@ import shutil
 from django.conf import settings
 from django.test.runner import DiscoverRunner
 
+
 class CSVImportRunner(DiscoverRunner):
     def setup_databases(self, *args, **kwargs):
         print("Add the csvimport test models migrations")

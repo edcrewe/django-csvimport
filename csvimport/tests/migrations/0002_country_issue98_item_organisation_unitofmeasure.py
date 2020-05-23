@@ -7,92 +7,180 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('csvimport', '0001_initial'),
+        ("csvimport", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Issue98',
+            name="Issue98",
             fields=[
-                ('co_id', models.CharField(default='', max_length=7, primary_key=True, serialize=False)),
-                ('co_role', models.CharField(blank=True, max_length=16, null=True)),
-                ('co_level', models.IntegerField(blank=True, default=0, null=True)),
-                ('co_region', models.CharField(blank=True, max_length=16, null=True)),
-                ('tm_role', models.CharField(blank=True, max_length=16, null=True)),
-                ('tm_level', models.DecimalField(blank=True, decimal_places=1, default=0, max_digits=3, null=True)),
-                ('tm_region', models.CharField(blank=True, max_length=16, null=True)),
-                ('co_salary_low', models.CharField(blank=True, default='', max_length=8)),
-                ('co_salary_mid', models.CharField(blank=True, default='', max_length=8)),
-                ('co_salary_high', models.CharField(blank=True, default='', max_length=8)),
-                ('co_equity_low', models.CharField(blank=True, default='', max_length=8)),
-                ('co_equity_mid', models.CharField(blank=True, default='', max_length=8)),
-                ('co_equity_high', models.CharField(blank=True, default='', max_length=8)),
-                ('co_bonus_low', models.CharField(blank=True, default='', max_length=3)),
-                ('co_bonus_mid', models.CharField(blank=True, default='', max_length=3)),
-                ('co_bonus_high', models.CharField(blank=True, default='', max_length=3)),
-                ('co_total_comp_low', models.CharField(blank=True, default='', max_length=8)),
-                ('co_total_comp_mid', models.CharField(blank=True, default='', max_length=8)),
-                ('co_total_comp_high', models.CharField(blank=True, default='', max_length=8)),
+                (
+                    "co_id",
+                    models.CharField(
+                        default="", max_length=7, primary_key=True, serialize=False
+                    ),
+                ),
+                ("co_role", models.CharField(blank=True, max_length=16, null=True)),
+                ("co_level", models.IntegerField(blank=True, default=0, null=True)),
+                ("co_region", models.CharField(blank=True, max_length=16, null=True)),
+                ("tm_role", models.CharField(blank=True, max_length=16, null=True)),
+                (
+                    "tm_level",
+                    models.DecimalField(
+                        blank=True, decimal_places=1, default=0, max_digits=3, null=True
+                    ),
+                ),
+                ("tm_region", models.CharField(blank=True, max_length=16, null=True)),
+                (
+                    "co_salary_low",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_salary_mid",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_salary_high",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_equity_low",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_equity_mid",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_equity_high",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_bonus_low",
+                    models.CharField(blank=True, default="", max_length=3),
+                ),
+                (
+                    "co_bonus_mid",
+                    models.CharField(blank=True, default="", max_length=3),
+                ),
+                (
+                    "co_bonus_high",
+                    models.CharField(blank=True, default="", max_length=3),
+                ),
+                (
+                    "co_total_comp_low",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_total_comp_mid",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
+                (
+                    "co_total_comp_high",
+                    models.CharField(blank=True, default="", max_length=8),
+                ),
             ],
-            options={
-                'db_table': 'csvtests_issue98',
-                'managed': True,
-            },
+            options={"db_table": "csvtests_issue98", "managed": True,},
         ),
         migrations.CreateModel(
-            name='Country',
+            name="Country",
             fields=[
-                ('code', models.CharField(max_length=4, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('latitude', models.FloatField(default=0, null=True)),
-                ('longitude', models.FloatField(default=0, null=True)),
-                ('alias', models.CharField(max_length=255, null=True)),
+                (
+                    "code",
+                    models.CharField(max_length=4, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("latitude", models.FloatField(default=0, null=True)),
+                ("longitude", models.FloatField(default=0, null=True)),
+                ("alias", models.CharField(max_length=255, null=True)),
             ],
-            options={
-                'db_table': '"csvtests_country"',
-                'managed': True,
-            },
+            options={"db_table": '"csvtests_country"', "managed": True,},
         ),
         migrations.CreateModel(
-            name='Organisation',
+            name="Organisation",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
             ],
-            options={
-                'db_table': 'csvtests_organisation',
-                'managed': True,
-            },
+            options={"db_table": "csvtests_organisation", "managed": True,},
         ),
         migrations.CreateModel(
-            name='UnitOfMeasure',
+            name="UnitOfMeasure",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=32)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=32)),
             ],
-            options={
-                'db_table': 'csvtests_unitofmeasure',
-                'managed': True,
-            },
+            options={"db_table": "csvtests_unitofmeasure", "managed": True,},
         ),
         migrations.CreateModel(
-            name='Item',
+            name="Item",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('TYPE', models.PositiveIntegerField(default=0)),
-                ('code_share', models.CharField(help_text='Cross-organization item code', max_length=32)),
-                ('code_org', models.CharField(help_text='Organization-specfific item code', max_length=32)),
-                ('description', models.TextField(null=True)),
-                ('quantity', models.PositiveIntegerField(default=1)),
-                ('status', models.CharField(max_length=10, null=True)),
-                ('date', models.DateField(auto_now=True, null=True)),
-                ('country', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='csvimport.Country')),
-                ('organisation', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='csvimport.Organisation')),
-                ('uom', models.ForeignKey(help_text='Unit of Measure', on_delete=django.db.models.deletion.CASCADE, to='csvimport.UnitOfMeasure')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("TYPE", models.PositiveIntegerField(default=0)),
+                (
+                    "code_share",
+                    models.CharField(
+                        help_text="Cross-organization item code", max_length=32
+                    ),
+                ),
+                (
+                    "code_org",
+                    models.CharField(
+                        help_text="Organization-specfific item code", max_length=32
+                    ),
+                ),
+                ("description", models.TextField(null=True)),
+                ("quantity", models.PositiveIntegerField(default=1)),
+                ("status", models.CharField(max_length=10, null=True)),
+                ("date", models.DateField(auto_now=True, null=True)),
+                (
+                    "country",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="csvimport.Country",
+                    ),
+                ),
+                (
+                    "organisation",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="csvimport.Organisation",
+                    ),
+                ),
+                (
+                    "uom",
+                    models.ForeignKey(
+                        help_text="Unit of Measure",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="csvimport.UnitOfMeasure",
+                    ),
+                ),
             ],
-            options={
-                'db_table': 'csvtests_item',
-                'managed': True,
-            },
+            options={"db_table": "csvtests_item", "managed": True,},
         ),
     ]
