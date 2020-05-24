@@ -8,11 +8,11 @@ admin.autodiscover()
 # URL patterns for test django-csvimport install
 try:
     # 1.9 or later
-    urlpatterns = [url(r"^admin/", admin.site.urls), url(r"^index.html", index)]
+    urlpatterns = [url(r"^admin/", admin.site.urls), url(r"^.*", index)]
 except:
     # 1.8 or earlier
     urlpatterns = patterns(
-        "", (r"^admin/", include(admin.site.urls)), (r"^index.html", index)
+        "", (r"^admin/", include(admin.site.urls)), (r"^.*", index)
     )
     if settings.DEBUG:
         urlpatterns += patterns(

@@ -7,9 +7,11 @@ def index(request, template="README.txt", **kwargs):
                   <p>You have installed the test django-csvimport
                   application. Click on the <a href="/admin/">admin</a>
                   to try it</p>
-                  <p>NB: you must run<br />
+                  <p>NB: you must edit csvimport.settings to add<br />
+                     <i>MIGRATION_MODULES["csvimport"] = "csvimport.tests.migrations"</i><br />
+                  Then run:<br />
                      django-admin.py migrate --settings=csvimport.settings <br />
-                  first to create the test models.
+                  to create the test models.
                   <p>Click on csvimport in the admin</p>
                   <p>Try importing data via the test csv files in
                      django-csvimport/csvimport/tests/fixtures folder</p>
