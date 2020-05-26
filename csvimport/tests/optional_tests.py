@@ -55,7 +55,7 @@ class CommandArgsTest(CommandTestCase):
         """
         defaults = "code_org=ALLTHESAME,quantity=58"
         self.command(
-            filename, "csvimport.Item", "country=KE(Country|code)", defaults=defaults
+            filename, "csvimport.Item", defaults=defaults
         )
         item = self.get_item("watercan")
         self.assertNotEqual(item.code_org, "CWATCONT20F")

@@ -47,7 +47,7 @@ class CSVImport(models.Model):
     model_name = models.CharField(
         max_length=255,
         blank=False,
-        default="csvimport.Item",
+        default="app_label.model_name",
         help_text="Please specify the app_label.model_name",
         choices=get_models(),
     )

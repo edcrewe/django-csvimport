@@ -22,7 +22,7 @@ class CSVImportAdmin(ModelAdmin):
         "import_user",
     ]
     formfield_overrides = {
-        models.CharField: {"widget": forms.Textarea(attrs={"rows": "4", "cols": "60"})},
+        models.CharField: {"widget": forms.Textarea(attrs={"rows": "1", "cols": "40"})},
     }
 
     def save_model(self, request, obj, form, change):
