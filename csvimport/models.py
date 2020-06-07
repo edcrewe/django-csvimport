@@ -1,5 +1,6 @@
 import csvimport.monkeypatch_tzinfo
 
+from django.apps import apps
 from django.db import models
 from csvimport.app import settings
 from copy import deepcopy
@@ -19,14 +20,17 @@ def get_models():
         return MODELS
     # Create your models here.
     if not getattr(settings, "CSVIMPORT_MODELS", []):
+        allmodels = []
+        for app_name in settings.INSTALLED_APPS:
+            app_parts = app_name.split('.')
+            if app_name.startswith('django.'):
+                app_name = app_parts[-1]
+            else:
+                app_name = app_parts[0]
         try:
-            # django1.7 or later ...
-            try:
-                allmodels = models.get_models()
-            except:
-                allmodels = []
+            allmodels.extend(apps.get_app_config(app_name).get_models())
         except:
-            allmodels = models.loading.get_models()
+            allmodels = []
         if allmodels:
             MODELS = [
                 "%s.%s" % (m._meta.app_label, m.__name__)
@@ -35,10 +39,8 @@ def get_models():
             ]
     else:
         MODELS = deepcopy(settings.CSVIMPORT_MODELS)
-
     MODELS = tuple([(m, m) for m in MODELS])
     return MODELS
-
 
 class CSVImport(models.Model):
     """ Logging model for importing files """
