@@ -4,8 +4,7 @@ from csvimport.tests.testcase import CommandTestCase
 from csvimport.tests.models import Country
 import sys
 from django.core.exceptions import ObjectDoesNotExist
-
-pyversion = sys.version_info[0]  # python 2 or 3
+import django
 
 
 class ConstraintTest(CommandTestCase):
@@ -16,20 +15,31 @@ class ConstraintTest(CommandTestCase):
             country = Country.objects.get(code__exact=country_code)
         except ObjectDoesNotExist:
             country = None
-            self.assertTrue(country, 'Failed to get row from imported test csv for countries')
+            self.assertTrue(
+                country, "Failed to get row from imported test csv for countries"
+            )
         return country
 
-    def test_empty_notnull(self, filename='bad_country.csv'):
+    def test_empty_notnull(self, filename="bad_country.csv"):
         """ Use custom command to upload a country file with missing long lat data"""
-        errs = ['could not convert string to float: null',
-                'could not convert string to float: null',
-                'Imported 3 rows to Country']
-
-        self.command(csvfile=filename, modelname='csvimport.Country', defaults='',
-                     expected_errs=errs,
-                     clean=False)
-        #TODO - this should only have 3 rows
+        errs = [
+            "Field 'latitude' expected a number but got 'null'.",
+            "could not convert string to float: 'null'",
+            "Field 'latitude' expected a number but got 'null'.",
+            "could not convert string to float: 'null'",
+            "Imported 3 rows to Country",
+        ]
+        if django.VERSION[0] == 2:
+            errs.append("could not convert string to float: 'null'")
+            errs.append("could not convert string to float: 'null'")
+        self.command(
+            csvfile=filename,
+            modelname="csvimport.Country",
+            defaults="",
+            expected_errs=errs,
+            clean=False,
+        )
         self.assertEqual(Country.objects.count(), 3)
-        country = self.get_country('K1')
+        country = self.get_country("K1")
         self.assertTrue(country.name, "Montserrat")
         Country.objects.all().delete()

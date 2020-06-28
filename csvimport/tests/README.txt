@@ -1,15 +1,15 @@
 Tests Readme
 ============
 
-Test files are imported via the __init__.py 
+Test files are imported via the __init__.py
 
 >>> from foobar_tests import *
 
-For one off run of tests use 
+For one off run of tests use
 
 >>> manage.py test --settings='csvimport.settings' csvimport.tests
 
-Or could use following import of settings for manage.py / django-admin.py ...
+Or could use following import of settings for django-admin.py ...
 
 >>> #!/bin/python
 >>> from django.core import management
@@ -20,6 +20,6 @@ Or could use following import of settings for manage.py / django-admin.py ...
 >>> if __name__ == "__main__":
 >>>    management.execute_from_command_line()
 
-Then can run via 
+Then can run via
 
->>> manage.py test csvimport.tests
+>>> django-admin.py test csvimport.tests

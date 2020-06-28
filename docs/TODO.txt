@@ -1,6 +1,0 @@
-TODO
-====
-
-#. Add more tests
-#. Add use of xlrd for Excel file upload
-#. Improve related model creation - use of related csv file?
