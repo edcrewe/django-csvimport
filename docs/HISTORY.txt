@@ -3,8 +3,8 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
-2.16 - Fix and add tests
-------------------------
+2.16 - Fix and add tests - 28 June 2020
+---------------------------------------
 
 #. Move test fixture migrations to separate migration folder picked up by custom testrunner
 #. Add regression tests for all reported issues
