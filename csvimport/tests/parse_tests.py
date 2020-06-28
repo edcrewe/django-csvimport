@@ -148,7 +148,7 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.description, "")
         item = self.get_item("blanket")
         self.assertEqual(item.quantity, 0)  # empty double quote
-        self.assertEqual(item.status, "Stock")
+        self.assertEqual(item.status, "Order")
         item = self.get_item("shed")
         self.assertEqual(item.quantity, 180)
         item = self.get_item('soap')

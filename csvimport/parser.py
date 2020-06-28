@@ -72,7 +72,7 @@ class CSVParser(object):
         # ... especially in Python 3 - its a lot stricter
         # so reopen as raw unencoded and just try and get lines out one by one
         output = []
-        count = 0
+        count = 0   # (?:""|[^"])*  "(.+".+")"|(".+?")|("")
         expression = r"""(['"]*)(.*?)\1(""" + delimiter + r"""|$)"""
         csvsplit = re.compile(expression)
         if not rows:
@@ -106,19 +106,10 @@ class CSVParser(object):
                 if pyversion == 3:
                     row = row.decode(self.charset)
                 if type(row) in self.string_types:
-                    # FIXME: Works for test fixtures - but rather hacky csvreader replacement regex splitter
-                    # breaks unless empty cols have a space added!
-                    row = row.replace(",,", ", ,")
-                    row = row.replace('""', '" "')
-                    row = row.replace("''", "' '")
                     if not row:
                         continue
-                    row = csvsplit.split(row)
-                    row = [
-                        item
-                        for item in row
-                        if item and item not in (delimiter, '"', "'")
-                    ]
+                    matches = csvsplit.findall(row)
+                    row = [match[1] for match in matches][:-1]
                     if pyversion == 2:
                         try:
                             row = [unicode(item, self.charset) for item in row]
