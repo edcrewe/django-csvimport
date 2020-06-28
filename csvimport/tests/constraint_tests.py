@@ -24,7 +24,9 @@ class ConstraintTest(CommandTestCase):
         """ Use custom command to upload a country file with missing long lat data"""
         errs = [
             "Field 'latitude' expected a number but got 'null'.",
+            "could not convert string to float: 'null'",
             "Field 'latitude' expected a number but got 'null'.",
+            "could not convert string to float: 'null'",
             "Imported 3 rows to Country",
         ]
         if django.VERSION[0] == 2:
