@@ -135,7 +135,7 @@ class CommandParseTest(CommandTestCase):
     def test_quoted(self, filename="test_quoted.csv"):
         """ Use custom command parse file - test always double quote except some numbers
             - test empty double quotes doesnt make the import skip a column """
-        errs = ["Imported 3 rows to Item"]
+        errs = ['Imported 4 rows to Item']
         self.command(
             filename, "csvimport.Item", "country=KE(Country|code)", expected_errs=errs
         )
@@ -151,6 +151,8 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.status, "Stock")
         item = self.get_item("shed")
         self.assertEqual(item.quantity, 180)
+        item = self.get_item('soap')
+        self.assertEqual(item.description, 'SOAP, "200 g", bar')
         Item.objects.all().delete()
 
     def test_row_increment(self, filename="test_broken_rows.csv"):
