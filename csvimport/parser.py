@@ -72,7 +72,8 @@ class CSVParser(object):
         # ... especially in Python 3 - its a lot stricter
         # so reopen as raw unencoded and just try and get lines out one by one
         output = []
-        count = 0   # (?:""|[^"])*  "(.+".+")"|(".+?")|("")
+        count = 0
+        # TODO: Fix use of a quoted field with commas next to escaped quotes - eg. "field1=SOAP, ""200 g"", bar","field2"
         expression = r"""(['"]*)(.*?)\1(""" + delimiter + r"""|$)"""
         csvsplit = re.compile(expression)
         if not rows:
@@ -109,7 +110,8 @@ class CSVParser(object):
                     if not row:
                         continue
                     matches = csvsplit.findall(row)
-                    row = [match[1] for match in matches][:-1]
+                    # Fix CSV repeat quote used for escaping within quotes
+                    row = [match[1].replace('""', '"') for match in matches][:-1]
                     if pyversion == 2:
                         try:
                             row = [unicode(item, self.charset) for item in row]
