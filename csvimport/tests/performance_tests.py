@@ -37,7 +37,7 @@ class PerformanceTest(CommandTestCase):
             time=True,
         )
         self.assertTrue(single_time > bulk_time)
-        print ("Time to run bulk countries import was %s faster than %s" % (
-            bulk_time,
-            single_time,
-        ))
+        print(
+            "Time to run bulk countries import was %s faster than %s"
+            % (bulk_time, single_time,)
+        )

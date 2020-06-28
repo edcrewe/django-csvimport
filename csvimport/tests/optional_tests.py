@@ -54,9 +54,7 @@ class CommandArgsTest(CommandTestCase):
             this is more normally used to allow setting values for missing columns
         """
         defaults = "code_org=ALLTHESAME,quantity=58"
-        self.command(
-            filename, "csvimport.Item", defaults=defaults
-        )
+        self.command(filename, "csvimport.Item", defaults=defaults)
         item = self.get_item("watercan")
         self.assertNotEqual(item.code_org, "CWATCONT20F")
         self.assertEqual(item.code_org, "ALLTHESAME")

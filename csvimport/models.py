@@ -22,8 +22,8 @@ def get_models():
     if not getattr(settings, "CSVIMPORT_MODELS", []):
         allmodels = []
         for app_name in settings.INSTALLED_APPS:
-            app_parts = app_name.split('.')
-            if app_name.startswith('django.'):
+            app_parts = app_name.split(".")
+            if app_name.startswith("django."):
                 app_name = app_parts[-1]
             else:
                 app_name = app_parts[0]
@@ -42,6 +42,7 @@ def get_models():
     MODELS = tuple([(m, m) for m in MODELS])
     return MODELS
 
+
 class CSVImport(models.Model):
     """ Logging model for importing files """
 
@@ -51,7 +52,7 @@ class CSVImport(models.Model):
         blank=False,
         default="app_label.model_name",
         help_text="Please specify the app_label.model_name",
-        choices=get_models(),
+        #  choices=get_models(),
     )
     field_list = models.TextField(
         blank=True,

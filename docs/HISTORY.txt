@@ -3,8 +3,13 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
-2.16 - Fix all tests
---------------------
+2.16 - Fix and add tests
+------------------------
+
+#. Move test fixture migrations to separate migration folder picked up by custom testrunner
+#. Add regression tests for all reported issues
+#. Add admin UI tests
+#. Enable and fix all existing tests
 
 2.15 - Fix compatiblity issue for Django 3 - 27 April 2020
 ----------------------------------------------------------

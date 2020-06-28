@@ -8,7 +8,7 @@ def index(request, template="README.txt", **kwargs):
                   application. Click on the <a href="/admin/">admin</a>
                   to try it</p>
                   <p>NB: you must edit csvimport.settings to add<br />
-                     <i>MIGRATION_MODULES["csvimport"] = "csvimport.tests.migrations"</i><br />
+                     <i>MIGRATION_MODULES={"csvimport": "csvimport.tests.migrations"}</i><br />
                   Then run:<br />
                      django-admin.py migrate --settings=csvimport.settings <br />
                   to create the test models.

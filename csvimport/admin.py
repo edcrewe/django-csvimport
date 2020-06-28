@@ -61,3 +61,6 @@ class CSVImportAdmin(ModelAdmin):
 
 
 admin.site.register(CSVImport, CSVImportAdmin)
+from csvimport.tests.models import Item
+
+admin.site.register(Item)
