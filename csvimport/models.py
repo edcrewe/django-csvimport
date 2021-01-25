@@ -80,6 +80,9 @@ class CSVImport(models.Model):
     def __unicode__(self):
         return self.upload_file.name
 
+    def __str__(self):
+        return self.__unicode__()
+
 
 class ImportModel(models.Model):
     """ Optional one to one mapper of import file to Model """
