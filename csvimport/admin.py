@@ -1,3 +1,4 @@
+import locale
 from datetime import datetime
 from django import forms
 from django.db import models
@@ -16,6 +17,7 @@ class CSVImportAdmin(ModelAdmin):
         "field_list",
         "upload_file",
         "file_name",
+        "delimiter",
         "encoding",
         "upload_method",
         "error_log_html",
@@ -24,6 +26,11 @@ class CSVImportAdmin(ModelAdmin):
     formfield_overrides = {
         models.CharField: {"widget": forms.Textarea(attrs={"rows": "1", "cols": "40"})},
     }
+
+    def get_changeform_initial_data(self, request):
+        #This works for my problem, but I don't know if there are side effects. So I won't push it
+        #locale.setlocale(locale.LC_ALL, '')
+        return {'delimiter': ";" if locale.localeconv()['decimal_point'] == "," else ","}
 
     def save_model(self, request, obj, form, change):
         """ Do save and process command - cant commit False
@@ -42,6 +49,7 @@ class CSVImportAdmin(ModelAdmin):
                 charset=obj.encoding,
                 uploaded=obj.upload_file,
                 defaults=defaults,
+                delimiter=obj.delimiter,
             )
         errors = cmd.run(logid=obj.id)
         if errors:
