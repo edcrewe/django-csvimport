@@ -61,3 +61,7 @@ class CSVImportAdmin(ModelAdmin):
 
 
 admin.site.register(CSVImport, CSVImportAdmin)
+
+# To see sample model in admin from test settings uncomment the following...
+# from csvimport.tests.models import Item
+# admin.site.register(Item)
