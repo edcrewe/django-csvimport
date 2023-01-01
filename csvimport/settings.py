@@ -1,5 +1,5 @@
 # Settings to be used when running unit tests
-# python manage.py test --settings=csvimport.tests.settings csvimport
+# ./bin/django-admin test --settings=csvimport.settings csvimport.tests
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
@@ -15,6 +15,8 @@ SECRET_KEY = "(2^xk$^us_v$zd-qhd1_z8a!89*cc415b(*%*o(med4bk^w3ui"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 ALLOWED_HOSTS = []
 
 TEMPLATES = [
@@ -28,6 +30,7 @@ TEMPLATES = [
             "context_processors": [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
                 # list if you haven't customized them:
+                "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.i18n",

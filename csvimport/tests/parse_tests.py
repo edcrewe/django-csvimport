@@ -176,3 +176,12 @@ class CommandParseTest(CommandTestCase):
         # Confirm that the maximum value used for PKey is not 7
         self.assertEqual(Item.objects.latest("id").id, 5)
         Item.objects.all().delete()
+
+    def test_single_row(self, filename="test_single_row.csv"):
+        """ Check that single row is fine based on issue https://github.com/edcrewe/django-csvimport/issues/106  """
+        errs = ["Imported 1 rows to Item"]
+        self.command(
+            filename, "csvimport.Item", "country=KE(Country|code)", expected_errs=errs
+        )
+        self.assertEqual(Item.objects.count(), 1)
+        Item.objects.all().delete()

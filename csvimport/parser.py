@@ -10,21 +10,21 @@ pyversion = sys.version_info[0]  # python 2 or 3
 
 
 class CSVParser(object):
-    """ Open a CSV file, check its encoding and parse it into memory
-        and set up the map of the fields
+    """Open a CSV file, check its encoding and parse it into memory
+    and set up the map of the fields
     """
 
     csvfile = []
     charset = ""
     filehandle = None
     check_cols = False
-    string_types = (type(u""), type(""))
+    string_types = (type(""), type(""))
 
     def list_rows(self, rows):
-        """ CSV Reader returns an iterable, but as we possibly need to
-            perform list commands and since list is an acceptable iterable,
-            we'll just transform it.
-            Also do optional column count consistency check here
+        """CSV Reader returns an iterable, but as we possibly need to
+        perform list commands and since list is an acceptable iterable,
+        we'll just transform it.
+        Also do optional column count consistency check here
         """
         if rows and self.check_cols:
             rowlen = 0
@@ -42,7 +42,7 @@ class CSVParser(object):
         return list(rows)
 
     def open_csvfile(self, datafile, delimiter=",", reader=True):
-        """ Detect file encoding and open appropriately """
+        """Detect file encoding and open appropriately"""
         self.filehandle = open(datafile, "rb")
         if not self.charset:
             import chardet
@@ -65,9 +65,11 @@ class CSVParser(object):
                         csv_data=csvfile, charset=self.charset, delimiter=delimiter
                     )
                     rows = [row for row in csvgenerator]
+                    self.filehandle.close()
                     return self.list_rows(rows)
                 except:
                     pass
+        self.filehandle.close()
         # Sometimes encoding is too mashed to be able to open the file as text with csv_reader
         # ... especially in Python 3 - its a lot stricter
         # so reopen as raw unencoded and just try and get lines out one by one
@@ -104,6 +106,8 @@ class CSVParser(object):
 
         if rows:
             for row in rows:
+                if not row.rstrip():
+                    continue
                 if pyversion == 3:
                     row = row.decode(self.charset)
                 if type(row) in self.string_types:
@@ -139,7 +143,7 @@ class CSVParser(object):
             yield [unicode(cell, charset) for cell in row]
 
     def charset_encoder(self, csv_data, charset="utf-8"):
-        """ Check passed a valid charset then encode """
+        """Check passed a valid charset then encode"""
         test_string = "test_real_charset"
         try:
             test_string.encode(charset)
@@ -204,7 +208,7 @@ class CSVParser(object):
         return parse_mapping(mappings)
 
     def check_filesystem(self, csvfile, delimiter=",", reader=True):
-        """ Check for files on the file system """
+        """Check for files on the file system"""
         if csvfile and os.path.exists(csvfile):
             if os.path.isdir(csvfile):
                 self.csvfile = []
