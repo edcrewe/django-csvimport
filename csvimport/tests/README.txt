@@ -7,7 +7,7 @@ Test files are imported via the __init__.py
 
 For one off run of tests use
 
->>> manage.py test --settings='csvimport.settings' csvimport.tests
+>>> python3 -m django test --settings='csvimport.settings' csvimport.tests
 
 Or could use following import of settings for django-admin.py ...
 
@@ -22,4 +22,4 @@ Or could use following import of settings for django-admin.py ...
 
 Then can run via
 
->>> django-admin.py test csvimport.tests
+>>> bin/django-admin test csvimport.tests

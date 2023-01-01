@@ -1,5 +1,5 @@
 # Settings to be used when running unit tests
-# python manage.py test --settings=csvimport.tests.settings csvimport
+# ./bin/django-admin test --settings=csvimport.settings csvimport.tests
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
