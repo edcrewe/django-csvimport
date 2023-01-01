@@ -6,9 +6,9 @@ admin.autodiscover()
 
 # URL patterns for test django-csvimport install
 try:
+    # 4 or later
     from django.urls import re_path
 
-    # 4 or later
     urlpatterns = [re_path(r"^admin/", admin.site.urls), re_path(r"^.*", index)]
 except:
     from django.conf.urls import url, include
