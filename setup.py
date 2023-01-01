@@ -5,7 +5,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = "2.16"
+version = "2.17"
 
 with open("README.rst", "r") as fp:
     csvimport_description = fp.read() + "\n"
@@ -30,7 +30,9 @@ setup(
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",                
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",        
         "License :: OSI Approved :: Apache Software License",
     ],
     keywords="CVS import django fixture",
@@ -44,7 +46,7 @@ setup(
     # this line always breaks install?
     # package_data = {'csvimport': ['*.csv', '*.rst']},
     zip_safe=False,
-    install_requires=["django>=1.7", "chardet"],
+    install_requires=["django>=2.2.5", "chardet"],
     entry_points="""
       # -*- Entry points: -*-
       """,

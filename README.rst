@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - April 2020
+Ed Crewe - January 2023
 
 Overview
 --------
@@ -37,16 +37,16 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
-version 2.14 was tested with Django 3.0.5 on Python 3.7.6 and Python 3.8.2
+version 2.16 tested with Django 3.2.16 on Python 3.9.6
+version 2.14 tested with Django 3.0.5 on Python 3.7.6, 3.8.2
+version 2.13 was tested with Django 2.2.5 on Python 3.7.3
+version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13, Python 3.5.6
   
 (NOTE To use the inspectcsv model generation command, requires messytables. Latest messytables needs older 
 python magic...
 
 #. pip install python-magic-bin==0.4.14
 #. pip install messytables)
-    
-version 2.13 was tested with Django 2.2.5 on Python 3.7.3
-version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13 and Python 3.5.6
 
 Please use version 2.1, eg. pip install django-csvimport==2.1
 for Django versions prior to 1.7
