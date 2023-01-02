@@ -3,6 +3,13 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
+2.17 - Fix for django 4 - 2 Jan 2023
+------------------------------------
+
+#. Fix incompatible methods for django 4
+#. Add a test for single row CSV and fix issue of trailing line returns
+#. Minor issue PRs [edouard-gv]
+
 2.16 - Fix and add tests - 28 June 2020
 ---------------------------------------
 
