@@ -26,6 +26,11 @@ The core import code was based on http://djangosnippets.org/snippets/633/ by Jon
 It adds character encoding handling, model field and column autodetection, admin interface,
 custom command etc.
 
+Version 3 - Dec 2023
+--------------------
+
+#. Incorporate messytables relevant code since its no longer supported (OKN now use Rust based qsv, but that is overkill for the optional create Models feature)
+
 Version 2 - Sept 2014
 ---------------------
 
@@ -37,10 +42,11 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
-version 2.16 tested with Django 3.2.16 on Python 3.9.6
-version 2.14 tested with Django 3.0.5 on Python 3.7.6, 3.8.2
-version 2.13 was tested with Django 2.2.5 on Python 3.7.3
-version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13, Python 3.5.6
+- version 3.0  tested with Django 5.0 Python 3.12
+- version 2.16 tested with Django 3.2.16 on Python 3.9.6
+- version 2.14 tested with Django 3.0.5 on Python 3.7.6, 3.8.2
+- version 2.13 was tested with Django 2.2.5 on Python 3.7.3
+- version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13, Python 3.5.6
   
 (NOTE To use the inspectcsv model generation command, requires messytables. Latest messytables needs older 
 python magic...
@@ -159,6 +165,13 @@ then use the tests settings to have some sample models for importing data, and t
 Alternatively you can use the command line to upload
 
 django-admin.py importcsv --model='csvimport.Country' django-csvimport/csvimport/tests/fixtures/countries.csv --settings='csvimport.settings'
+
+Tests
+-----
+
+To run the django-csvimport tests use:
+
+>>> bin/django-admin test csvimport --settings=csvimport.settings
 
 Foreign Keys
 ------------
