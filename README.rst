@@ -30,8 +30,7 @@ Version 3 - Dec 2023
 --------------------
 
 #. Test with Django 5 and Python 3.12
-#. Incorporate messytables relevant code (2 files) since its no longer supported for Python 3.12
-(OKN has developed Rust based qsv to replace messytables, but it is overkill for the optional create Models feature)
+#. Incorporate messytables relevant code, 2 files, since its no longer supported for Python 3.12
 
 Version 2 - Sept 2014
 ---------------------
