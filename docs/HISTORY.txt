@@ -3,6 +3,15 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
+3.0 - Add messytables for django 5 - 23 Dec 2023
+------------------------------------------------
+
+#. Upgrade to Django 5, hence Python 3.12
+#. Add csvimport/messytables with two files to provide functionality used from OKN messytables, since the whole package is no longer maintained for Python 3.12
+#. Autoformat the code with black
+
+[OKN]
+
 2.17 - Fix for django 4 - 2 Jan 2023
 ------------------------------------
 

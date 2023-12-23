@@ -293,7 +293,7 @@ class Command(LabelCommand, CSVParser):
         model_instance = self.model()
         model_instance.csvimport_id = csvimportid
 
-        for (column, field, foreignkey) in self.mappings:
+        for column, field, foreignkey in self.mappings:
             if self.nameindexes:
                 column = indexes.index(column)
             else:
@@ -412,7 +412,7 @@ class Command(LabelCommand, CSVParser):
         msg = ""
         if model_instance:
             if self.defaults:
-                for (field, value, foreignkey) in self.defaults:
+                for field, value, foreignkey in self.defaults:
                     value = self.type_clean(field, value, loglist)
                     try:
                         done = model_instance.getattr(field)
@@ -426,7 +426,7 @@ class Command(LabelCommand, CSVParser):
 
             if self.deduplicate:
                 matchdict = {}
-                for (column, field, foreignkey) in self.mappings:
+                for column, field, foreignkey in self.mappings:
                     matchdict[field + "__exact"] = getattr(model_instance, field, None)
                 try:
                     self.model.objects.get(**matchdict)
@@ -575,7 +575,7 @@ class Command(LabelCommand, CSVParser):
         foreign keys, therefore foreign data
         """
         fk_key, fk_field = foreignkey
-        if fk_key and fk_field and rowcol != '':
+        if fk_key and fk_field and rowcol != "":
             # Allow users to specify app label for fk model if they want
             if fk_key.find(".") > -1:
                 new_app_label, fk_key = fk_key.split(".")

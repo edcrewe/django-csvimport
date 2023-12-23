@@ -9,7 +9,9 @@ from distutils.version import StrictVersion
 from optparse import make_option
 from django.core.management.base import LabelCommand, BaseCommand
 
-# from csvimport import CSVParser
+from csvimport.messytables.types import type_guess
+from csvimport.make_model import MakeModel
+
 
 cleancol = re.compile("[^0-9a-zA-Z]+")  # cleancol.sub('_', s)
 
@@ -47,7 +49,7 @@ class Command(LabelCommand, CSVParser):
     help = "Analyses CSV file date to generate a Django model"
 
     def __init__(self):
-        """ Set default attributes data types """
+        """Set default attributes data types"""
         super(Command, self).__init__()
         self.csvfile = []
         self.charset = ""
@@ -56,8 +58,8 @@ class Command(LabelCommand, CSVParser):
         self.errors = []
 
     def handle_label(self, label, **options):
-        """ Handle the circular reference by passing the nested
-            save_csvimport function
+        """Handle the circular reference by passing the nested
+        save_csvimport function
         """
         csvfile = label
         defaults = options.get("defaults", [])
@@ -82,14 +84,14 @@ class Command(LabelCommand, CSVParser):
         self.makemodel = (
             '""" A django model generated with django-csvimport csvinspect\n'
         )
-        self.makemodel += '    which used OKN messytables to guess data types - may need some manual tweaks!\n"""'
+        self.makemodel += '    which used code from OKN messytables to guess data types - may need some manual tweaks!\n"""'
         self.makemodel += "\nfrom django.db import models\n\n"
         self.makemodel += model_definition
         print(self.makemodel)
         return
 
     def create_new_model(self, modelname, app_label):
-        """ Use messytables to guess field types and build a new model """
+        """Use messytables to guess field types and build a new model"""
 
         nocols = False
         cols = self.csvfile[0]
@@ -105,24 +107,21 @@ class Command(LabelCommand, CSVParser):
             cols = [col.strip('"') for col in cols]
             cols = [col.strip("'") for col in cols]
             cols = [cleancol.sub("_", col).lower() for col in cols]
+        # Get untyped sample table content
+        # table_set = any_tableset(self.filehandle)
+        # row_set = table_set.tables[0]
+        # sample = row_set.sample
+        if nocols:
+            types = type_guess(self.csvfile)
+        else:
+            types = type_guess(self.csvfile[1:])
         try:
-            from messytables import any_tableset, type_guess
-        except:
-            self.errors.append(
-                "If you want to inspect CSV files to generate model code, you must install https://messytables.readthedocs.org"
-            )
-            self.modelname = ""
-            return
-        try:
-            table_set = any_tableset(self.filehandle)
-            row_set = table_set.tables[0]
-            types = type_guess(row_set.sample)
             types = [str(typeobj) for typeobj in types]
             # If the header has more cols than the data has cols - ignore the end ones
             if len(cols) > len(types):
                 cols = cols[: len(types)]
         except Exception as err:
-            self.errors.append("messytables could not run due to error")
+            self.errors.append("messytables code could not run due to error")
             self.errors.append(str(err))
             self.modelname = ""
             return
@@ -141,15 +140,13 @@ class Command(LabelCommand, CSVParser):
             default = True
             column = (col, types[i], length, length, integer, decimal, blank, default)
             fieldset.append(column)
-        # Import here so that messytables is not a dependency for just using csvimport cmd
-        from csvimport.make_model import MakeModel
 
         maker = MakeModel()
         return maker.model_from_table("%s_%s" % (app_label, modelname), fieldset)
 
     def get_maxlengths(self, cols):
-        """ Get maximum column length values to avoid truncation
-            -- can always manually reduce size of fields after auto model creation
+        """Get maximum column length values to avoid truncation
+        -- can always manually reduce size of fields after auto model creation
         """
         len_cols = len(cols)
         maximums = [0] * len_cols

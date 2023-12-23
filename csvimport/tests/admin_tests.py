@@ -12,7 +12,7 @@ from csvimport.models import CSVImport, get_models
 
 
 class AdminTest(CommandTestCase):
-    """ Run test of csvimport admin UI """
+    """Run test of csvimport admin UI"""
 
     def test_get_models(self):
         """Check that get_models is working to give a list of models for import"""

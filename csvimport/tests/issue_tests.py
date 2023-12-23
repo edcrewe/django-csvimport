@@ -6,12 +6,12 @@ import sys
 
 
 class RegressionTest(CommandTestCase):
-    """ Run tests with data from reported issue that last col is empty in github bug tracker 
-        Could not replicate - all fields are populated without any trailing comma needed
+    """Run tests with data from reported issue that last col is empty in github bug tracker
+    Could not replicate - all fields are populated without any trailing comma needed
     """
 
     def test_issue_98(self, filename="issue98.csv"):
-        """ Test if last column is lost - check all rows and all values of a sample row"""
+        """Test if last column is lost - check all rows and all values of a sample row"""
         info = ["Imported 5 rows to Issue98"]
         testrow = [
             "abcd190",

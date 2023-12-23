@@ -8,12 +8,12 @@ from django.conf import settings
 
 
 class LogTest(CommandTestCase):
-    """ Run test of file parsing """
+    """Run test of file parsing"""
 
     logpath = ""
 
     def get_log_path(self):
-        """ Get the log file that should of been written by the parse tests """
+        """Get the log file that should of been written by the parse tests"""
         if CSVIMPORT_LOG != "logger":
             print(
                 """CSVIMPORT_LOG is not set to 'logger' in settings
@@ -40,7 +40,7 @@ class LogTest(CommandTestCase):
         return False
 
     def test_log(self):
-        """ Check the log is there and then remove it """
+        """Check the log is there and then remove it"""
         if self.get_log_path():
             csvlog = open(self.logpath)
             lines = csvlog.read()
@@ -50,19 +50,9 @@ class LogTest(CommandTestCase):
         return
 
     def test_new_model(self, filename="test_new_model.csv"):
-        """ Use custom command to upload file and create model """
-        try:
-            import messytables
-
-            runtest = True
-        except:
-            print("Install messytables to run the inspectcsv test")
-            runtest = False
-        if runtest:
-            pkey = "wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)"
-            makemodel = self.inspectcsv(
-                csvfile=filename, model="create_new_model.shiny"
-            )
-            self.assertIn("wordcol = models.CharField", makemodel)
-            self.assertIn("class CreateNewModelShiny", makemodel)
-            self.assertIn("create_new_model_shiny", makemodel)
+        """Use custom command to upload file and create model"""
+        pkey = "wordcol = models.CharField(max_length=8, null=False, primary_key=True, blank=False)"
+        makemodel = self.inspectcsv(csvfile=filename, model="create_new_model.shiny")
+        self.assertIn("wordcol = models.CharField", makemodel)
+        self.assertIn("class CreateNewModelShiny", makemodel)
+        self.assertIn("create_new_model_shiny", makemodel)

@@ -21,8 +21,8 @@ DEFAULT_ERRS = [
 
 
 class DummyFileObj:
-    """ Use to replace html upload / or command arg
-        with test fixtures files
+    """Use to replace html upload / or command arg
+    with test fixtures files
     """
 
     path = ""
@@ -32,10 +32,10 @@ class DummyFileObj:
 
 
 class CommandTestCase(TestCase):
-    """ Run test of use of optional command line args - mappings, default and charset """
+    """Run test of use of optional command line args - mappings, default and charset"""
 
     def inspectcsv(self, csvfile, model="", charset="", defaults=""):
-        """ Run inspectcsv command to parse file """
+        """Run inspectcsv command to parse file"""
         cmd = InspectCommand()
         uploaded = DummyFileObj()
         uploaded.set_path(csvfile)
@@ -62,7 +62,7 @@ class CommandTestCase(TestCase):
         bulk=False,
         time=False,
     ):
-        """ Run core csvimport command to parse file """
+        """Run core csvimport command to parse file"""
         cmd = ImportCommand()
         uploaded = DummyFileObj()
         uploaded.set_path(csvfile)
@@ -103,7 +103,7 @@ class CommandTestCase(TestCase):
         self.assertEqual(errors, [])
 
     def get_item(self, code_share="sheeting"):
-        """ Get item for confirming import is OK """
+        """Get item for confirming import is OK"""
         try:
             item = Item.objects.get(code_share__exact=code_share)
         except ObjectDoesNotExist:

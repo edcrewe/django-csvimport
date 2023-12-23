@@ -10,8 +10,7 @@ MESSYMAP = {
 
 
 class MakeModel(object):
-    """ Generates a simple model from a definition of fields
-    """
+    """Generates a simple model from a definition of fields"""
 
     def to_django(self, mtype):
         djtype = MESSYMAP.get(str(mtype), "")
@@ -21,7 +20,7 @@ class MakeModel(object):
         return djtype
 
     def table2model(self, table_name):
-        """ CamelCase from a table name """
+        """CamelCase from a table name"""
         breaks = ["_", " ", "-"]
         parts = [
             table_name,
@@ -39,11 +38,11 @@ class MakeModel(object):
         return klass
 
     def model_from_table(self, table_name, fieldset):
-        """ Generates model code and writes it to files,
-            also clone code and sql if config requires it
-            Note - follows the same format as
-            introspection.get_table_description(cursor, table_name)
-            [(column_name, messy_type, bytes, max_length, max_digits, decimal_places) , ...]
+        """Generates model code and writes it to files,
+        also clone code and sql if config requires it
+        Note - follows the same format as
+        introspection.get_table_description(cursor, table_name)
+        [(column_name, messy_type, bytes, max_length, max_digits, decimal_places) , ...]
         """
         classname = self.table2model(table_name)
         filename = classname.lower()

@@ -13,8 +13,7 @@ MODELS = []
 
 
 def get_models():
-    """ Cannot load at module level for later djangos - since its too early
-    """
+    """Cannot load at module level for later djangos - since its too early"""
     global MODELS
     if MODELS:
         return MODELS
@@ -44,7 +43,7 @@ def get_models():
 
 
 class CSVImport(models.Model):
-    """ Logging model for importing files """
+    """Logging model for importing files"""
 
     model_choice = []
     model_name = models.CharField(
@@ -85,7 +84,7 @@ class CSVImport(models.Model):
 
 
 class ImportModel(models.Model):
-    """ Optional one to one mapper of import file to Model """
+    """Optional one to one mapper of import file to Model"""
 
     csvimport = models.ForeignKey(CSVImport, on_delete=models.CASCADE)
     numeric_id = models.PositiveIntegerField()

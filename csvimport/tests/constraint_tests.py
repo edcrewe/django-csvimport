@@ -8,7 +8,7 @@ import django
 
 
 class ConstraintTest(CommandTestCase):
-    """ Run test of file parsing """
+    """Run test of file parsing"""
 
     def get_country(self, country_code):
         try:
@@ -21,7 +21,7 @@ class ConstraintTest(CommandTestCase):
         return country
 
     def test_empty_notnull(self, filename="bad_country.csv"):
-        """ Use custom command to upload a country file with missing long lat data"""
+        """Use custom command to upload a country file with missing long lat data"""
         errs = [
             "Field 'latitude' expected a number but got 'null'.",
             "could not convert string to float: 'null'",

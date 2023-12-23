@@ -10,7 +10,7 @@ pyversion = sys.version_info[0]  # python 2 or 3
 
 
 class PerformanceTest(CommandTestCase):
-    """ Run test of file parsing """
+    """Run test of file parsing"""
 
     def test_time_load(self, filename="countries.csv"):
         """Time the upload of a country file"""
@@ -39,5 +39,8 @@ class PerformanceTest(CommandTestCase):
         self.assertTrue(single_time > bulk_time)
         print(
             "Time to run bulk countries import was %s faster than %s"
-            % (bulk_time, single_time,)
+            % (
+                bulk_time,
+                single_time,
+            )
         )

@@ -5,7 +5,6 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("csvimport", "0001_initial"),
     ]
@@ -14,7 +13,10 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Issue98",
             fields=[
-                ("co_id", models.CharField(default="", max_length=7, serialize=False),),
+                (
+                    "co_id",
+                    models.CharField(default="", max_length=7, serialize=False),
+                ),
                 ("co_role", models.CharField(blank=True, max_length=16, null=True)),
                 ("co_level", models.IntegerField(blank=True, default=0, null=True)),
                 ("co_region", models.CharField(blank=True, max_length=16, null=True)),
@@ -75,7 +77,10 @@ class Migration(migrations.Migration):
                     models.CharField(blank=True, default="", max_length=8),
                 ),
             ],
-            options={"db_table": "csvtests_issue98", "managed": True,},
+            options={
+                "db_table": "csvtests_issue98",
+                "managed": True,
+            },
         ),
         migrations.CreateModel(
             name="Country",
@@ -89,7 +94,10 @@ class Migration(migrations.Migration):
                 ("longitude", models.FloatField(default=0, null=True)),
                 ("alias", models.CharField(max_length=255, null=True)),
             ],
-            options={"db_table": '"csvtests_country"', "managed": True,},
+            options={
+                "db_table": '"csvtests_country"',
+                "managed": True,
+            },
         ),
         migrations.CreateModel(
             name="Organisation",
@@ -105,7 +113,10 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=255)),
             ],
-            options={"db_table": "csvtests_organisation", "managed": True,},
+            options={
+                "db_table": "csvtests_organisation",
+                "managed": True,
+            },
         ),
         migrations.CreateModel(
             name="UnitOfMeasure",
@@ -121,7 +132,10 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=32)),
             ],
-            options={"db_table": "csvtests_unitofmeasure", "managed": True,},
+            options={
+                "db_table": "csvtests_unitofmeasure",
+                "managed": True,
+            },
         ),
         migrations.CreateModel(
             name="Item",
@@ -176,6 +190,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"db_table": "csvtests_item", "managed": True,},
+            options={
+                "db_table": "csvtests_item",
+                "managed": True,
+            },
         ),
     ]

@@ -4,12 +4,12 @@ from csvimport.tests.models import Item
 
 
 class CommandArgsTest(CommandTestCase):
-    """ Run test of use of optional command line args - mappings, default and charset """
+    """Run test of use of optional command line args - mappings, default and charset"""
 
     def test_mappings(self, filename="test_headless.csv"):
-        """ Use custom command to upload file and parse it into Items
-            Handle either mapping format
-            TODO: add handling of spaces in defaults?
+        """Use custom command to upload file and parse it into Items
+        Handle either mapping format
+        TODO: add handling of spaces in defaults?
         """
         # header equivalent only mapping
         mappings = "CODE_SHARE,CODE_ORG,ORGANISATION,DESCRIPTION,UOM,QUANTITY,STATUS"
@@ -48,10 +48,10 @@ class CommandArgsTest(CommandTestCase):
         Item.objects.all().delete()
 
     def test_default(self, filename="test_char.csv"):
-        """ Check the default values over-ride those in the file
-            NB: Should we add an option to only make defaults change null values?
-            ... maybe although all of that could be done post import anyway so
-            this is more normally used to allow setting values for missing columns
+        """Check the default values over-ride those in the file
+        NB: Should we add an option to only make defaults change null values?
+        ... maybe although all of that could be done post import anyway so
+        this is more normally used to allow setting values for missing columns
         """
         defaults = "code_org=ALLTHESAME,quantity=58"
         self.command(filename, "csvimport.Item", defaults=defaults)

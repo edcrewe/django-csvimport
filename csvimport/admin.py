@@ -8,7 +8,7 @@ from csvimport.models import CSVImport
 
 
 class CSVImportAdmin(ModelAdmin):
-    """ Custom model to not have much editable! """
+    """Custom model to not have much editable!"""
 
     readonly_fields = ["file_name", "upload_method", "error_log_html", "import_user"]
     fields = [
@@ -26,8 +26,8 @@ class CSVImportAdmin(ModelAdmin):
     }
 
     def save_model(self, request, obj, form, change):
-        """ Do save and process command - cant commit False
-            since then file wont be found for reopening via right charset
+        """Do save and process command - cant commit False
+        since then file wont be found for reopening via right charset
         """
         form.save()
         from csvimport.management.commands.importcsv import Command
@@ -51,7 +51,7 @@ class CSVImportAdmin(ModelAdmin):
         obj.save()
 
     def filename_defaults(self, filename):
-        """ Override this method to supply filename based data """
+        """Override this method to supply filename based data"""
         defaults = []
         splitters = {"/": -1, ".": 0, "_": 0}
         for splitter, index in splitters.items():

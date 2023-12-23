@@ -5,8 +5,8 @@ import time
 
 
 def _isdst(self, dt):
-    """ Monkeypatch from https://code.djangoproject.com/ticket/3418
-        since sqlite and other backends still have this issue in django 1.6
+    """Monkeypatch from https://code.djangoproject.com/ticket/3418
+    since sqlite and other backends still have this issue in django 1.6
     """
     year = dt.year
     if int(year) < 1970:
