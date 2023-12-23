@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - January 2023
+Ed Crewe - December 2023
 
 Overview
 --------
@@ -20,7 +20,7 @@ for possible use via cronjob etc.
 
 For CSV files import where their schema is unknown, and there is no existing model to import to, there
 is another command, inspectcsv, to generate the model code from the CSV file, guessing data types from the data
-using https://messytables.readthedocs.org - to use this command please pip install messytables.
+using code from https://messytables.readthedocs.org
 
 The core import code was based on http://djangosnippets.org/snippets/633/ by Jonathan Holst.
 It adds character encoding handling, model field and column autodetection, admin interface,
@@ -29,7 +29,9 @@ custom command etc.
 Version 3 - Dec 2023
 --------------------
 
-#. Incorporate messytables relevant code since its no longer supported (OKN now use Rust based qsv, but that is overkill for the optional create Models feature)
+#. Test with Django 5 and Python 3.12
+#. Incorporate messytables relevant code (2 files) since its no longer supported for Python 3.12
+(OKN has developed Rust based qsv to replace messytables, but it is overkill for the optional create Models feature)
 
 Version 2 - Sept 2014
 ---------------------
@@ -47,12 +49,6 @@ Version Compatibility
 - version 2.14 tested with Django 3.0.5 on Python 3.7.6, 3.8.2
 - version 2.13 was tested with Django 2.2.5 on Python 3.7.3
 - version 2.6 was tested with Django 1.7, 1.8, 1.9, 1.10, 1.11 on Python 2.7.13, Python 3.5.6
-  
-(NOTE To use the inspectcsv model generation command, requires messytables. Latest messytables needs older 
-python magic...
-
-#. pip install python-magic-bin==0.4.14
-#. pip install messytables)
 
 Please use version 2.1, eg. pip install django-csvimport==2.1
 for Django versions prior to 1.7
@@ -87,8 +83,6 @@ Custom commands
 ---------------
 
 INSPECTCSV
-
-(pip install messytables to use this command)
 
 manage.py inspectcsv importfile.csv > models.py
 
