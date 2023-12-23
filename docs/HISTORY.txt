@@ -3,6 +3,11 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
+3.1 - Add messytables for django 5 - 23 Dec 2023
+------------------------------------------------
+
+#. Use dateparser rather than python-dateutil and add to setup.py dependencies
+
 3.0 - Add messytables for django 5 - 23 Dec 2023
 ------------------------------------------------
 

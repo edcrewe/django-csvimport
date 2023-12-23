@@ -5,7 +5,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-version = "3.0"
+version = "3.1"
 
 with open("README.rst", "r") as fp:
     csvimport_description = fp.read() + "\n"
@@ -48,7 +48,7 @@ setup(
     # this line always breaks install?
     # package_data = {'csvimport': ['*.csv', '*.rst']},
     zip_safe=False,
-    install_requires=["django>=2.2.5", "chardet"],
+    install_requires=["django>=2.2.5", "chardet", "dateparser"],
     entry_points="""
       # -*- Entry points: -*-
       """,

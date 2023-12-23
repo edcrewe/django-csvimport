@@ -5,7 +5,7 @@ from itertools import zip_longest
 import locale
 import sys
 
-import dateutil.parser as parser
+import dateparser
 
 from csvimport.messytables.dateparser import DATE_FORMATS, is_date
 
@@ -243,7 +243,7 @@ class DateUtilType(CellType):
     def cast(self, value):
         if value in ("", None):
             return None
-        return parser.parse(value)
+        return dateparser.parse(value)
 
 
 TYPES = [
