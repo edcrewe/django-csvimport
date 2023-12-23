@@ -17,7 +17,7 @@ setup(
     name="django-csvimport",
     version=version,
     description="Import CSV files to django models",
-    long_description_content_type="test/x-rst",
+    long_description_content_type="text/x-rst",
     long_description=csvimport_description,
     # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
