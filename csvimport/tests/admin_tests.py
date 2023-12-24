@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os
+import os, sys
 
 from django.conf import settings
 from django.test import Client
@@ -29,7 +29,7 @@ class AdminTest(CommandTestCase):
         )
         login = c.login(username="admin", password="letmein")
         fixpath = os.path.join(
-            os.getcwd(), "src/django-csvimport/csvimport/tests/fixtures/test_plain.csv"
+            os.path.dirname(__file__), "fixtures", "test_plain.csv"
         )
         with open(fixpath) as fp:
             fake_file = ContentFile(fp.read())
