@@ -164,7 +164,7 @@ Tests
 
 To run the django-csvimport tests use:
 
->>> bin/django-admin test csvimport --settings=csvimport.settings
+>>> bin/python3 -m django test --settings='csvimport.settings' csvimport.tests
 
 Foreign Keys
 ------------
