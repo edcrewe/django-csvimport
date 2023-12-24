@@ -28,9 +28,7 @@ class AdminTest(CommandTestCase):
             "admin", "admin@example.com", "letmein"
         )
         login = c.login(username="admin", password="letmein")
-        fixpath = os.path.join(
-            os.path.dirname(__file__), "fixtures", "test_plain.csv"
-        )
+        fixpath = os.path.join(os.path.dirname(__file__), "fixtures", "test_plain.csv")
         with open(fixpath) as fp:
             fake_file = ContentFile(fp.read())
             fake_file.name = "test_plain.csv"
