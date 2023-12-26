@@ -1,5 +1,3 @@
-import csvimport.monkeypatch_tzinfo
-
 from django.apps import apps
 from django.db import models
 from csvimport.app import settings

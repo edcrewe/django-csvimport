@@ -30,7 +30,8 @@ Version 3 - Dec 2023
 --------------------
 
 #. Test with Django 5 and Python 3.12
-#. Incorporate messytables relevant code, 2 files, since its no longer supported for Python 3.12
+#. Incorporate messytables relevant code, the types.py file, since its no longer supported for Python 3.12
+#. Use dateparser for auto-handling a much wider range of date formats
 
 Version 2 - Sept 2014
 ---------------------
@@ -197,14 +198,8 @@ If imports are happening repeatedly, eg. once a day, you retain your import CSV 
 DateTime  data
 --------------
 
-Note that the importer uses the standard date input format list in settings to try to convert any datetime types you have in your CSV file.
-So add this to your settings with a list of any formats that you want to be handled.
-
-DATE_INPUT_FORMATS = ['%Y-%m-%d %H:%M:%S']
-
-In order for dates to be imported outside of the timezone range of 1970-2037
-for certain database backends such as sqlite there is a patch of django.utils.timezone
-using tzinfo monkeypatch
+Note that the importer uses dateparser to try to convert any datetime types you have in your CSV file.
+See https://dateparser.readthedocs.io/en/latest/
 
 Acknowledgements
 ----------------

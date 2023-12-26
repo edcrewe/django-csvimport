@@ -5,7 +5,7 @@ import os
 import csv
 import re
 from datetime import datetime
-
+import dateparser
 import codecs
 import chardet
 import django
@@ -53,13 +53,6 @@ DATE = ["DateField", "TimeField", "DateTimeField"]
 BOOLEAN = ["BooleanField", "NullBooleanField"]
 BOOLEAN_TRUE = [1, "1", "Y", "Yes", "yes", "True", "true", "T", "t"]
 
-# Adding Support for Django 1.9+
-if StrictVersion(django.get_version()) >= StrictVersion("1.9.0"):
-    DATE_INPUT_FORMATS = tuple(settings.DATE_INPUT_FORMATS) or ("%d/%m/%Y", "%Y/%m/%d")
-else:
-    DATE_INPUT_FORMATS = settings.DATE_INPUT_FORMATS or ("%d/%m/%Y", "%Y/%m/%d")
-
-CSV_DATE_INPUT_FORMATS = DATE_INPUT_FORMATS + ("%d-%m-%Y", "%Y-%m-%d")
 cleancol = re.compile("[^0-9a-zA-Z]+")  # cleancol.sub('_', s)
 
 from django import dispatch
@@ -524,15 +517,7 @@ class Command(LabelCommand, CSVParser):
         # date data - remove the date if it doesn't convert so null=True can work
         if field_type in DATE:
             datevalue = None
-            try:
-                datevalue = datetime(value)
-            except:
-                for datefmt in CSV_DATE_INPUT_FORMATS:
-                    try:
-                        datevalue = datetime.strptime(value, datefmt)
-                    except:
-                        pass
-
+            datevalue = dateparser.parse(value)
             if datevalue:
                 value = timezone.make_aware(datevalue, CURRENT_TIMEZONE)
             else:
