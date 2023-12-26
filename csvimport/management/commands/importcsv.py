@@ -2,12 +2,10 @@
     Django command to import CSV files
 """
 import os
-import csv
 import re
+import json
 from datetime import datetime
 import dateparser
-import codecs
-import chardet
 import django
 from distutils.version import StrictVersion
 
@@ -52,6 +50,16 @@ SMALLINT_DBS = ["sqlite", "sqlite3", "sqlite4"]
 DATE = ["DateField", "TimeField", "DateTimeField"]
 BOOLEAN = ["BooleanField", "NullBooleanField"]
 BOOLEAN_TRUE = [1, "1", "Y", "Yes", "yes", "True", "true", "T", "t"]
+
+# Check if there is a Json Map for dateparser settings, turn it into Python map
+DATEPARSER_SETTINGS = os.environ.get("DATEPARSER_SETTINGS")
+if DATEPARSER_SETTINGS:
+    try:
+        DATEPARSER_SETTINGS = json.loads(DATEPARSER_SETTINGS)
+    except:
+        DATEPARSER_SETTINGS = {}
+else:
+    DATEPARSER_SETTINGS = {}
 
 cleancol = re.compile("[^0-9a-zA-Z]+")  # cleancol.sub('_', s)
 
@@ -516,8 +524,7 @@ class Command(LabelCommand, CSVParser):
                     value = 0
         # date data - remove the date if it doesn't convert so null=True can work
         if field_type in DATE:
-            datevalue = None
-            datevalue = dateparser.parse(value)
+            datevalue = dateparser.parse(value, settings=DATEPARSER_SETTINGS)
             if datevalue:
                 value = timezone.make_aware(datevalue, CURRENT_TIMEZONE)
             else:

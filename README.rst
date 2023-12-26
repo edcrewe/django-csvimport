@@ -199,7 +199,7 @@ DateTime  data
 --------------
 
 Note that the importer uses dateparser to try to convert any datetime types you have in your CSV file.
-See https://dateparser.readthedocs.io/en/latest/
+See https://dateparser.readthedocs.io/en/latest/settings.html for DATEPARSER_SETTINGS env variable as a JSON map.
 
 Acknowledgements
 ----------------
