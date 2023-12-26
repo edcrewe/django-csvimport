@@ -5,8 +5,6 @@ from itertools import zip_longest
 import locale
 import sys
 
-import dateparser
-
 from csvimport.messytables.dateparser import DATE_FORMATS, is_date
 
 
@@ -221,31 +219,6 @@ class DateType(CellType):
         return hash(self.__class__) + hash(self.format)
 
 
-class DateUtilType(CellType):
-    """The date util type uses the dateutil library to
-    parse the dates. The advantage of this type over
-    DateType is the speed and better date detection. However,
-    it does not offer format detection.
-
-    Do not use this together with the DateType"""
-
-    guessing_weight = 3
-    result_type = datetime.datetime
-
-    def test(self, value):
-        if not (
-            isinstance(value, datetime.datetime)
-            or (isinstance(value, str) and is_date(value))
-        ):
-            return False
-        return CellType.test(self, value)
-
-    def cast(self, value):
-        if value in ("", None):
-            return None
-        return dateparser.parse(value)
-
-
 TYPES = [
     StringType,
     DecimalType,
@@ -271,6 +244,9 @@ def type_guess(rows, types=TYPES, strict=False):
     Modified original messytables.type_quess
     to use simple rows = list of lists of cell values
     ie inspectcsv self.csvfile with cols first row removed if exists
+
+    All columns are checked for all types so this can be slow for huge CSV files
+    so make a sample file with a subset of the data for this use case.
     """
     guesses = []
     type_instances = [i for t in types for i in t.instances()]

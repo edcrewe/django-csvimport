@@ -3,11 +3,10 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
-3.2 - Use dateparser for import and inspect - 26 Dec 2023
+3.2 - Use dateparser for import - 26 Dec 2023
 ---------------------------------------------------------
 
 #. Use dateparser for importing a much wider range of mixed date formats without specifying a format
-#. Use dateparser for messytables / inspectcsv and remove local dateparser
 #. Remove old tz monkeypatch
 
 3.1 - Add messytables for django 5 - 23 Dec 2023

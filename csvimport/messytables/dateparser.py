@@ -10,6 +10,7 @@ def is_date(value):
 def create_date_formats(day_first=True):
     """generate combinations of time and date
     formats with different delimeters
+    - use this for fast check of dates, because dateparser is too slow for checking all string fields
     """
 
     if day_first:
@@ -32,12 +33,10 @@ def create_date_formats(day_first=True):
 
     both_date_formats = list(zip(date_formats, python_date_formats))
 
-    # time_formats = "hh:mmz hh:mm:ssz hh:mmtzd hh:mm:sstzd".split()
     time_formats = "hh:mm:ssz hh:mm:ss hh:mm:sstzd".split()
     python_time_formats = "%H:%M%Z %H:%M:%S %H:%M:%S%Z %H:%M%z %H:%M:%S%z".split()
     both_time_formats = list(zip(time_formats, python_time_formats))
 
-    # date_separators = ["-","."," ","","/","\\"]
     date_separators = ["-", ".", "/", " "]
 
     all_date_formats = []
