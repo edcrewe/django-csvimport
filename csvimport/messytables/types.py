@@ -1,7 +1,6 @@
 import decimal
 import datetime
 from collections import defaultdict
-from itertools import zip_longest
 import locale
 import sys
 
@@ -231,15 +230,12 @@ TYPES = [
 ]
 
 
-def type_guess(rows, types=TYPES, strict=False):
+def type_guess(rows, types=TYPES):
     """The type guesser aggregates the number of successful
     conversions of each column to each type, weights them by a
     fixed type priority and select the most probable type for
     each column based on that figure. It returns a list of
     ``CellType``. Empty cells are ignored.
-
-    Strict means that a type will not be guessed
-    if parsing fails for a single cell in the column.
 
     Modified original messytables.type_quess
     to use simple rows = list of lists of cell values
@@ -250,47 +246,18 @@ def type_guess(rows, types=TYPES, strict=False):
     """
     guesses = []
     type_instances = [i for t in types for i in t.instances()]
-    if strict:
-        at_least_one_value = []
-        for ri, row in enumerate(rows):
-            diff = len(row) - len(guesses)
-            for _ in range(diff):
-                typesdict = {}
-                for type in type_instances:
-                    typesdict[type] = 0
-                guesses.append(typesdict)
-                at_least_one_value.append(False)
-            for ci, cell in enumerate(row):
-                if not cell:
-                    continue
-                at_least_one_value[ci] = True
-                for type in list(guesses[ci].keys()):
-                    if not type.test(cell):
-                        guesses[ci].pop(type)
-        # no need to set guessing weights before this
-        # because we only accept a type if it never fails
-        for i, guess in enumerate(guesses):
-            for type in guess:
-                guesses[i][type] = type.guessing_weight
-        # in case there were no values at all in the column,
-        # we just set the guessed type to string
-        for i, v in enumerate(at_least_one_value):
-            if not v:
-                guesses[i] = {StringType(): 0}
-    else:
-        for i, row in enumerate(rows):
-            diff = len(row) - len(guesses)
-            for _ in range(diff):
-                guesses.append(defaultdict(int))
-            for i, cell in enumerate(row):
-                # add string guess so that we have at least one guess
-                guesses[i][StringType()] = guesses[i].get(StringType(), 0)
-                if not cell:
-                    continue
-                for type in type_instances:
-                    if type.test(cell):
-                        guesses[i][type] += type.guessing_weight
-        _columns = []
+    for i, row in enumerate(rows):
+        diff = len(row) - len(guesses)
+        for _ in range(diff):
+            guesses.append(defaultdict(int))
+        for i, cell in enumerate(row):
+            # add string guess so that we have at least one guess
+            guesses[i][StringType()] = guesses[i].get(StringType(), 0)
+            if not cell:
+                continue
+            for type in type_instances:
+                if type.test(cell):
+                    guesses[i][type] += type.guessing_weight
     _columns = []
     for guess in guesses:
         # this first creates an array of tuples because we want the types to be
@@ -300,25 +267,3 @@ def type_guess(rows, types=TYPES, strict=False):
         guesses_tuples = [(t, guess[t]) for t in type_instances if t in guess]
         _columns.append(max(guesses_tuples, key=lambda t_n: t_n[1])[0])
     return _columns
-
-
-def types_processor(types, strict=False):
-    """Apply the column types set on the instance to the
-    current row, attempting to cast each cell to the specified
-    type.
-
-    Strict means that casting errors are not ignored"""
-
-    def apply_types(row_set, row):
-        if types is None:
-            return row
-        for cell, type in zip_longest(row, types):
-            try:
-                cell = type.cast(cell)
-                cell.type = type
-            except Exception:
-                if strict and type:
-                    raise
-        return row
-
-    return apply_types
