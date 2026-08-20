@@ -7,7 +7,7 @@ import json
 from datetime import datetime
 import dateparser
 import django
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 from django.db import DatabaseError
 from django.db import transaction
@@ -153,7 +153,7 @@ class Command(LabelCommand, CSVParser):
             parser.add_argument("--%s" % arg, **self.options[arg])
 
     # Support for Django 1.9 or earlier
-    if StrictVersion(django.get_version()) < StrictVersion("1.10.0"):
+    if Version(django.get_version()) < Version("1.10.0"):
         make_options = []
         for arg in options:
             make_options.append(make_option("--%s" % arg, **options[arg]))
@@ -294,6 +294,7 @@ class Command(LabelCommand, CSVParser):
         model_instance = self.model()
         model_instance.csvimport_id = csvimportid
 
+        msg = None
         for column, field, foreignkey in self.mappings:
             if self.nameindexes:
                 column = indexes.index(column)
