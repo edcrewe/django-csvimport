@@ -294,6 +294,7 @@ class Command(LabelCommand, CSVParser):
         model_instance = self.model()
         model_instance.csvimport_id = csvimportid
 
+        msg = None
         for column, field, foreignkey in self.mappings:
             if self.nameindexes:
                 column = indexes.index(column)
