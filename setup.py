@@ -48,7 +48,7 @@ setup(
     # this line always breaks install?
     # package_data = {'csvimport': ['*.csv', '*.rst']},
     zip_safe=False,
-    install_requires=["django>=2.2.5", "chardet", "dateparser"],
+    install_requires=["django>=4.2", "chardet", "dateparser", "packaging"],
     entry_points="""
       # -*- Entry points: -*-
       """,

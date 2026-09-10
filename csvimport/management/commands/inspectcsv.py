@@ -4,7 +4,7 @@
 import re
 import os
 import django
-from distutils.version import StrictVersion
+from packaging.version import Version
 
 from optparse import make_option
 from django.core.management.base import LabelCommand, BaseCommand
@@ -41,7 +41,7 @@ class Command(LabelCommand, CSVParser):
     )
 
     # Adding support for Django 1.10+
-    if StrictVersion(django.get_version()) >= StrictVersion("1.10.0"):
+    if Version(django.get_version()) >= Version("1.10.0"):
         option_list = getattr(BaseCommand, "option_list", ()) + make_options
     else:
         option_list = BaseCommand.option_list + make_options
