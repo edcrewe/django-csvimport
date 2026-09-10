@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Use unicode source code to make test character string writing easier
 from csvimport.tests.testcase import CommandTestCase
-from csvimport.tests.models import Issue98
+from csvimport.management.commands.importcsv import Command as ImportCommand
+from csvimport.tests.models import Issue98, Item
 import sys
 
 
@@ -43,3 +44,17 @@ class RegressionTest(CommandTestCase):
         fields = Issue98._meta.get_fields()
         for i, field in enumerate(fields):
             self.assertEqual(getattr(obj, field.name), testrow[i])
+
+    def test_assignment_error_initializes_message(self):
+        """Log the first assignment error without raising UnboundLocalError."""
+        command = ImportCommand()
+        command.model = Item
+        command.mappings = [("1", "uom", None)]
+        loglist = []
+
+        command.make_row(["not-a-unit"], 0, 0, loglist, clean=False)
+
+        self.assertEqual(
+            loglist,
+            ["row 0: Column uom = not-a-unit couldnt be set for row"],
+        )

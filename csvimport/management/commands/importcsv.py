@@ -6,14 +6,11 @@ import re
 import json
 from datetime import datetime
 import dateparser
-import django
-from distutils.version import StrictVersion
 
 from django.db import DatabaseError
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management.base import LabelCommand, BaseCommand, CommandError
-from optparse import make_option
+from django.core.management.base import LabelCommand, CommandError
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -141,6 +138,11 @@ class Command(LabelCommand, CSVParser):
             "default": False,
             "help": "If True, all csv rows are created at once by a bulk create, so can fail if any have data issues, but its faster",
         },
+        "standard-parser": {
+            "action": "store_true",
+            "default": False,
+            "help": "Use Python's standard CSV parser instead of the forgiving parser",
+        },
     }
 
     # Use 1.10 or later arguments method
@@ -151,13 +153,6 @@ class Command(LabelCommand, CSVParser):
         )
         for arg in self.options:
             parser.add_argument("--%s" % arg, **self.options[arg])
-
-    # Support for Django 1.9 or earlier
-    if StrictVersion(django.get_version()) < StrictVersion("1.10.0"):
-        make_options = []
-        for arg in options:
-            make_options.append(make_option("--%s" % arg, **options[arg]))
-        option_list = BaseCommand.option_list + tuple(make_options)
 
     help = "Imports a CSV file to a model"
 
@@ -182,6 +177,7 @@ class Command(LabelCommand, CSVParser):
         self.makemodel = ""
         self.start = 1
         self.db_backend = ""
+        self.indexes = []
 
     def handle(self, *args, **options):
         if args:
@@ -203,6 +199,7 @@ class Command(LabelCommand, CSVParser):
         delimiter = options.get("delimiter", ",")
         clean = options.get("clean", True)
         bulk = options.get("bulk", False)
+        standard_parser = options.get("standard_parser", False)
         # show_traceback = options.get('traceback', True)
         warn = self.setup(
             mappings=mappings,
@@ -213,6 +210,7 @@ class Command(LabelCommand, CSVParser):
             delimiter=delimiter,
             clean=clean,
             bulk=bulk,
+            reader=standard_parser,
         )
         if not warn and not hasattr(self.model, "_meta"):
             warn = (
@@ -242,13 +240,14 @@ class Command(LabelCommand, CSVParser):
         nameindexes=False,
         deduplicate=True,
         delimiter=",",
-        reader=True,
+        reader=False,
         clean=True,
         bulk=False,
     ):
         """Setup up the attributes for running the import"""
         self.clean = clean
         self.bulk = bulk
+        self.charset = charset
         self.defaults = self.set_mappings(defaults)
         if modelname.find(".") > -1:
             app_label, model = modelname.rsplit(".", 1)
@@ -260,7 +259,6 @@ class Command(LabelCommand, CSVParser):
             failed = self.check_filesystem(csvfile, delimiter=delimiter, reader=reader)
             if failed:
                 return failed
-        self.charset = charset
         self.app_label = app_label
         self.model = get_model(app_label, model)
         if not self.model:
@@ -294,9 +292,10 @@ class Command(LabelCommand, CSVParser):
         model_instance = self.model()
         model_instance.csvimport_id = csvimportid
 
+        msg = None
         for column, field, foreignkey in self.mappings:
             if self.nameindexes:
-                column = indexes.index(column)
+                column = self.indexes.index(column)
             else:
                 column = int(column) - 1
 
@@ -342,7 +341,7 @@ class Command(LabelCommand, CSVParser):
         """Run the csvimport"""
         loglist = []
         if self.nameindexes:
-            indexes = self.csvfile.pop(0)
+            self.indexes = self.csvfile.pop(0)
         counter = 0
         if logid:
             csvimportid = logid
@@ -379,7 +378,7 @@ class Command(LabelCommand, CSVParser):
                 logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
             model_instance = self.make_row(row, csvimportid, i, loglist, self.clean)
-            if self.bulk:
+            if self.bulk and model_instance is not None:
                 models.append(model_instance)
             else:
                 with transaction.atomic():

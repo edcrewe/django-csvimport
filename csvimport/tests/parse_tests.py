@@ -23,17 +23,34 @@ class CommandParseTest(CommandTestCase):
 
     def test_local_parser(self, filename="test_plain.csv"):
         """Use custom command to upload file and parse it into Items
-        Use reader = False to use local parser not csv lib reader
-        Note that Python 3 csv reader is far less format tolerant so tends to use local parser
+        The forgiving local parser is the default.
         """
-        self.command(
-            filename, "csvimport.Item", "country=KE(Country|code)", reader=False
-        )
+        self.command(filename, "csvimport.Item", "country=KE(Country|code)")
         item = self.get_item("sheeting")
         # Check a couple of the fields in Item
         self.assertEqual(item.code_org, "RF007")
         self.assertEqual(item.description, "Plastic sheeting, 4*60m, roll")
         # Check related Organisation model is created
+        self.assertEqual(item.organisation.name, "Save UK")
+        Item.objects.all().delete()
+
+    def test_named_column_mappings(self, filename="test_plain.csv"):
+        """Map fields by CSV header name rather than column position."""
+        mappings = (
+            "CODE_SHARE=code_share,CODE_ORG=code_org,"
+            "ORGANISATION=organisation(Organisation|name),"
+            "DESCRIPTION=description,UOM=uom(UnitOfMeasure|name),"
+            "QUANTITY=quantity,STATUS=status"
+        )
+        self.command(
+            filename,
+            "csvimport.Item",
+            defaults="country=KE(Country|code)",
+            mappings=mappings,
+            nameindexes=True,
+        )
+        item = self.get_item("sheeting")
+        self.assertEqual(item.code_org, "RF007")
         self.assertEqual(item.organisation.name, "Save UK")
         Item.objects.all().delete()
 
@@ -155,6 +172,45 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.description, 'SOAP, "200 g" bar')
         Item.objects.all().delete()
 
+    def test_quoted_multiline_field(self, filename="test_quoted_multiline.csv"):
+        """Use the standard CSV parser for quoted fields containing newlines."""
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=["Imported 1 rows to Item"],
+            reader=True,
+        )
+        item = self.get_item("tent")
+        self.assertEqual(item.description, "Family tent,\nincluding ground sheet")
+        Item.objects.all().delete()
+
+    def test_forgiving_parser_recovers_unmatched_quote(
+        self, filename="test_unmatched_quote.csv"
+    ):
+        """Recover columns that the standard parser combines after an unmatched quote."""
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=["Imported 1 rows to Item"],
+        )
+        item = self.get_item("rough")
+        self.assertEqual(item.description, '"Family tent with an unmatched quote')
+        Item.objects.all().delete()
+
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=[
+                "row 0: FKey uom couldnt be set for row - because the row is not parsable - skipping it",
+                "Imported 0 rows to Item",
+            ],
+            reader=True,
+        )
+        self.assertFalse(Item.objects.exists())
+
     def test_row_increment(self, filename="test_broken_rows.csv"):
         """Test parsing a file with 2 rows that are mashed up
         see if it does 5 of 7 also check pkey increment wrt.
@@ -175,6 +231,23 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(Item.objects.count(), 5)
         # Confirm that the maximum value used for PKey is not 7
         self.assertEqual(Item.objects.latest("id").id, 5)
+        Item.objects.all().delete()
+
+    def test_bulk_import_skips_broken_rows(self, filename="test_broken_rows.csv"):
+        """Do not pass rejected rows to bulk_create."""
+        errs = [
+            "row 1: FKey uom couldnt be set for row - because the row is not parsable - skipping it",
+            "row 4: FKey organisation couldnt be set for row - because the row is not parsable - skipping it",
+            "Imported 5 rows to Item",
+        ]
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=errs,
+            bulk=True,
+        )
+        self.assertEqual(Item.objects.count(), 5)
         Item.objects.all().delete()
 
     def test_single_row(self, filename="test_single_row.csv"):

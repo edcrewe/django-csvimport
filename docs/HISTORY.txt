@@ -3,6 +3,20 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
+3.3 - Compatibility and reliability updates - Sept 2026
+--------------------------------------------------------
+
+#. Remove obsolete distutils-based Django version checks and declare the setuptools build backend
+#. Fix uninitiated msg [ioknox]
+#. Add regression coverage for import assignment error logging
+#. Add an opt-in text-mode standard CSV parser for quoted multiline fields while retaining forgiving parsing by default
+#. Test that forgiving parsing recovers a row rejected by the standard parser after an unmatched quote
+#. Package commands, migrations and supporting modules explicitly without deprecated namespace packaging
+#. Fix imports that map fields by CSV header name
+#. Skip rejected rows safely during bulk imports
+#. Keep production migrations consistent with the CSVImport model
+#. Declare Python 3.8 or newer and remove obsolete Python classifiers
+
 3.2 - Use dateparser for import - 26 Dec 2023
 ---------------------------------------------------------
 

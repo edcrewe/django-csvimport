@@ -3,11 +3,8 @@
 """
 import re
 import os
-import django
-from distutils.version import StrictVersion
 
-from optparse import make_option
-from django.core.management.base import LabelCommand, BaseCommand
+from django.core.management.base import LabelCommand
 
 from csvimport.messytables.types import type_guess
 from csvimport.make_model import MakeModel
@@ -23,30 +20,29 @@ class Command(LabelCommand, CSVParser):
     Inspect a CSV resource to generate the code for a Django model.
     """
 
-    make_options = (
-        make_option(
-            "--defaults",
-            default="",
-            help="""Provide comma separated defaults for the import
+    options = {
+        "defaults": {
+            "default": "",
+            "help": """Provide comma separated defaults for the import
                                        (field1=value,field3=value, ...)""",
-        ),
-        make_option(
-            "--model", default="", help="Please provide the model to import to"
-        ),
-        make_option(
-            "--charset",
-            default="",
-            help="Force the charset conversion used rather than detect it",
-        ),
-    )
+        },
+        "model": {"default": "", "help": "Please provide the model to import to"},
+        "charset": {
+            "default": "",
+            "help": "Force the charset conversion used rather than detect it",
+        },
+    }
 
-    # Adding support for Django 1.10+
-    if StrictVersion(django.get_version()) >= StrictVersion("1.10.0"):
-        option_list = getattr(BaseCommand, "option_list", ()) + make_options
-    else:
-        option_list = BaseCommand.option_list + make_options
+    def add_arguments(self, parser):
+        parser.add_argument("csvfile", help="The CSV file to inspect")
+        for arg, options in self.options.items():
+            parser.add_argument("--%s" % arg, **options)
 
     help = "Analyses CSV file date to generate a Django model"
+
+    def handle(self, *args, **options):
+        label = args[0] if args else options.get("csvfile")
+        return self.handle_label(label, **options)
 
     def __init__(self):
         """Set default attributes data types"""
@@ -69,6 +65,7 @@ class Command(LabelCommand, CSVParser):
             model = model.rsplit(".", 1)[0]
             model = model.replace(" ", "_")
         charset = options.get("charset", "")
+        self.charset = charset
         self.defaults = self.set_mappings(defaults)
         self.check_filesystem(csvfile)
         if model.find(".") > -1:

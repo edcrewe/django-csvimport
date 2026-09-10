@@ -9,3 +9,5 @@ global-include *rst
 global-include *txt
 global-include *csv
 global-exclude *pyc
+global-exclude *.log
+prune csv

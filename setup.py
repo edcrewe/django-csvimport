@@ -1,11 +1,8 @@
 import os
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import find_packages, setup
 
-version = "3.2"
+version = "3.3"
 
 with open("README.rst", "r") as fp:
     csvimport_description = fp.read() + "\n"
@@ -25,16 +22,14 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Development Status :: 5 - Production/Stable",
         "Framework :: Django",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "License :: OSI Approved :: Apache Software License",
     ],
     keywords="CVS import django fixture",
@@ -42,13 +37,16 @@ setup(
     author_email="edmundcrewe@gmail.com",
     url="https://github.com/edcrewe/django-csvimport",
     license="Apache",
-    packages=["csvimport"],
-    include_package_data=True,
-    namespace_packages=["csvimport"],
+    packages=find_packages(),
+    package_data={
+        "csvimport.messytables": ["README.md"],
+        "csvimport.tests": ["README.txt", "fixtures/*.csv"],
+    },
     # this line always breaks install?
     # package_data = {'csvimport': ['*.csv', '*.rst']},
     zip_safe=False,
-    install_requires=["django>=2.2.5", "chardet", "dateparser"],
+    python_requires=">=3.8",
+    install_requires=["django>=4.2", "chardet", "dateparser"],
     entry_points="""
       # -*- Entry points: -*-
       """,

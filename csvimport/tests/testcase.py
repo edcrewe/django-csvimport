@@ -57,7 +57,7 @@ class CommandTestCase(TestCase):
         nameindexes=False,
         deduplicate=True,
         delimiter=",",
-        reader=True,
+        reader=False,
         clean=True,
         bulk=False,
         time=False,

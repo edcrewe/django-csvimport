@@ -1,13 +1,13 @@
 Django CSV Import
 =================
 
-Ed Crewe - December 2023
+Ed Crewe - September 2026
 
 Overview
 --------
 
 django-csvimport is a generic importer tool to allow the upload of CSV files for
-populating data. The egg installs an admin csvimport model that has a file upload field.
+populating data. The wheel installs an admin csvimport model that has a file upload field.
 Add a new csvimport and upload a comma separated values file or MS Excel file.
 
 The upload triggers the import mechanism which matches the header line of the files
@@ -25,6 +25,20 @@ using code from https://messytables.readthedocs.org
 The core import code was based on http://djangosnippets.org/snippets/633/ by Jonathan Holst.
 It adds character encoding handling, model field and column autodetection, admin interface,
 custom command etc.
+
+Version 3.3 - Sept 2026
+-----------------------
+
+#. Test with Django 5.2.17, 6.1.1 and Python 3.14.4
+#. Remove obsolete distutils-based Django version checks and declare the setuptools build backend.
+#. Add regression coverage for import assignment error logging.
+#. Add an opt-in standard CSV parser while retaining forgiving parsing by default.
+#. Test forgiving recovery of a row rejected by the standard parser after an unmatched quote.
+#. Package all application modules explicitly without deprecated namespace packaging.
+#. Fix imports that map fields by CSV header name.
+#. Skip rejected rows safely during bulk imports.
+#. Keep production migrations consistent with the CSVImport model.
+#. Declare Python 3.8 or newer and remove obsolete Python classifiers.
 
 Version 3 - Dec 2023
 --------------------
@@ -44,6 +58,7 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
+- version 3.3 tested with Django 5.2.17, 6.1.1 and Python 3.14.4
 - version 3.0  tested with Django 5.0 Python 3.12
 - version 2.16 tested with Django 3.2.16 on Python 3.9.6
 - version 2.14 tested with Django 3.0.5 on Python 3.7.6, 3.8.2
@@ -68,16 +83,37 @@ Installation instructions
 Add the following to the INSTALLED_APPS in the settings.py of your project:
 
 >>>  pip install django-csvimport
+     (OR >>> uv pip install django-csvimport)
 ...
 ...  INSTALLED_APPS = (
 ...  ...
 ...  'csvimport.app.CSVImportConf',  # use AppConfig for django >=1.7 csvimport >=2.2
 ...  )
+
 ...
 ...  python manage.py migrate  (or syncdb if django < 1.9)
 
 Note that migrate has the core tables in 0001_initial migration and test tables in 0002 so
 rm migrations/0002_test_models.py if you do not want these cluttering your database
+
+Parser choice
+-------------
+
+django-csvimport uses its forgiving parser by default. This is intentional: the
+package is designed to import large, messy CSV files that may not strictly
+follow the CSV format. The forgiving parser handles many such files, but it does
+not support every CSV feature, including quoted fields containing line breaks.
+
+The ``importcsv`` command can instead use Python's standard ``csv.reader`` with
+the ``--standard-parser`` option. The standard parser supports quoted multiline
+fields and other standard CSV behaviour, but is less forgiving of badly
+formatted input::
+
+    django-admin importcsv data.csv --model app.Model --standard-parser
+
+Code calling ``Command.setup()`` directly can make the same choice by passing
+``reader=True``. Existing command-line, programmatic and admin imports continue
+to use the forgiving parser unless this option is selected.
 
 Custom commands
 ---------------
@@ -166,6 +202,9 @@ Tests
 To run the django-csvimport tests use:
 
 >>> bin/python3 -m django test --settings='csvimport.settings' csvimport.tests
+
+OR from within a virtual env with django installed ...
+>>> bin/django-admin test csvimport --settings=csvimport.settings
 
 Foreign Keys
 ------------
