@@ -1,7 +1,7 @@
 import os
 
 try:
-    from setuptools import setup
+    from setuptools import find_packages, setup
 except ImportError:
     from distutils.core import setup
 
@@ -42,9 +42,11 @@ setup(
     author_email="edmundcrewe@gmail.com",
     url="https://github.com/edcrewe/django-csvimport",
     license="Apache",
-    packages=["csvimport"],
-    include_package_data=True,
-    namespace_packages=["csvimport"],
+    packages=find_packages(),
+    package_data={
+        "csvimport.messytables": ["README.md"],
+        "csvimport.tests": ["README.txt", "fixtures/*.csv"],
+    },
     # this line always breaks install?
     # package_data = {'csvimport': ['*.csv', '*.rst']},
     zip_safe=False,

@@ -32,6 +32,7 @@ Version 3.3 - Sept 2026
 #. Test with Django 5.2.17, 6.1.1 and Python 3.14.4
 #. Replaced distutils with packaging (remove need to install setuptools).
 #. Add an opt-in standard CSV parser while retaining forgiving parsing by default.
+#. Package all application modules explicitly without deprecated namespace packaging.
 
 Version 3 - Dec 2023
 --------------------
