@@ -187,6 +187,7 @@ class Command(LabelCommand, CSVParser):
         self.makemodel = ""
         self.start = 1
         self.db_backend = ""
+        self.indexes = []
 
     def handle(self, *args, **options):
         if args:
@@ -304,7 +305,7 @@ class Command(LabelCommand, CSVParser):
         msg = None
         for column, field, foreignkey in self.mappings:
             if self.nameindexes:
-                column = indexes.index(column)
+                column = self.indexes.index(column)
             else:
                 column = int(column) - 1
 
@@ -350,7 +351,7 @@ class Command(LabelCommand, CSVParser):
         """Run the csvimport"""
         loglist = []
         if self.nameindexes:
-            indexes = self.csvfile.pop(0)
+            self.indexes = self.csvfile.pop(0)
         counter = 0
         if logid:
             csvimportid = logid

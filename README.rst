@@ -33,6 +33,7 @@ Version 3.3 - Sept 2026
 #. Replaced distutils with packaging (remove need to install setuptools).
 #. Add an opt-in standard CSV parser while retaining forgiving parsing by default.
 #. Package all application modules explicitly without deprecated namespace packaging.
+#. Fix imports that map fields by CSV header name.
 
 Version 3 - Dec 2023
 --------------------

@@ -34,6 +34,26 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.organisation.name, "Save UK")
         Item.objects.all().delete()
 
+    def test_named_column_mappings(self, filename="test_plain.csv"):
+        """Map fields by CSV header name rather than column position."""
+        mappings = (
+            "CODE_SHARE=code_share,CODE_ORG=code_org,"
+            "ORGANISATION=organisation(Organisation|name),"
+            "DESCRIPTION=description,UOM=uom(UnitOfMeasure|name),"
+            "QUANTITY=quantity,STATUS=status"
+        )
+        self.command(
+            filename,
+            "csvimport.Item",
+            defaults="country=KE(Country|code)",
+            mappings=mappings,
+            nameindexes=True,
+        )
+        item = self.get_item("sheeting")
+        self.assertEqual(item.code_org, "RF007")
+        self.assertEqual(item.organisation.name, "Save UK")
+        Item.objects.all().delete()
+
     def test_tab(self, filename="test_tab.csv"):
         """Use custom command to upload file and parse it into Items with different, tab, delimiter"""
         self.command(
