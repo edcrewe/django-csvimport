@@ -35,6 +35,7 @@ Version 3.3 - Sept 2026
 #. Package all application modules explicitly without deprecated namespace packaging.
 #. Fix imports that map fields by CSV header name.
 #. Skip rejected rows safely during bulk imports.
+#. Keep production migrations consistent with the CSVImport model.
 
 Version 3 - Dec 2023
 --------------------

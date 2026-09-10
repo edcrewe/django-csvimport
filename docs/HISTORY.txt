@@ -12,6 +12,7 @@ Contributors listed as [github.com username] where they are on github
 #. Package commands, migrations and supporting modules explicitly without deprecated namespace packaging
 #. Fix imports that map fields by CSV header name
 #. Skip rejected rows safely during bulk imports
+#. Keep production migrations consistent with the CSVImport model
 
 3.2 - Use dateparser for import - 26 Dec 2023
 ---------------------------------------------------------

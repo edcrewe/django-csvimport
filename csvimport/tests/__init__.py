@@ -9,3 +9,4 @@ from csvimport.tests.constraint_tests import ConstraintTest
 from csvimport.tests.performance_tests import PerformanceTest
 from csvimport.tests.log_tests import LogTest
 from csvimport.tests.admin_tests import AdminTest
+from csvimport.tests.migration_tests import ProductionMigrationTest
