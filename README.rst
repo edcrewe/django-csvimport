@@ -36,6 +36,7 @@ Version 3.3 - Sept 2026
 #. Fix imports that map fields by CSV header name.
 #. Skip rejected rows safely during bulk imports.
 #. Keep production migrations consistent with the CSVImport model.
+#. Declare Python 3.8 or newer and remove obsolete Python classifiers.
 
 Version 3 - Dec 2023
 --------------------
