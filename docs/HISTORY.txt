@@ -3,10 +3,10 @@ Changelog
 
 Contributors listed as [github.com username] where they are on github
 
-3.3 - Update to use packaging and not require setuptools
+3.3 - Compatibility and reliability updates - Sept 2026
 --------------------------------------------------------
 
-#. Use packaging for Version
+#. Remove obsolete distutils-based Django version checks and declare the setuptools build backend
 #. Fix uninitiated msg [ioknox]
 #. Add an opt-in text-mode standard CSV parser for quoted multiline fields while retaining forgiving parsing by default
 #. Package commands, migrations and supporting modules explicitly without deprecated namespace packaging

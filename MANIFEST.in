@@ -5,9 +5,9 @@ recursive-include csvimport *
 recursive-include docs *
 recursive-include csvimport/tests/fixtures *
 recursive-include csvimport/migrations *
-prune csv
 global-include *rst
 global-include *txt
 global-include *csv
 global-exclude *pyc
 global-exclude *.log
+prune csv

@@ -1,9 +1,6 @@
 import os
 
-try:
-    from setuptools import find_packages, setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import find_packages, setup
 
 version = "3.3"
 
@@ -49,7 +46,7 @@ setup(
     # package_data = {'csvimport': ['*.csv', '*.rst']},
     zip_safe=False,
     python_requires=">=3.8",
-    install_requires=["django>=4.2", "chardet", "dateparser", "packaging"],
+    install_requires=["django>=4.2", "chardet", "dateparser"],
     entry_points="""
       # -*- Entry points: -*-
       """,

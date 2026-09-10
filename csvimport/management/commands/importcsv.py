@@ -6,14 +6,11 @@ import re
 import json
 from datetime import datetime
 import dateparser
-import django
-from packaging.version import Version
 
 from django.db import DatabaseError
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management.base import LabelCommand, BaseCommand, CommandError
-from optparse import make_option
+from django.core.management.base import LabelCommand, CommandError
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
@@ -156,13 +153,6 @@ class Command(LabelCommand, CSVParser):
         )
         for arg in self.options:
             parser.add_argument("--%s" % arg, **self.options[arg])
-
-    # Support for Django 1.9 or earlier
-    if Version(django.get_version()) < Version("1.10.0"):
-        make_options = []
-        for arg in options:
-            make_options.append(make_option("--%s" % arg, **options[arg]))
-        option_list = BaseCommand.option_list + tuple(make_options)
 
     help = "Imports a CSV file to a model"
 

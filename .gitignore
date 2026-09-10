@@ -8,4 +8,5 @@ reports
 *-old
 MANIFEST
 csvimport/csvimport_test.log
+csv/
 db.sqlite3
