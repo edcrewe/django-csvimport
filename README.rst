@@ -1,7 +1,7 @@
 Django CSV Import
 =================
 
-Ed Crewe - December 2023
+Ed Crewe - September 2026
 
 Overview
 --------
@@ -30,7 +30,7 @@ Version 3.3 - Sept 2026
 -----------------------
 
 #. Test with Django 5.2.17, 6.1.1 and Python 3.14.4
-#. Replaced distutils with packaging (remove need to install setuptools to get it working).
+#. Replaced distutils with packaging (remove need to install setuptools).
 
 Version 3 - Dec 2023
 --------------------
@@ -50,6 +50,7 @@ Version 2 - Sept 2014
 Version Compatibility
 ---------------------
 
+- version 3.3 tested with Django 5.2.17, 6.1.1 and Python 3.14.4
 - version 3.0  tested with Django 5.0 Python 3.12
 - version 2.16 tested with Django 3.2.16 on Python 3.9.6
 - version 2.14 tested with Django 3.0.5 on Python 3.7.6, 3.8.2
@@ -74,6 +75,7 @@ Installation instructions
 Add the following to the INSTALLED_APPS in the settings.py of your project:
 
 >>>  pip install django-csvimport
+     (OR >>> uv pip install django-csvimport)
 ...
 ...  INSTALLED_APPS = (
 ...  ...
@@ -172,6 +174,9 @@ Tests
 To run the django-csvimport tests use:
 
 >>> bin/python3 -m django test --settings='csvimport.settings' csvimport.tests
+
+OR from within a virtual env with django installed ...
+>>> bin/django-admin test csvimport --settings=csvimport.settings
 
 Foreign Keys
 ------------
