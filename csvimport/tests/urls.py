@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.conf import settings
 from csvimport.tests.views import index
+from csvimport.tests import admin as test_admin  # noqa: F401
 
 admin.autodiscover()
 
