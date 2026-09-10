@@ -33,6 +33,7 @@ Version 3.3 - Sept 2026
 #. Remove obsolete distutils-based Django version checks and declare the setuptools build backend.
 #. Add regression coverage for import assignment error logging.
 #. Add an opt-in standard CSV parser while retaining forgiving parsing by default.
+#. Test forgiving recovery of a row rejected by the standard parser after an unmatched quote.
 #. Package all application modules explicitly without deprecated namespace packaging.
 #. Fix imports that map fields by CSV header name.
 #. Skip rejected rows safely during bulk imports.

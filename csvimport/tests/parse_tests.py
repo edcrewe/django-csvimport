@@ -185,6 +185,32 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.description, "Family tent,\nincluding ground sheet")
         Item.objects.all().delete()
 
+    def test_forgiving_parser_recovers_unmatched_quote(
+        self, filename="test_unmatched_quote.csv"
+    ):
+        """Recover columns that the standard parser combines after an unmatched quote."""
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=["Imported 1 rows to Item"],
+        )
+        item = self.get_item("rough")
+        self.assertEqual(item.description, '"Family tent with an unmatched quote')
+        Item.objects.all().delete()
+
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=[
+                "row 0: FKey uom couldnt be set for row - because the row is not parsable - skipping it",
+                "Imported 0 rows to Item",
+            ],
+            reader=True,
+        )
+        self.assertFalse(Item.objects.exists())
+
     def test_row_increment(self, filename="test_broken_rows.csv"):
         """Test parsing a file with 2 rows that are mashed up
         see if it does 5 of 7 also check pkey increment wrt.
