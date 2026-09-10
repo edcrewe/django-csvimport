@@ -388,7 +388,7 @@ class Command(LabelCommand, CSVParser):
                 logger.info("Import %s %i", self.model.__name__, counter)
             counter += 1
             model_instance = self.make_row(row, csvimportid, i, loglist, self.clean)
-            if self.bulk:
+            if self.bulk and model_instance is not None:
                 models.append(model_instance)
             else:
                 with transaction.atomic():

@@ -207,6 +207,23 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(Item.objects.latest("id").id, 5)
         Item.objects.all().delete()
 
+    def test_bulk_import_skips_broken_rows(self, filename="test_broken_rows.csv"):
+        """Do not pass rejected rows to bulk_create."""
+        errs = [
+            "row 1: FKey uom couldnt be set for row - because the row is not parsable - skipping it",
+            "row 4: FKey organisation couldnt be set for row - because the row is not parsable - skipping it",
+            "Imported 5 rows to Item",
+        ]
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=errs,
+            bulk=True,
+        )
+        self.assertEqual(Item.objects.count(), 5)
+        Item.objects.all().delete()
+
     def test_single_row(self, filename="test_single_row.csv"):
         """Check that single row is fine based on issue https://github.com/edcrewe/django-csvimport/issues/106"""
         errs = ["Imported 1 rows to Item"]
