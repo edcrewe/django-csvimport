@@ -3,8 +3,6 @@ import os
 import re
 import csv
 import sys
-import codecs
-import re
 
 pyversion = sys.version_info[0]  # python 2 or 3
 
@@ -41,35 +39,26 @@ class CSVParser(object):
                         return []
         return list(rows)
 
-    def open_csvfile(self, datafile, delimiter=",", reader=True):
+    def open_csvfile(self, datafile, delimiter=",", reader=False):
         """Detect file encoding and open appropriately"""
-        self.filehandle = open(datafile, "rb")
         if not self.charset:
             import chardet
 
-            diagnose = chardet.detect(self.filehandle.read())
-            self.charset = diagnose["encoding"]
+            with open(datafile, "rb") as content_file:
+                diagnose = chardet.detect(content_file.read())
+            self.charset = diagnose["encoding"] or "utf-8"
         rows = []
         if reader:
             try:
-                csvfile = codecs.open(datafile, "r", self.charset)
-            except IOError:
+                with open(datafile, "r", encoding=self.charset, newline="") as csvfile:
+                    rows = [row for row in csv.reader(csvfile, delimiter=delimiter) if row]
+                return self.list_rows(rows)
+            except OSError:
                 self.error(
                     "Could not open specified csv file, %s, or it does not exist"
                     % datafile,
                     0,
                 )
-            else:
-                try:
-                    csvgenerator = self.charset_csv_reader(
-                        csv_data=csvfile, charset=self.charset, delimiter=delimiter
-                    )
-                    rows = [row for row in csvgenerator]
-                    self.filehandle.close()
-                    return self.list_rows(rows)
-                except:
-                    pass
-        self.filehandle.close()
         # Sometimes encoding is too mashed to be able to open the file as text with csv_reader
         # ... especially in Python 3 - its a lot stricter
         # so reopen as raw unencoded and just try and get lines out one by one
@@ -129,29 +118,6 @@ class CSVParser(object):
                         self.loglist.append("Failed to parse row %s" % count)
         return self.list_rows(output)
 
-    def charset_csv_reader(
-        self, csv_data, dialect=csv.excel, charset="utf-8", delimiter=",", **kwargs
-    ):
-        csv_reader = csv.reader(
-            self.charset_encoder(csv_data, charset),
-            dialect=dialect,
-            delimiter=delimiter,
-            **kwargs
-        )
-        for row in csv_reader:
-            # decode charset back to Unicode, cell by cell:
-            yield [unicode(cell, charset) for cell in row]
-
-    def charset_encoder(self, csv_data, charset="utf-8"):
-        """Check passed a valid charset then encode"""
-        test_string = "test_real_charset"
-        try:
-            test_string.encode(charset)
-        except:
-            charset = "utf-8"
-        for line in csv_data:
-            yield line.encode(charset)
-
     def set_mappings(self, mappings):
         """
         Parse the mappings, and return a list of them.
@@ -207,7 +173,7 @@ class CSVParser(object):
         mappings = mappings.replace("column", "")
         return parse_mapping(mappings)
 
-    def check_filesystem(self, csvfile, delimiter=",", reader=True):
+    def check_filesystem(self, csvfile, delimiter=",", reader=False):
         """Check for files on the file system"""
         if csvfile and os.path.exists(csvfile):
             if os.path.isdir(csvfile):

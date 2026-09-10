@@ -8,6 +8,7 @@ Contributors listed as [github.com username] where they are on github
 
 #. Use packaging for Version
 #. Fix uninitiated msg [ioknox]
+#. Add an opt-in text-mode standard CSV parser for quoted multiline fields while retaining forgiving parsing by default
 
 3.2 - Use dateparser for import - 26 Dec 2023
 ---------------------------------------------------------

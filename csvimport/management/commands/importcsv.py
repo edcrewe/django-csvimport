@@ -141,6 +141,11 @@ class Command(LabelCommand, CSVParser):
             "default": False,
             "help": "If True, all csv rows are created at once by a bulk create, so can fail if any have data issues, but its faster",
         },
+        "standard-parser": {
+            "action": "store_true",
+            "default": False,
+            "help": "Use Python's standard CSV parser instead of the forgiving parser",
+        },
     }
 
     # Use 1.10 or later arguments method
@@ -203,6 +208,7 @@ class Command(LabelCommand, CSVParser):
         delimiter = options.get("delimiter", ",")
         clean = options.get("clean", True)
         bulk = options.get("bulk", False)
+        standard_parser = options.get("standard_parser", False)
         # show_traceback = options.get('traceback', True)
         warn = self.setup(
             mappings=mappings,
@@ -213,6 +219,7 @@ class Command(LabelCommand, CSVParser):
             delimiter=delimiter,
             clean=clean,
             bulk=bulk,
+            reader=standard_parser,
         )
         if not warn and not hasattr(self.model, "_meta"):
             warn = (
@@ -242,13 +249,14 @@ class Command(LabelCommand, CSVParser):
         nameindexes=False,
         deduplicate=True,
         delimiter=",",
-        reader=True,
+        reader=False,
         clean=True,
         bulk=False,
     ):
         """Setup up the attributes for running the import"""
         self.clean = clean
         self.bulk = bulk
+        self.charset = charset
         self.defaults = self.set_mappings(defaults)
         if modelname.find(".") > -1:
             app_label, model = modelname.rsplit(".", 1)
@@ -260,7 +268,6 @@ class Command(LabelCommand, CSVParser):
             failed = self.check_filesystem(csvfile, delimiter=delimiter, reader=reader)
             if failed:
                 return failed
-        self.charset = charset
         self.app_label = app_label
         self.model = get_model(app_label, model)
         if not self.model:

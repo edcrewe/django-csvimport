@@ -31,6 +31,7 @@ Version 3.3 - Sept 2026
 
 #. Test with Django 5.2.17, 6.1.1 and Python 3.14.4
 #. Replaced distutils with packaging (remove need to install setuptools).
+#. Add an opt-in standard CSV parser while retaining forgiving parsing by default.
 
 Version 3 - Dec 2023
 --------------------
@@ -81,11 +82,31 @@ Add the following to the INSTALLED_APPS in the settings.py of your project:
 ...  ...
 ...  'csvimport.app.CSVImportConf',  # use AppConfig for django >=1.7 csvimport >=2.2
 ...  )
+
 ...
 ...  python manage.py migrate  (or syncdb if django < 1.9)
 
 Note that migrate has the core tables in 0001_initial migration and test tables in 0002 so
 rm migrations/0002_test_models.py if you do not want these cluttering your database
+
+Parser choice
+-------------
+
+django-csvimport uses its forgiving parser by default. This is intentional: the
+package is designed to import large, messy CSV files that may not strictly
+follow the CSV format. The forgiving parser handles many such files, but it does
+not support every CSV feature, including quoted fields containing line breaks.
+
+The ``importcsv`` command can instead use Python's standard ``csv.reader`` with
+the ``--standard-parser`` option. The standard parser supports quoted multiline
+fields and other standard CSV behaviour, but is less forgiving of badly
+formatted input::
+
+    django-admin importcsv data.csv --model app.Model --standard-parser
+
+Code calling ``Command.setup()`` directly can make the same choice by passing
+``reader=True``. Existing command-line, programmatic and admin imports continue
+to use the forgiving parser unless this option is selected.
 
 Custom commands
 ---------------

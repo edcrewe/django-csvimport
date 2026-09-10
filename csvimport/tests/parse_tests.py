@@ -23,12 +23,9 @@ class CommandParseTest(CommandTestCase):
 
     def test_local_parser(self, filename="test_plain.csv"):
         """Use custom command to upload file and parse it into Items
-        Use reader = False to use local parser not csv lib reader
-        Note that Python 3 csv reader is far less format tolerant so tends to use local parser
+        The forgiving local parser is the default.
         """
-        self.command(
-            filename, "csvimport.Item", "country=KE(Country|code)", reader=False
-        )
+        self.command(filename, "csvimport.Item", "country=KE(Country|code)")
         item = self.get_item("sheeting")
         # Check a couple of the fields in Item
         self.assertEqual(item.code_org, "RF007")
@@ -153,6 +150,19 @@ class CommandParseTest(CommandTestCase):
         self.assertEqual(item.quantity, 180)
         item = self.get_item("soap")
         self.assertEqual(item.description, 'SOAP, "200 g" bar')
+        Item.objects.all().delete()
+
+    def test_quoted_multiline_field(self, filename="test_quoted_multiline.csv"):
+        """Use the standard CSV parser for quoted fields containing newlines."""
+        self.command(
+            filename,
+            "csvimport.Item",
+            "country=KE(Country|code)",
+            expected_errs=["Imported 1 rows to Item"],
+            reader=True,
+        )
+        item = self.get_item("tent")
+        self.assertEqual(item.description, "Family tent,\nincluding ground sheet")
         Item.objects.all().delete()
 
     def test_row_increment(self, filename="test_broken_rows.csv"):
