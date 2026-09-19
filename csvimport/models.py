@@ -59,6 +59,7 @@ class CSVImport(models.Model):
     )
     upload_file = models.FileField(upload_to="csv", storage=fs)
     file_name = models.CharField(max_length=255, blank=True)
+    delimiter = models.CharField(max_length=1, default=",")
     encoding = models.CharField(max_length=32, blank=True)
     upload_method = models.CharField(
         blank=False, max_length=50, default="manual", choices=CHOICES
