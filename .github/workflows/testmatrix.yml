@@ -1,4 +1,4 @@
-name: CI
+name: Django version test matrix
 
 on:
   push:
